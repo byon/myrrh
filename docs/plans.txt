@@ -1,0 +1,69 @@
+Myrrh plans:
+===========
+
+Short-term todo list:
+--------------------
+
+Plans for whole of myrrh:
+-------------------------
+ -Devise a truly portable build system or at least functional vc + gcc build
+ -UML diagrams for the whole library, a good UML tool?
+ -Make a true requirement list for all of the libraries
+ -Automatically updatable version/build number system.
+
+
+Plans for new libraries:
+------------------------
+ -Tool for tracking time
+ -Configuration library
+ -Socket library
+ -Some data directing library (mediates data from n sources to n targets)
+ -Configurable error handling? Depends on build mode or truly dynamic?
+ -Template framework that creates random content to STL containers (usable for
+  unit tests?)
+
+
+Plans for specific libraries:
+-----------------------------
+ -utility:
+   -Go through the ideas used in temp folder experimentations and check if
+    there any ideas that could be taken into use in the utility library.
+   -Add tests for different timezones to testTime.
+ -log:
+   -SubFolder subclasses that add process name and/or id to folder name
+   -It might be usable being able to chain SubFolder classes. For instance the
+    higher subfolder could be named by date and lower by process name and
+    lowest by process id.
+   -Correct the singleton logic so there will be no dead reference problem at
+     shutdown
+   -Should we separate the writing into std output stream from Log
+    implementation? Then it would be possible to add classes that have nothing
+    to do with std::ostream as output targets. We can to that now already but
+    the client coder needs to do (perhaps) too much as he needs to implement
+    TWO new classes and he needs to know about STL stream's before doing that.
+    Also it would be make it possible to use myrrh::log in compilation
+    environment that does not support STL (like Symbian).
+   -Take into use some compile time assertions to the template methods so that
+    error output becomes more readable.
+     -What does this really mean in concrete terms 
+   -Make comparison performance tests with log4cpp and apache logger
+   -See if there is a way to get rid of the performance penalty on writing when
+     verbosity threshold is not breached.
+   -The current concept of line headers support only that: the headers for log
+    lines. There may be other needs. For instance some application might
+    require the output in XML (so that it is easily readable by some other
+    application.
+   -A Trace class? Usable for following the execution of a thread.
+   -Should the library have responsibility of cleaning up old log files?
+   -Could the idea for data forwarding be used also here?
+   -Socket output target
+   -CORBA output target?
+   -Perhaps we could externalize the whole IO operation into a separate
+    process? The myrrh::log would only ensure that the log entry is sent to
+    the process and the separate process would do the writing. That way the
+    actual application would not have to wait for IO. It would have to wait
+    for some acknowledgement response from the IP process though. The
+    performance benefit would come from writing the log entries into log in
+    large blocks. If the IO is separated into another process, then it does
+    not matter if the already "written" entries are not yet in the actual
+    log file. The IO process will take care of that separately.

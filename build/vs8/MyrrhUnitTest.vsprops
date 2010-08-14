@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="MyrrhUnitTest"
+	>
+	<Tool
+		Name="VCPostBuildEventTool"
+		CommandLine="&quot;$(TargetDir)$(TargetName).exe&quot;  --result_code=no --report_level=no --detect_memory_leaks=0"
+	/>
+</VisualStudioPropertySheet>

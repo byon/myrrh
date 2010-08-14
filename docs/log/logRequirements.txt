@@ -1,0 +1,62 @@
+Requirements for myrrh/log library:
+
+1. There must be a type safe way to do the log writing without compromising
+   performance. - OK -
+2. There must be a way to control the verbosity level of output runtime. - OK -
+3. The performance cost for calling output functions when current verbosity
+   threshold is not exceeded (i.e. no output is written) must be minimal.
+   - OK -
+4. The output interface must be compatible with std::ostream. - OK -
+5. The output interface must be easily extendable. For instance it should be
+   possible to define an output target that writes to a socket or to a GUI
+   widget. - OK -
+6. The log writing must be done in a thread safe manner. - OK -
+7. There must a possibility to add a specific header in front of each output
+   line. - OK -
+8. The line header must be entirely customizable. - OK -
+9. There must be a possibility to add (theoretically) infinite number of output
+   targets during runtime. - OK -
+10. There must be possibility to remove output targets during runtime. - OK -
+11. A write operation must be atomic. The log of output should be a reliable
+    evidence of the occurred thread of execution.
+    - NOK - Error handling needs refinement. Log writing does not guarantee
+            strong exception safety.
+12. There must be a default line header that writes timestamp with accuracy
+    of milliseconds and an identifier for the used verbosity. - OK -
+13. The implementation must be in ANSI/ISO c++ for maximum portability. - OK -
+14. The implementation must implement the verbosity levels in imitation of
+    UNIX syslog facility verbosity levels. - OK -
+15. The library must be thoroughly documented with examples.
+    - NOK - The class documentation is not consistent. Some classes are
+            documented properly, some are not documented at all. Examples
+            exist for myrrh::log::policy, but not for myrrh::log. There are no
+            UML diagrams.
+16. There must be a test driver that tests all of the requirements of library.
+    - OK - 
+17. The library should strive for strong exception guarantee: in case of
+    exception the program is left exactly into state as it was before the error
+    causing operation. The exception safety level must be documented for each
+    method.
+    - NOK - The source code should be reviewed with this in mind. The actual
+            file output is known not to guarantee strong exception safety.
+            Also the exception safety level is not documented.
+18. The output library must be accessible through a destruction safe mechanism,
+    which makes certain that all resources get deallocated in correct order.
+    This includes the case when std (error) output is set as target.
+    - NOK - Andrei Alexandrescu's book points out a flaw in Meyer's singleton
+            solution if another static object is using the singleton once it
+            has already been destructed at application exit. For log writing
+            this is a likely scenario.
+19. The log output library must be initializable so that when the application
+    is restarted, it either:
+      a) Rewrites over the old log file - OK -
+      b) Appends to the end of the old log file - OK -
+20. It should be possible to limit the maximum size of output file. - OK -
+21. The folder into which log file(s) are written must be customizable during
+    runtime. -OK-
+22. The log writer library must be initializable so that when the maximum log
+    file size is reached, the library either:
+      a) creates a new log file and starts to write output there - OK -
+      b) deletes a part of the log file's start. - OK -
+23. The log writer library must be initializable so that the log files are
+    written into a subfolder that is named by current date - OK -

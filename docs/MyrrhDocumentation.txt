@@ -1,0 +1,1484 @@
+/**
+ * @file MyrhhDocumentation.txt
+ */
+
+/**
+ * @mainpage Documentation of myrrh library
+ * @section introduction Introduction
+ *
+ * myrrh is a C++ library that combines a few useful functionalities
+ * together. It is not in itself restricted to any specific domain, though so
+ * far it's main focus in the area of logging. The main libraries are
+ * introduced here only in few words. For more specific documentation, please
+ * follow the links below in this page.<br><br>
+ *
+ * @subsection myrrh_log_brief myrrh::log briefly
+ *
+ * The functionality related to logging is gathered under myrrh::log
+ * library. It also contains a smaller library myrrh::log::policy. The other
+ * libraries in myrrh are used to achieve the goals of myrrh::log.<br><br>
+ *
+ * @subsection myrrh_file_brief myrrh::file briefly
+ * 
+ * myrrh::file contains convenience classes and functions for reading and
+ * writing files.<br><br>
+ *
+ * @subsection myrrh_util_brief myrrh::util briefly
+ *
+ * myrrh::util is a collection of miscellaneous utility functions and
+ * classes.<br><br>
+ *
+ * @section more_documentation Documentation of specific libraries
+ *   - @subpage myrrh_log "myrrh::log"
+ *   - @subpage myrrh_file "myrrh::file"
+ *   - @subpage myrrh_util "myrrh::util"
+ */
+
+/**
+ * @page myrrh_log Documentation for myrrh::log
+ *   - @subpage myrrh_log_introduction
+ *   - @subpage myrrh_log_motivation
+ *   - @subpage myrrh_log_features
+ *   - @subpage myrrh_log_design
+ *   - @subpage myrrh_log_decisions
+ *   - @subpage myrrh_log_acknowledgements
+ */
+
+/**
+ * @page myrrh_log_introduction Introduction to myrrh::log
+ *
+ * @section myrrh_log_introduction_goal Original goal
+ *
+ * The idea behind myrrh::log came from numerous bugs I made while
+ * using other logging facilities. These relied on printf-type of function
+ * calls, which are notoriously easy to use incorrectly (as we'll see in the
+ * next section). The stream library in STL is type-safe and
+ * therefore easier to use. It however lacks the verbosity levels that are
+ * present in libraries designed specifically for logging. Also in the context
+ * of threads additional synchronization mechanisms are needed. The original
+ * goal was to combine the type safety of streams to ability to define the
+ * amount of logged entries to thread safety.
+ *
+ * @subsection myrrh_log_intro_goal_printf The problem with printf
+ *
+ * The fastest solution is to use functions with variable count of parameters,
+ * as c-funtion printf uses. This however is hard to use correctly as it has
+ * no real type safety. It takes only one mistake to enter the world of
+ * undefined behaviour. An example with such an error is shown (printf style
+ * functions usually expect a char array when using %s, the example gives
+ * an std::string object and results are undefined):
+ *
+ * @code
+ *    std::string toBePrinted("AString");
+ *    Logger(LoggerLevel::Info, "Value of string %s", toBePrinted);
+ * @endcode
+ *
+ * A program that uses printf-like functions for logging
+ * is likely to have at least one such mistake lurking in some code segment
+ * that handles error situation that "can never happen". This kind of wishful
+ * thinking is likely to bring the application to it's knees just when it is
+ * most inconvenient, as I've learned the hard way. Because of this the
+ * printf-option was discarded for myrrh::log.
+ *
+ * @subsection myrrh_log_intro_goal_local Type safety with a cost
+ *
+ * The use of output operators as the STL stream library does, is far better
+ * option, as it guarantees type safety. C++ is a strongly typed language and
+ * C++ libraries should take advantage of it. The first option that came to
+ * mind was to have separate objects to handle the output. It would not be
+ * very usable to have to create a new object in the function scope though.
+ * At least I dislike to use two lines of code for just writing one
+ * line. Also each use would have been needed to enclose in some thread safety
+ * block that would ensure correct log files in the context of multiple
+ * threads. Each use would have then required four lines of code. An example
+ * in C++:ish pseudocode:
+ *
+ * @code
+ *    SomeLoggerClass object;
+ *    Lock( );
+ *    object << "Action done";
+ *    Unlock( );
+ * @endcode
+ *
+ * This can of course be hidden by using macros, but I just happen to dislike
+ * macros. I've taken to heart the advice from nearly every c++ book not to use
+ * them and so never bothered to really learn them.
+ *
+ * @subsection myrrh_log_intro_goal_singleton Easier usage but with license to err
+ *
+ * A sligthly better solution is to store the logger objects in a centralized
+ * singleton and then use a manipulator (like std::endl) to signal the end
+ * of output. This way each new use of the logging object would cause the
+ * entering of the thread safe portion of code and the manipulator would exit
+ * it. This would have been as easy to use as std::cout:
+ *
+ * @code
+ *    SomeLogger::Info( ) << "Action done" << SomeLogger::Done;
+ * @endcode
+ *
+ * Unfortunately this shares the problems that comes with manual usage of new /
+ * and delete. It is easy to forget to add the manipulator to the end of output
+ * and thus deadlock all but the active thread. This would also cause all log
+ * entries be output to one single line. Even if the user remembers to add the
+ * end manipulator, it is entirely possible to have an exception in the
+ * between. If that happens the effect is the same as with forgetting to add
+ * end manipulator.
+ *
+ * @subsection myrrh_log_intro_goal_final Proposed solution
+ *
+ * By the time I was figuring out how to solve this problem I was also reading
+ * some texts by Bjarne Stroustrup that dealt with RAII. After a while
+ * something went 'snick' in my brain (not a very loud 'snick' in the
+ * perspective of software development masterpieces, I know, but a helpfull
+ * sound all the same) and I understood I can use RAII here as well. Instead
+ * of returning a reference to an object I can create an instance just for that
+ * log entry. Constructor does any needed initialization, the log entry is
+ * compiled by using output operators and destructor writes the completed
+ * entry. As an example of use:
+ *
+ * @code
+ *    myrrh::log::Info( ) << "Action done";
+ * @endcode
+ *
+ * No end manipulator is needed, because destructor takes care of it
+ * automatically. This simple idea is the center piece of myrrh::log.
+ * Everything else is basically just bits and pieces added later.
+ *
+ * This solution as everything else in the world is of course not perfect and
+ * has disadvantages (please see @ref myrrh_log_motivation_wn_performance).
+ *
+ * @section myrrh_log_intro_other_goals Other goals
+ *
+ * Besides the already mentioned one and true goal, there were plenty of other
+ * objectives that were considered beneficial enough to pursue. Here I've
+ * gathered a few that are concrete enough to be considered as features.
+ *
+ * @subsection myrrh_log_intro_log_verbosity Verbosity levels
+ *
+ * I originally learned to program in Windows environment. When I went to work
+ * in a company that had server programs running in UNIX environment, I was
+ * kind of awed by the practicality of the syslog facility. You were able to
+ * configure the amount of logging and even use grep to get the pieces you were
+ * interested in. Yes, I was rather young and quite easily awed. The point is
+ * that I wanted to have the same nice verbosity levels in myrrh::log.
+ *
+ * In the current version there are seven verbosity levels, one of which can
+ * be completely disabled compile time.
+ *
+ * @subsection myrrh_log_intro_log_extendability Extendability
+ *
+ * I wanted it to be easy to extend the functionality of myrrh::log without
+ * touching the library itself. STL is a good example how this can be done. It
+ * is actually used as the way to extend myrrh::log. As it is possible to
+ * extend std::ostream classes, why make your own solution? One reason would
+ * be to avoid dependency to STL, but I consider STL so integral part of C++,
+ * that I discarded that.
+ *
+ * The output targets for myrrh::log need to implement the std::ostream
+ * interface. As std::ostream inteface can be implemented to output the written
+ * content to just about anything, this adds a lot of extendability. The
+ * myrrh::log::policy library uses this to implement it's functionality. The
+ * one other extendability point in myrrh::log itself is the possibility to
+ * define the log entry header (see next subsection).
+ *
+ * @subsection myrrh_log_intro_log_entry_header Log entry header
+ *
+ * The syslog entries in UNIX that talked previously about had a specific
+ * header in front. This header contained some information considered important
+ * in an easy-to-glance format. This made it easy to use grep to find for
+ * instance "all the warnings during the application execution", "the log
+ * entries written between specific points of time" or "all the errors that
+ * occurred in the last week." This was convenient enough worth imitating.
+ *
+ * The log entries written by using myrrh::log have a default line header that
+ * has the following format 'YYYY.MM.DD hh:mm:ss:SSS I Entry' (where most of
+ * the header is easy-to-guess timestamp and 'I' is identifier for the used
+ * level of verbosity), for instance:
+ *
+ * @code
+ * 2007.03.19 23:06:41:123 I This is an example log entry line in Info level
+ * @endcode
+ *
+ * This line header can be removed or configured to be more fitting to other
+ * requirements. The configuration can be changed during runtime.
+ *
+ * @subsection myrrh_log_intro_log_policies Configurable log policies
+ *
+ * I had seen some neat examples of the way logs are written. Some had an
+ * ability to crop the log file shorter when a maximum size was reached, some
+ * divided the log data into smaller and more easily manageable files while
+ * others had logic, which named the log files according to process-id, time
+ * first written or some other useful information.
+ *
+ * This was another feature that I wanted to imitate in myrrh::log. And I did.
+ * Actually I did it quite a few times over. The desired functionality could
+ * be implemented quite easily, but the result was a bit unflexible. If you
+ * wanted to have the same functionality, but with a slight difference, you
+ * wouldhave to write about the same amount of code. Reusability is quite high
+ * in my list of priorities, so I was not happy and did a lot of redesigning,
+ * rewriting and refactoring. Eventually I came up with the current
+ * myrrh::log::policy library, which is quite flexible and should be easy to
+ * extend. Hopefully I will be happy with it. At least a little while.
+ *
+ * @subsection myrrh_log_intro_log_runtime Configurability during runtime
+ *
+ * I've always liked the possibility to configure things to ones liking. The
+ * easier the configuration, the better. I've later learned that some times it
+ * is better to have basic features that actually work than having multitude of
+ * features that "kinda work". Any way, I started with a goal of having the
+ * functionality of myrrh::log being configurable during runtime.
+ *
+ * The goal is actually achieved, but I would not brag too much here. As
+ * already stated, I've moved my priorities a bit from the start. You can
+ * change the verbosity level and the style of line header quite easily during
+ * runtime. The log policy can also be changed during runtime, but that is not
+ * that easily achievable.
+ */
+ 
+/**
+ * @page myrrh_log_motivation Motivation for starting to use myrrh::log
+ *
+ * @section myrrh_log_motivation_why Why use myrrh::log?
+ * 
+ * There's plenty of logging libraries available. What makes myrrh::log better
+ * than others?
+ *
+ * I'm not claiming that myrrh::log is better than any other logging libraries
+ * (I have far too little experience of these to make such claims) and if you
+ * already have a solution that is efficient, reliable, type safe and meets
+ * your expectations in terms of features, there is no reason to change to
+ * myrrh::log. Changes are though, that if you are reading this, you currently
+ * do not have such a library available.
+ *
+ * I have listed here a few reasons why myrrh::log might be a good choice. Also
+ * in the bottom of the page there a few items that might lead you to search
+ * for other options that suit you better.
+ *
+ * @subsection myrrh_log_motivation_safety Type safety
+ *
+ * One of the first requirements set on myrrh::log was the ability to write
+ * the log entries with safety provided compiler's type checking. Most of
+ * the other libraries I've seen use either variable amount of parameters or
+ * macros.
+ *
+ * The first option just casts type safety into the wind and trusts the
+ * programmers to always do right. This does not seem to be a good option, as
+ * the logging code is usually written as an afterthought, on the side, just in
+ * case and having one's mind completely elsewhere.
+ *
+ * The other option (use of macros) is warned against in practically every c++
+ * programming book. I trust the people writing those books.
+ *
+ * In myrrh::log, you can write the following:
+ *
+ * @code
+ *     myrrh::log::Info( ) << "String with integer " << 1234;
+ * @endcode
+ *
+ * ...without worrying about converting numbers to strings or allocating
+ * buffers for strings. Of course this safety comes with a price (please see
+ * @ref myrrh_log_motivation_wn_performance).
+ *
+ * @subsection myrrh_log_motivation_usage Natural usage
+ *
+ * As a c++ programmer, one is most likely familiar with the c++ way of doing
+ * things. Some of the logging libraries for c++ fall short in this perspect as
+ * they imitate APIs from other languages too closely. The ones that use printf
+ * style API are basically programming in C. Others try to imitate Java and
+ * make the API a bit too cumbersome.
+ *
+ * What is the first thing that a programmer learns about c++? Probably the
+ * next line:
+ *
+ * @code
+ *     std::cout << "Hello world" << std::endl;
+ * @endcode
+ *
+ * The output operator is the most natural way to output things in c++. This
+ * brings a sense of familiarity makes myrrh::log easier to learn. I've also
+ * used RAII to strive for good level of exception safety. This again is a
+ * thing that a c++ programmer expects and gets annoyed if the expectations are
+ * not met.
+ *
+ * I've tried to make the myrrh::log API easy and intuitive from the point of
+ * view of an c++ programmer. If I've succeeded, this is a clear benefit. If
+ * you are a c++ programmer, that is. ;)
+ *
+ * @subsection myrrh_log_motivation_brevity Brevity
+ *
+ * Sure enough there were type safe options available before as well. One
+ * could just use std::ofstream objects. You could use them even with the same
+ * one-line syntax:
+ *
+ * @code
+ *     std::ofstream("my.log") << LogHeader( ) << "A log entry" << std::endl;
+ * @endcode
+ *
+ * This would annoy me, because I would have to add the file name, the log
+ * header and the flush manipulator everytime writing the log. Repeating code
+ * (no matter how simple) is tedious and usually leads to repeating bugs as
+ * well. Opening the file for writing each time might affect performance as
+ * well.
+ *
+ * In comparison I like the brevity of myrrh::log. The functionality that you
+ * want to occur for every line write operation gets done behind the scenes and
+ * you can modify it separately without having to change the log writing lines.
+ *
+ * @subsection myrrh_log_motivation_config Configurability
+ *
+ * Why would you want to use a logging library in the first place? Why not just
+ * use plain old std::ofstream (or printf, if that is more to your taste)?
+ *
+ * For me the reason is that then I don't have to worry about opening the files
+ * (and closing them, if that is more to your taste), choosing the file paths,
+ * deciding on what to do if the file is growing very large, deciding on
+ * disabling some log lines without commenting the lines and recompiling,
+ * putting timestamps or other useful information on each log entry, etc.
+ *
+ * There are a plenty of decisions one has to make to take the most benefit out
+ * of log writing. To get your decisions obeyed by the computer, you
+ * have to write plenty of code. And it's not a good think if that plenty is
+ * messed in and amongst your other code.
+ *
+ * One nasty thing in that is of course code duplication with the likely
+ * companion of bug duplication. Even worse is the additional complexity of
+ * your code. If you have to worry about all these things, part of your brain
+ * that should be thinking about your real problem is preoccupied by writing
+ * the logging code properly. Good programmers are humble people. They
+ * know their brain capacity is limited and try to limit the stuff it has to
+ * handle at one time.
+ *
+ * So, use of a logging library is a smart thing. But what if the implementer
+ * of the logging library did not have the same requirements as you do? What if
+ * that obnoxious idiot has decided that every log entry should contain
+ * timestamp, when you know that is obvious waste of processor cycles? What if
+ * the smelling little imbecil has decided that log files should be written in
+ * a folder named after the processid, when all you want is one plain log file
+ * that stays put in its appointed place.
+ *
+ * For fear of being called with ugly names, I've tried to make myrrh::log
+ * very configurable. I first wrote "as configurable as possible", but that is
+ * not really true. I've aimed for making some features that really work
+ * instead of plenty of features that usually work. Still, you can change the
+ * verbosity of your logging, the header written in front of your log entries,
+ * the path where your log is written to, the way your log is named, whether
+ * your log is cropped to shorter when it grows too large or if a new file is
+ * started or if the same file is used until disk capacity ends. All these
+ * choices can be made during runtime.
+ *
+ * And if you are not really happy with the selection of
+ * choices given, you can contact me and we'll see if we can come up with a
+ * solution. No promises made, though. This is a hobby, not a 24/7 commitment.
+ * :)
+ *
+ * @subsection myrrh_log_motivation_policies Basic policies already implemented
+ *
+ * Configurability is a nice thing, but what if you want to start using the
+ * damn library now, without wanting to learn about it's damn classes and damn
+ * functions and its damn inner workings? Well, if you are lucky, you might be
+ * happy with the example policies already implemented. The examples are quite
+ * simple, they take about 5-10 lines of code each, but sometimes even that is
+ * too much.
+ *
+ * The already implemented logging policies are:
+ *   - Writing the log file into a subfolder named after the current date. Once
+ *     the date changes, a new log file is started in a new folder. After
+ *     restarting the application, the log writing starts from today's log
+ *     file, if such exist. Otherwise a new file is opened.
+ *   - Log file that is resized to half, when a specified size is reached. The
+ *     same file is used after restart of application.
+ *   - The combination of the previous two. There is only one log file for one
+ *     day. It get's resized if growing too large, but for every new day there
+ *     comes a new folder and a new log file (assuming that there are log
+ *     entries during the day).
+ *   - Writing log file with a timestamped name up to a maximum size and then
+ *     moving on to a new file. Repeat until disk space runs out or application
+ *     exits. After restart, uses the latest file.
+ *   - The log files are written according to the previous policy, except they
+ *     are stored in a folder named after the date of the writing. A new log
+ *     file in a new folder is started when date is changed.
+ *
+ * Why were these policies chosen? They were primarily meant as examples and
+ * were thus chosen to display the different configuration possibilities
+ * without being too complex to distract the reader.
+ *
+ * @subsection myrrh_log_motivation_modularity Modularity
+ *
+ * What if you like the idea of writing the log entries type safely in one
+ * line, but don't need the different logging policies? Or if you like the
+ * policies, but just hate the syntax of outputting strings into an object
+ * that is destructed on the same line? Or you like the possibility of rolling
+ * back into a previous version of the file in case of an exception? As
+ * possible answers (in respective order) use myrrh::log and skip
+ * myrrh::log::policy, use myrrh::log::policy without myrrh::log or use
+ * myrrh::file::SafeModify on its own.
+ *
+ * All of the classes and functions in myrrh library are unit tested in
+ * isolation. They of course contain dependencies to other classes, but the
+ * dependencies should be minimized to the level that is strictly needed. This
+ * means, you should be able to pick up the pieces you need without having to
+ * take the other backage along.
+ *
+ * @section myrrh_log_motivation_why_not Why not use myrrh::log?
+ *
+ * The world is not perfect, there are no silver bullets nor free lunches. And
+ * so some tradeoffs have been made in myrrh::log as well. Some of them are
+ * between absolute performance and safety, some between having ultracool
+ * features and having a life besides coding c++. Here is an incomplete list of
+ * things that probably could be better in myrrh::log.
+ *
+ * @subsection myrrh_log_motivation_wn_unicode No unicode support
+ *
+ * At this point myrrh::log has no unicode support. This means that the
+ * following lines of code will fail to compile:
+ * @code
+ *     std::wstring unicodeString("Streaming this to myrrh::log fails");
+ *     myrrh::log::Info( ) << unicodeString;
+ *     myrrh::log::Info( ) << L"The same is true for this";
+ * @endcode
+ *
+ * This is quite a big flaw in myrrh::log, but it can be fixed. As the fix is
+ * (at least supposedly) quite mechanical, I have had no plans to do it as it
+ * seems a rather boring task. I may change my mind if asked.
+ *
+ * @subsection myrrh_log_motivation_wn_categories No categories
+ *
+ * At least log4cpp (http://log4cpp.sourceforge.net/) implements logging
+ * categories. It means that as you can separate your application to different
+ * modules you can also separate their logging as well.
+ *
+ * For instance, let's imagine you have modules gui, logic and net, that handle
+ * graphical user interface, the business logic and TCP/IP connection to outer
+ * world, respectively. If you used separate categories for each, you could
+ * specify different verbosity to each of their logging. So for instance, if
+ * you knew there was something fishy in the TCP/IP code, you could raise it's
+ * verbosity very high to get all of the details you can possibly want and at
+ * the same time lower the verbosity of other components very low, so you could
+ * concentrate into the output that you really are interested in.
+ *
+ * This is neat and practical and nice. I decided to concentrate in other
+ * features with myrrh::log, so this feature is not included at this stage.
+ *
+ * @subsection myrrh_log_motivation_wn_performance Unmeasured performance
+ *
+ * In the beginning of development of myrrh::log I was very interested of the
+ * performance of myrrh::log. There are some design decisions that were made
+ * because of that. However at that time I began reading Herb Sutter's (with
+ * later Andrei Alexandrescu) Exceptional C++ series of books. I became
+ * convinced of the dangers in premature optimization.
+ *
+ * The idea is that during major part of the development, one concentrates in
+ * implementing the features and getting the code in maintainable order. If
+ * (and only if) one finds performance problems later on, a profiler is used
+ * to find out the true bottlenecks and you eliminate those. That way you get
+ * good quality code reasonably fast and the performance tweaks are made only
+ * to small part of code.
+ *
+ * The problem with myrrh::log is that I have not done the performance
+ * measurement effort for a long time. I suspect that it compares quite well in
+ * terms of performance. But without proof, you should treat that statement
+ * with the same doubt you would when listening to the tales your father starts
+ * telling when he's had a few (and then some).
+ *
+ * My feeling is that logging will not most likely not take that much time of
+ * your performance. If it does, you have put your logging lines in a bit funny
+ * places. If you are trying to make the fastest graphichs algorithm in the
+ * world, you probably should not do any file I/O in your innermost loop. Then
+ * again, I'm not a graphics programmer, so what do I know?
+ *
+ * If performance really, really matters to you, you will undoubtedly get
+ * faster performance just by using printf. But that is not a choice between
+ * good and bad. It's a tradeoff between performance, type safety and the
+ * features you need.
+ *
+ * @subsection myrrh_log_motivation_wn_portability Portability
+ *
+ * I like portability. I like the fact that you can use the same code in
+ * Windows and Linux. The fact remains though, that if a piece of code is
+ * developed just in one environment, it is very unlikely to work as expected
+ * or even compile in other environment. I developed myrrh::log on Windows by
+ * using Visual Studio 2003 and later VS 2005 Express. I would be surprised if
+ * it would compile straight away on other compilers.
+ *
+ * The code tries to use portable APIs mostly and portability is definitely a
+ * goal for myrrh::log, but it will take some time to make it come absolutely
+ * true.
+ *
+ * One thing that will never happen, is ultimate portability. If your compiler
+ * does not support STL and boost, it is very unlikely that you get myrrh::log
+ * working. First of all it is very dependant of both. You cannot compile
+ * myrrh::log without them. Second, if the environment does not support STL,
+ * it likely has a rather poor support for c++ templates. You need template
+ * support to get myrrh::log compiled.
+ *
+ * @subsection myrrh_log_motivation_wn_header Only partial formatting possible for log entries
+ *
+ * With myrrh::log, you can add a "log entry header" to the beginning of each
+ * log entry. Other forms of formatting are however currently not possible. For
+ * instance it is not currently supported to have any common formatting at the
+ * end of log entry rows.
+ *
+ * @subsection myrrh_log_motivation_wn_productization Incomplete productization
+ *
+ * Currently the only way you can use myrrh::log, is by downloading the source
+ * and compiling it yourself. If you want to compile it out of the box, you
+ * have to compile it with VS2005 into a static library.
+ *
+ * There is no support for having myrrh::log in a dll. Nor is there any
+ * installer that would do the nasty details for you. If someone actually
+ * started using the library, I might do something about it. Or if someone
+ * decided that they want to do it, then by all means, please do. This is open
+ * source after all.
+ *
+ * @subsection myrrh_log_motivation_wn_cleanup Deleting old log files
+ *
+ * The different logging policies makes it rather easy to divide the log
+ * content into several files. After a time these files of course start to
+ * accumulate, especially if you do lot of logging. It would be handy, if you
+ * could easily add in some logic that would, for instance, clean up all the
+ * log files that were older than one month. Or once you reach one hundred
+ * files, the oldest file gets deleted with creation of each new file.
+ *
+ * I suspect this functionality could be relatively easily added into
+ * myrrh::log. Fact is that currently it is not there, though.
+ */
+ 
+/**
+ * @page myrrh_log_features Features of myrrh::log
+ *
+ * @section myrrh_log_features_type_safety Type safety
+ *
+ * Assuming that a type can be used to streaming output into std::ostream (i.e
+ * it is a fundamental type or that there exists an output operator into
+ * std::ostream for that type) you can just stream variables of that type into
+ * myrrh::log::Verbosity objects. This will cause the data to be written into
+ * log file(s) type safely if the verbosity level so allows.
+ *
+ * Here type safety means that if the log write line compiles (and you have not
+ * done anything silly in the output operator function) it is guaranteened that
+ * the data will get written to log correctly or not at all (if verbosity
+ * restricts or if there is I/O error). You cannot have a situation where you
+ * expect to write a string, but make some small silly mistake and the
+ * application will output garbage or crash. This can easily happen with
+ * printf.
+ *
+ * Programmer's normally do not pay that much attention to log writing. Not
+ * many applications are focused on log writing and the focus of the developer
+ * should be on the real task in hand. Then again logs are very useful,
+ * so you may have a lot of log writing lines in your application.
+ * If you are using some logging facility that is not type safe, this means you
+ * are filling your application with nests for bugs.
+ *
+ * The bugs that occur in normal program execution, you'll notice relatively
+ * easily, because you get to test them yourself. The especially nasty
+ * bugs remain easily lurking in error handling code. It may be assumed that
+ * some error just cannot ever happen. Just in case you put some logging there
+ * to notice if it happens. And if it does, you'll really, really need
+ * to know about it, because it may mean you have assumed something fundamental
+ * about yout application logic incorrectly. If there is a bug in log writing
+ * here, you may just get some garbage into your log, or a straight out crash.
+ * So, instead of getting clear trace of the actual error, you'll get just
+ * occasional error reports of mysterious behaviour that is
+ * totally random. You cannot fix the original error, because you do not even
+ * know about it. You probably cannot even get any clues about the log writing
+ * error, because the main source for clues is log file (unless you are lucky
+ * enough to work in an environment, where you get core dumps or something
+ * equivalent).
+ *
+ * For this reason, it pays to use type safe mechanism in log writing.
+ * [@@todo Would this rant be more natural in the Motivation section?]
+ *
+ * @section myrrh_log_features_exception_safety Exception safety
+ *
+ * To make c++ programs really robust, the programmer must be aware of
+ * exception safety (if needed please read more from
+ * http://www.boost.org/more/generic_exception_safety.html or
+ * http://www.research.att.com/~bs/3rd_safe0.html). The myrrh::log
+ * library is written with this in mind. There are situations where one should
+ * not throw exceptions, for instance from destructors. It can be beneficial to
+ * be able to add logging to such places, so a decision was made that the
+ * myrrh::log writing functions and methods cannot throw exceptions. If there
+ * are error situations, those are silently ignored. This also allows
+ * continuing execution, if disk space is running out.
+ *
+ * There is obvious disadvantage from this as well. If there is some error
+ * situation, there is not immediate feedback. For instance, there could be
+ * some incorrect path rule that would point to a hard disk that does not
+ * exist. The error is obvious, but as exceptions are banned, the developer
+ * does not get immediate error. Instead he must [@@todo what?].
+ *
+ * [@@todo Make sure that there is some way to check for output error.]
+ *
+ * @section myrrh_log_features_thread_safety Thread safety
+ *
+ * Use of myrrh:log is safe also in multi-threaded environment. You can have as
+ * many threads writing log entries at the same time, as you want, and the log
+ * entries will come to log as whole. The execution order of the threads is not
+ * of course defined.
+ * @@todo Is this actually true? There are locks only in myrrh::log::Log.
+ *
+ * @section myrrh_log_features_verbosity Verbosity levels
+ *
+ * One convenient feature of almost every logging library, is the possibility
+ * to configure the amount of logging the application does during runtime. The
+ * different levels are called verbosity levels. The higher the verbosity level
+ * configured, the more "verbose" the application becomes.
+ *
+ * The logging library cannot of course guess what are important log entries
+ * and what are less important ones. This means that the developer using
+ * myrrh::log must set the verbosity level for each log entry. This happens
+ * easily by selecting the myrrh::log::Log::Verbosity objects as the target.
+ * For example the following line uses the Debug verbosity level when writing:
+ *
+ * @code
+ *     myrrh::log::Debug( ) << "This gets written only with high verbosity";
+ * @endcode
+ *
+ * The previous example gets written only if the configured verbosity level is
+ * Debug or higher (for list of levels, please refer to @ref
+ * myrrh_log_design_concepts_verbosity).
+ *
+ * The log entries with TRACE get written only if the build is made with Debug
+ * configuration (preprocessor statement NDEBUG must not be defined). In
+ * Release builds, the TRACE log entries do not cause any runtime
+ * overhead, because they are not even compiled into the binary.
+ *
+ * In addition to global verbosity level there can be additional output target
+ * specific verbosity levels. This means that if there are two output targets,
+ * one to local log file and the other to a TCP/IP connection (note that this
+ * kind of functionality is not currently in myrrh::log, this is an example of
+ * what could be done), you can set the global verbosity level to some value
+ * and more restricted values to the file output and TCP/IP output. This could
+ * be useful, if you want the local file to have as much debug data as
+ * possible and to have only the errors sent over the network.
+ *
+ * The global verbosity level can also be queried from myrrh::log. Normally
+ * there should be no reason to do this. Sometimes it may be though that you
+ * would like to print out some data that takes considerable amount of
+ * processor time to produce. If the data is not needed for any other purpose,
+ * it may not be worthwhile to get it at all, if verbosity level is too low.
+ * For instance:
+ *
+ * @code
+ *    if (myrrh::log::Log::Instance( ).IsWritable(myrrh::log::DEBUG))
+ *    {
+ *        myrrh::log::Debug( ) << "Result: " << AlgorithmThatTakesLongTime( );
+ *    }
+ * @endcode
+ *
+ * @section myrrh_log_features_extendability Extendability
+ *
+ * The myrrh::log library is built so that it has plenty of extension points.
+ * As the requirements for logging can vary a great deal, this is an obvious
+ * advantage. If you need to target your log entries somewhere else than plain
+ * file, you can just create a new subclass of std::ostream that directs the
+ * entries where you want them and pass this to myrrh::log. For instance you
+ * could store the log entries to a database, or sent them over network, or
+ * use them as input to some algorithm.
+ *
+ * Any class that implements the std::ostream interface of STL, is a valid
+ * output target for myrrh::log.
+ *
+ * @section myrrh_log_features_header Configurable log entry headers
+ *
+ * For purposes of handling the log file data automatically, it is practical to
+ * have some common data items in the log entries. For instance, if you have
+ * a specific identifier for your verbosity level in each row, it is very easy
+ * to just 'grep' all the errors to be viewable at the same time.
+ *
+ * In myrrh::log it is possible to define a "log entry header" that is printed
+ * before each log entry. By default the header consists of timestamp and a
+ * character that identifies the used verbosity level.
+ *
+ * You may have other requirements for the log header, or you would like to
+ * leave it completely away. If so, it is your lucky day. The header is
+ * entirely configurable. You can have there any data you like (and have access
+ * to) there. Some possibilities are for instance process id, thread id and
+ * host name.
+ *
+ * @section myrrh_log_features_path_configurability Configurable log paths
+ *
+ * It is a basic requirement of any software that writes output to a file to
+ * have the possibility to change the location into which the file is written.
+ * Naturally this is included also in myrrh::log.
+ *
+ * It could also be said that this logic is outside of myrrh::log. If you open
+ * a std::ofstream and add it as output target for myrrh::log, you can of
+ * course decide where the file is opened to.
+ *
+ * If you use myrrh::log::policy, you have additional configurability. When you
+ * use it, you need to define the path as a sum of "path rules". You can have
+ * just a hardcoded path as a rule. In that case the path never changes.
+ *
+ * You can also have a rule that changes for instance when the date changes.
+ * This would enable you to store the log files of one day in one folder. Or
+ * you could want to have several log files and name each of them with the time
+ * it was written. Or you could add the process id to the path, so you can
+ * easily find the files that were written during one execution of the program.
+ *
+ * As the path is built from rules instead of hardcoded strings, it is easy to
+ * combine them together without having to worry about them at the time of
+ * file opening.
+ *
+ * As an example, here is a rule that creates paths into parent folder
+ * "/usr/logs" so that there exists a folder for each date and inside these
+ * exists a folder for each execution (identified by process id). Inside these
+ * subfolders reside the actual log files that contain the timestamp of the
+ * file creation in their name.
+ *
+ * @code
+ *     using namespace myrrh::log::policy;
+ *     Path path("/usr/logs/");
+ *     path += Date( ) + "/" ProcessId( ) + "/myrrh" + Time( ) + ".log";
+ * @endcode
+ *
+ * You can also create your own rules for making the paths and use them
+ * separately or in combination of existing rules. This happens by making a new
+ * subclass of myrrh::log::policy::PathPart.
+ *
+ * @section myrrh_log_features_multiple_files Multiple log targets
+ *
+ * Occasionally it is useful to be able to output the log entries into several
+ * targets. For instance, you may want to have one log file in the local
+ * computer, but also another in a remote computer. You might have your
+ * software distributed into network, but you would want to have one
+ * centralized location for all of the log files.
+ *
+ * In myrrh::log there is no limit (except as set by your hardware/software
+ * environment) to the amount of output targets that you can set. The log
+ * entries are multiplied to all targets.
+ *
+ * The output targets do not really need to be files, databases or anything
+ * physically concrete. It might be just some algorithm that uses the input to
+ * count some statistics. Anything that implements the STL std::ostream
+ * interface goes.
+ *
+ * @section myrrh_log_features_continue_logging Continuing logging to same file after restart
+ *
+ * Different software have different needs for their logging policies. For some
+ * the easiest option is the best: just start a new file at restart. The
+ * benefit is that you can always use the same path to open the file, you might
+ * use some tool that automatically monitors changes in the file. But sometimes
+ * you do not want to lose the data from previous executions.
+ *
+ * Because of this myrrh::log offers the possibility to append the new log
+ * entries to the end of existing log files. That in itself is rather easy, but
+ * the same logic can be used, if you have several log files. If you have set
+ * the path rules correctly and select to append to existing files, myrrh::log
+ * will find the latest file (according your path rules) and append the new
+ * entries there.
+ *
+ * @section myrrh_log_features_many_logs Logging entries to many log files
+ *
+ * Have you ever made the mistake of opening file of about one GB in Notepad?
+ * Either you'll have to wait for a long, log time or just kill the poor
+ * bastard of a process when your patience runs out. Sure there are plenty of
+ * other editors available (even in Windows world) that are not so poor in
+ * handling large files. Sometimes you just cannot get your hands on them
+ * though. Or if you do, the users of the log files may have some favorite
+ * editor they do not want to change.
+ *
+ * Another situation where large log files can be annoying is when your
+ * customers are passing you log files for problem investigation. If you are
+ * writing a lot to log files, you can easily get files of gigabytes. Sure, you
+ * know how to package these files, but your customers may not. Even when the
+ * packaging is successfull, the resulting file may still be too large to fit
+ * in your mailbox, especially if you have plenty of customers.
+ *
+ * The log files become easier to manage, if the log data is divided into
+ * several files, based on for example some maximum file size. This is
+ * supported by myrrh::log policies.
+ *
+ * @section myrrh_log_features_log_cropping Cropping log files smaller
+ *
+ * If your software is meant to be kept running from now until forever, you
+ * cannot keep writing log entries without thinking about cleanup. Otherwise
+ * your software will eventually take all of the hard disk space of your
+ * customer.
+ *
+ * Currently myrrh::log supports the cleanup of old log entries by making it
+ * possible to crop the log file shorter. This means that when you exceed some
+ * configured max size for the log file, myrrh::log will delete the oldest
+ * entries from the beginning of the file and then continue appending new
+ * entries to the end.
+ */
+
+/**
+ * @page myrrh_log_design Design of myrrh::log
+ *
+ * @section myrrh_log_design_concepts Concepts
+ *
+ * @@todo Should these be in a separate page?
+ *
+ * @subsection myrrh_log_design_concepts_verbosity Verbosity levels
+ *
+ * One of the abilities of myrrh::log is the possibility to define the amount
+ * of log output during runtime. This is accomplished by specifying a verbosity
+ * level for each log entry. The log entries made with lower verbosity levels
+ * are deemed more important than the ones with higher levels.
+ *
+ * By specifying verbosity level of the application lower or higher, the user
+ * can define whether he/she wants to see te only the important log entries or
+ * to see more detail.
+ *
+ * There exists the following verbosity levels (from lowest to highest):
+ *   - CRIT
+ *   - ERROR
+ *   - WARN
+ *   - NOTIFY
+ *   - INFO
+ *   - DEBUG
+ *   - TRACE
+ *
+ * The user of myrrh::log defines the level of log entry's verbosity level by
+ * choosing which typedef of myrrh::log::Verbosity to use. The possible choices
+ * are listed below and correspond to the levels shown in previous list:
+ *  - myrrh::log::Critical
+ *  - myrrh::log::Error
+ *  - myrrh::log::Warn
+ *  - myrrh::log::Notify
+ *  - myrrh::log::Info
+ *  - myrrh::log::Debug
+ *  - myrrh::log::Trace
+ *
+ * @subsection myrrh_log_design_concepts_target Output target
+ *
+ * Writing entries through myrrh::log::Verbosity is not sufficient to get any
+ * output. The user of myrrh::log must always define where he/she wants the
+ * output by adding one or more output targets to myrrh::log::Log object. An
+ * output target must be implemented to follow the interface of std::ostream.
+ * Thus output target can be for example stdout (pass in std::cout object), a
+ * file (pass in a std::ofstream object) or your own implementation.
+ *
+ * Even though an output target defines one target, it does not necessarily
+ * have to really define one physical target, like one file. For example
+ * the myrrh::log::policy::Stream can hide behind it many log files that are
+ * opened to different places depending on the used log policy.
+ *
+ * An output target does not even really have to do any output. If for some
+ * reason, you would like to store the number of made log entries, you could
+ * have an output target, which would just update statistics each time a log
+ * entry was made.
+ *
+ * @subsection myrrh_log_design_concepts_header Log entry header
+ *
+ * In myrrh::log it is possible to define a header in front of each log entry.
+ * By default myrrh::log uses a header that contains the current timestamp and
+ * a character identifier of the used verbosity level. These can be useful
+ * when processing the log data afterwards.
+ *
+ * The user of myrrh::log can specify replace the default header by one that is
+ * tailored to his/her requirements.
+ *
+ * @subsection myrrh_log_design_concepts_policy Logging policy
+ *
+ * The myrrh::log library contains a sublibrary called myrrh::log::policy. It
+ * can be used to set a logging policy, i.e. to define a set of rules that
+ * define how the logging should be done. This set of rules can include choices
+ * on which file path to use, whether to append to an existing log or use old
+ * one and when to move on to next log file. Each of these choices are
+ * modularized behind a specific interface, so they are easy to add together,
+ * to make a policy out of small rules.
+ *
+ * @subsection myrrh_log_design_concepts_path_rules Path rules
+ *
+ * One of the choices that need to be made when defining a logging policy, is
+ * the location of the physical file and its name. The result of this decision
+ * is a logic by which to create a file path. To make it flexible to define
+ * this logic, myrrh::log::policy has separated the path into two parts: a
+ * parent path and a set of path rules. The parent path is something that never
+ * changes (for example the application's installation folder). The path rules
+ * each define a one small part of the path that is following its own logic.
+ * For example if the log file is named "logs/log123", it has the following
+ * rules: current directory under "logs" identifier, "logs" is a directory,
+ * file name starts with "log", file name ends with an integer. These kinds of
+ * rules can be specified in myrrh::log::policy as objects and as objects they
+ * are easy to to combine together in many various ways.
+ *
+ * @subsection myrrh_log_design_concepts_path_parts Path parts
+ *
+ * As specified in the previous section, the path rules specify the logic by
+ * which a log path is build. As the path is constructed of these rules, it is
+ * common to find these rules referred to as path parts.
+ *
+ * @subsection myrrh_log_design_concepts_restriction Log restrictions
+ *
+ * When defining log policy, there is usually some reason for it. It is simpler
+ * to use just one file, so why bother with the complexity of the policy, if
+ * there is no need? Usuaully this reason boils down to the fact that at some
+ * point you want to use some other file or to do some other action that makes
+ * it possible to use the current file (like cropping it smaller). This reason
+ * is abstracted behind the concept of log restriction. Each time a log entry
+ * is written, log::myrrh::policy checks if the current set of restrictions
+ * require you to do something. It is considered that if some condition is met,
+ * the log file is restricted, until some action is taken. An example of this
+ * is setting a maximum size for a log file. If the maximum size is to be
+ * exceeded, the file becomes restricted.
+ *
+ * @section myrrh_log_design_walkthrough Walkthrough
+ *
+ * This section contains short description of the bits and pieces that make up
+ * myrrh::log.
+ *
+ * @subsection myrrh_log_walkthrough_log myrrh::log
+ *
+ * The actual myrrh::log library contains one sublibrary (myrrh::log::policy)
+ * and the following classes:
+ * - myrrh::log::BufferedStream
+ * - myrrh::log::ErrorBoxBuffer
+ * - myrrh::log::ErrorBoxStream
+ * - myrrh::log::Header
+ * - myrrh::log::TimestampHeader
+ * - myrrh::log::Log (and nested classes)
+ *
+ * The central piece of the library is the singleton myrrh::log::Log class. It
+ * offers the interface for configurating the log writing and nested classes
+ * to take care of the closely related but independent tasks. These include
+ * writing a log entry both thread and type safely (myrrh::log::Log::Verbosity
+ * and its typedefs) and guarding the lifetime of output targets
+ * (myrrh::log::Log::OutputGuard). Note that myrrh::log::Log::Verbosity is the
+ * most used interface in the library. It is therefore worthwhile to study it.
+ *
+ * It is possible to configure the way myrrh::log writes the log entry headers
+ * of each file. The myrrh::log::Header interface exists to encapsulate the
+ * different ways. There is one ready made implementation,
+ * myrrh::log::TimestampHeader, which is used by default. It adds the current
+ * timestamp with an one character identifier of the used verbosity to the
+ * header.
+ *
+ * To explore the different possibilities for myrrh::log output targets, the
+ * myrrh::log::ErrorBoxBuffer and myrrh::log::ErrorBoxStream classes have been
+ * provided. The first one is an implementation of buffered stream buffer that
+ * shows the log entry as an error dialog and the second one is a wrapper
+ * around this buffer. Because it implements std::ostream interface, it can be
+ * used as an output target for myrrh::log.
+ *
+ * To implement the stream buffering a separate helper class,
+ * myrrh::log::BufferedStream has been implemented. It is a subclass of
+ * std::streambuf, but is still an abstract class. The concrete subclasses
+ * need to implement the actual flushing operation, but nothing else.
+ *
+ * @subsection myrrh_log_walkthrough_policy myrrh::log::policy
+ *
+ * The myrrh::log::policy is a sublibrary of myrrh::log. It implements ways
+ * to configure the logic in which to open the log files, how to name them and
+ * when to move to new log files. Writing to the log files through this policy
+ * is possible through an interface inherited from std::ostream. The user does
+ * not need to know about the details of which file is actually used for
+ * output. The interface makes it possible to use the policy as output target
+ * for myrrh::log::Log.
+ *
+ * The myrrh::log::policy library is combination of the following classes and
+ * interfaces:
+ * - myrrh::log::policy::Policy
+ * - myrrh::log::policy::File
+ * - myrrh::log::policy::Opener interface and implementations
+ * - myrrh::log::policy::Path and nested classes
+ * - myrrh::log::policy::PathPart interface and implementations
+ * - myrrh::log::policy::RestrictionStore
+ * - myrrh::log::policy::Restriction interface and implementations
+ * - myrrh::log::policy::RestrictionAppender interface and implementations
+ * - myrrh::log::policy::Buffer
+ * - myrrh::log::policy::Stream
+ *
+ * The class myrrh::log::policy::Policy is the centerpiece of the library. It
+ * combines the other classes together to create a logging policy. In theory
+ * all of the functionality could have been implemented into this class and
+ * originally most of it was. The library became lot easier to test though,
+ * once the different features were isolated into separate classes.
+ *
+ * One isolated concept is the way new log files are "opened". This is not
+ * required to mean concrete opening of files. Instead the existing file can be
+ * just resized before new log entry. This functionality is encapsulated behind
+ * myrrh::log::policy::Opener interface. There exists three ready made
+ * implementations: myrrh::log::policy::Appender, myrrh::log::policy::Creator
+ * and myrrh::log::policy::Resizer. The first uses an existing file as target,
+ * if such exists, the second always creates a new file (deleting any existing
+ * ones) and third resizes any existing file if it has grown too large.
+ *
+ * The Opener classes do not handle the file streams directly. Instead they use
+ * objects of myrrh::log::policy::File class. This removes code duplication, as
+ * the file handling is usually the same, regardless of decided method of
+ * opening the file.
+ *
+ * Sometimes it is enough to write the log file always to the same location and
+ * even with the same name. Sometimes it is handier to change one of them or
+ * even both. But the logic to handle this can be very different between
+ * different projects. To solve this problem, myrrh::log::policy has divided
+ * each small piece of a path as a path rule, implemented by subclasses of
+ * myrrh::log::policy::PathPart. The rules are combined into a whole by class
+ * myrrh::log::policy::Path. It allows new path parts to be added by a simple
+ * +operator syntax. The resulting object contains the ability to create a
+ * string that represents the path to the file and to match and sort the paths
+ * of existing files. For example, you could have a rule that defines all log
+ * files to be named as "myrrhN.log", where N is an incremented counter. You
+ * could create a rule that would be able to iterate through existing files and
+ * select the latest (by name not, not latest modification date) file as target
+ * for appending new log entries.
+ *
+ * Each of the myrrh::log::policy::PathPart subclasses is able to generate a
+ * small string that is a building piece for the path as a whole. This
+ * separation makes it easy to combine the different pieces into complex
+ * path rules. For a simple example, a path like "logs/myrrh123.log" would
+ * contain objects of:
+ *  - myrrh::log::policy::Text ("log")
+ *  - myrrh::log::policy::Folder ("/")
+ *  - myrrh::log::policy::Text ("myrrh")
+ *  - myrrh::log::policy::Index ("123")
+ *  - myrrh::log::policy::Text (".log")
+ *
+ * Another decision that can be encapsulated, is isolated behind interface
+ * Restriction. Each time a log entry is written, the stored restriction set
+ * is checked and if any state that the current file is restricted, then the
+ * log file is "opened" to next file. Two implementations exist:
+ * SizeRestriction and DateRestriction. The first one can be used to set a
+ * maximum size for the log files. The second one is used in conjunction with
+ * myrrh::log::policy::Date, so that when the date changes, the log file path
+ * is changed and a new file is used. This could be useful for instance, if the
+ * user would like to put log files from one date to one directory.
+ *
+ * Some of the PathPart rules may require restriction checking. For instance
+ * the myrrh::log::policy::Date requires the use of
+ * myrrh::log::policy::DateRestriction. To automate the setting of this and any
+ * other restrictions, the myrrh::log::policy::PathPart classes inherit also
+ * the myrrh::log::policy::RestrictionAppender interface. Whenever a path rule
+ * is defined to myrrh::log::policy::Policy, it is checked whether it contains
+ * parts that require restriction checking. This is done using the
+ * myrrh::log::policy::RestrictionAppender interface.
+ *
+ * A separate class myrrh::log::policy::RestrictionStore is used to store the
+ * restrictions and to check if any restrictions apply.
+ *
+ * To make it easy to integrate myrrh::log::policy to myrrh::log, a few classes
+ * have been implemented. The myrrh::log::policy::Buffer class implements
+ * flushing of buffered stread output to myrrh::log::policy::Policy object. The
+ * myrrh::log::policy::Stream wraps around the previous class and provides a
+ * std::ostream interface for the writing. The objects of the class can thus be
+ * used as myrrh::log output targets.
+ *
+ * There also a few examples provided in the myrrh::log::policy namespace. They
+ * are actually examples of valid use cases, so they are usable as they are.
+ * @@todo Possible to add a link?
+ */
+
+/**
+ * @page myrrh_log_decisions Major design decisions in myrrh::log
+ *
+ * @section myrrh_log_decisions_performance Effects of performance
+ *
+ * A programmer always desires to accomplish a perfect jewel of coding
+ * craftsmanship. The dream is to have an end product that is so easily
+ * understandble that it almost maintains itself. Even more precisely it is
+ * completely bug-free and has all the features one could desire already
+ * implemented. It is without question that it has to be lightning fast and
+ * perform without losing any needless CPU cycles.
+ *
+ * Yeah, right.
+ *
+ * Of course there are tradeoffs in myrrh::log. My original thinking when
+ * considering performance when logging was that, because it is done so
+ * frequently, it must be ultra-super-fast. With more experience, it came
+ * apparent that one cannot do any I/O operation in the midst of a time
+ * critical operation that is more CPU bound. No matter what you do, you'll be
+ * wasting time.
+ *
+ * Thus the question that has the most affect to performance is when to do
+ * logging. There exists direct support for this in myrrh::log in the form of
+ * verbosity levels. As the checking for log verbosity is done with template
+ * mechanics, the code is inlined to very fast boolean checks that take
+ * practically no time at all, if the verbosity is too low for writing.
+ *
+ * It is another thing what happens when it is noticed that log writing really
+ * is needed. I have considered that this is more irrelevant in overrall
+ * performance, so I have not paid so much consideration there. There should
+ * not be any spots for performance sinks here either. I have not done any
+ * performance measurements, though. Which means I do not really know.
+ *
+ * The bottom line is that where performance is concerned, the effort has been
+ * made to have the check for need of log writing fast. Not much thought has
+ * been put to making the log writing itself very fast.
+ *
+ * @section myrrh_log_decisions_exception_safety Exception safety
+ *
+ * To make a C++ program well behaved, it must act as expected in the case of
+ * exceptions. This normally means strong exception safety and basic, when that
+ * is not possible. This has been the aim also with myrrh::log. All methods and
+ * functions of the library should be strongly exception safe. If they follow
+ * only the basic level, this should be clearly documented. If this is not the
+ * case, please consider it as a bug, and report it.
+ *
+ * Another aspect of exception safety in context of logging is that it is very
+ * useful to log the life times of critical objects in the application. This
+ * means logging in constructor and destructor. As throwing in destructors is
+ * generally considered to be a bad idea, myrrh::log log opening and writing
+ * methods are designed not to throw exceptions. Instead the errors are
+ * silently ignored.
+ *
+ * This also brings disadvantages, as throwing an exception is the most natural
+ * way of reporting errors in C++. If for instance, a log file cannot be opened
+ * because of invalid file name, the error may go unnoticed for quite some
+ * time. This is of course inconvenient and may be dangerous. However it must
+ * also be considered what should happen, when this kind of exception occurs?
+ * In some applications the answer is obvious. Just terminate the application
+ * in loud enough way so that the user is sure to notice the error and thus be
+ * able to correct it. For many types of applications this is not a valid
+ * option. One cannot terminate any medical software just because one cannot
+ * log some debug entry. Thus there is the no-throw policy for errors.
+ *
+ * The best option would be to allow the application programmer to choose the
+ * method of error handling. If possible, this kind of feature will be added
+ * later on to myrrh::log. For now the safer option of no-throw policy is
+ * enforced to all users of myrrh::log.
+ *
+ * @section myrrh_log_decisions_modularity Modularity
+ *
+ * In the ancient times, I considered unit tests something that everybody
+ * considered a good idea, but also something that nobody had time to do. At
+ * some point I read about Test Driven Development and although I do not
+ * totally buy into the idea, I have found out that making unit tests before
+ * the implementation improves the quality of the software and reduces the
+ * development time. To make it even possible to have unit tests, the tested
+ * software needs to be modular enough so that different features can be tested
+ * in isolation. This has caused the myrrh library to have quite different
+ * design from the initial plans.
+ *
+ * Having a modular design also goes well together with the goals of
+ * extendability, configurability and maintanability. The first point is
+ * obvious: if software is designed to be modular, it has plenty of extension
+ * hooks for the user. The second point goes easily along as well: it is easier
+ * to build configuration options to a program that is modular and easily
+ * extendable. The maintanability is more arguable. With modularity the
+ * software becomes more complex and complexity makes software harder to
+ * understand. On the other hand, if the modularition is done smartly, each
+ * module should have only one clear focus. The particular piece of code
+ * becomes easier to understand and thus more maintainable. When these pieces
+ * have well designed interfaces, the entirety becomes more easily maintanable.
+ *
+ * @section myrrh_log_decisions_portability Portability
+ *
+ * One goal of myrrh::log is that it is portable. One must however define the
+ * level of portability. The complete portability (being able to compile the
+ * source code on all compilers and execute the final binary in all
+ * environments) is quite hard to accomplish and rules out many of the later
+ * C++ features that I consider essential.
+ *
+ * Thus the level of portability has been (on a quite general level) been
+ * defined so that, if you can get STL and boost libraries work in your
+ * compiler/environment, you are likely to get myrrh::log to work as well.
+ *
+ * Or that is the goal at least (please read more from @ref
+ * myrrh_log_motivation_why_not).
+ *
+ * As design decision this has affected so that I have been able to use
+ * exceptions, templates and type runtime info. With them I have also been able
+ * to use STl and boost. Without them I would have been doing a lot of
+ * reinventing the wheel.
+ */
+
+/**
+ * @page myrrh_log_acknowledgements Acknowledgements
+ *
+ * The original idea on how to implement myrrh::log::Log (the heart and soul of
+ * the library) came from reading some article Bjarne Stroustrup had written
+ * about RAII. From his works and many others (for example Scott Meyers, Herb
+ * Sutter, Nicolai Josuttis, Andrei Alexandrescu and John Lakos) I have
+ * learned many things about C++.
+ *
+ * The first good logging library that I have used in C++ is log4cpp
+ * (http://log4cpp.sourceforge.net/. It is a port from similar Java library
+ * log4j. Many of the ideas
+ * for logging related functionalities come from there. Others come from syslog
+ * logging facility in UNIX.
+ *
+ * In more concrete sense the myrrh::log library is built on top of two
+ * libraries: STL and boost (http://www.boost.org). Without them I would not have been able to finish
+ * the implementation.
+ */
+
+/**
+ * @page myrrh_file Documentation for myrrh::file
+ *   - @subpage myrrh_file_introduction
+ *   - @subpage myrrh_file_features
+ */
+
+/**
+ * @page myrrh_file_introduction Introduction to myrrh::file
+ *
+ * The myrrh::file library contains various classes and functions that are
+ * helpful in handling input/output to files. They do not combine into a
+ * unified entity, but are more or less independent of each other. Some are
+ * built with the help of the others, so of course dependencies do exist.
+ *
+ * The myrrh::file library is not a result of a very determined design and
+ * goals. Rather it is a combination of functionalities that became needed
+ * while implementing myrrh::log library. If you come across a piece of
+ * functionality that would be natural part of the library, but is not
+ * implemented, please suggest it to me.
+ */
+
+/**
+ * @page myrrh_file_features Features of myrrh::file
+ *
+ * @section myrrh_file_features_copying File copying
+ *
+ * The myrrh::file::Copy class exists to allow partial copying of a file. It
+ * can be used to copy a file in its entirety, but that is simpler to
+ * accomplish with boost::filesystem::copy_file
+ * (http://www.boost.org/libs/filesystem/doc/operations.htm#copy_file )
+ * function.
+ *
+ * The class is used to resize an existing file smaller in a strongly exception
+ * safe manner in myrrh::file::Resizer.
+ *
+ * @section myrrh_file_features_deleting File deleting
+ *
+ * The boost::filesystem::remove already implements a portable way to delete
+ * files. Sometimes it is handy to have an automatic file removal system, that
+ * removes when a certain scope is exited, in the spirit of RAII. This can be
+ * useful to make sure a half-finished file is deleted in case of exceptions.
+ * This is implemented in myrrh::file::Eraser class.
+ *
+ * This is used in many test cases of myrrh library and also in the
+ * implementation of myrrh::file::Temporary.
+ *
+ * @section myrrh_file_features_matching File matching
+ *
+ * It is quite a common task to find a specific set of files from a directory.
+ * For example, it could be required that at certain period of time all files
+ * that are older than a month are deleted. The myrrh::file::MatchFiles
+ * function can be used to find the files. It is a template method, which
+ * allows the user to specify the means of identification through a functor.
+ * One such functor already exists, myrrh::file::ExpressionMatcher. It matches
+ * any files whose name match given regular expression.
+ *
+ * The functionalities are used in myrrh::log::policy to examine the existing
+ * set of files and see if any of them are possible candidates for appending
+ * the new log entries into.
+ *
+ * @section myrrh_file_features_scanning File scanning
+ *
+ * Some times the files are not handled as entities. Some times you need to
+ * start writing or reading at a specific point in file. The interface
+ * myrrh::file::PositionScanner is used to encapsulate the logic in seeking
+ * this file position behind a common interface. Three implementations of the
+ * interface exists: PercentageFromEnd (seeks to point that is a certain
+ * percentage of file size from the end), ToEdgeScanner (seeks to file start
+ * or end), ScanFromStart (scans specific number of bytes from the start of the
+ * file and ScanFromEnd (as ScanFromStart, except from file end).
+ *
+ * The PositionScanner interface is used with myrrh::file::Copy to specify the
+ * the area to be copied to a new file and with myrrh::file::Resizer to specify
+ * the area that will be left in the file.
+ *
+ * @section myrrh_file_features_resizing File resizing
+ *
+ * Occasionally a file needs to be cropped shorter. For this purpose one can
+ * use myrrh::file::Resizer. Its implementation is strongly exception safe, so
+ * if the resizing is for some reason interrupted by an exception, the original
+ * situation is reverted.
+ *
+ * The class is used to resize the log files smaller in myrrh::log::policy.
+ *
+ * @section myrrh_file_features_safe Exception safe file modification
+ *
+ * Strong exception safety requires that if an exception occurs, the situation
+ * is reverted back to the original state, as if the function had not been
+ * called at all. The class myrrh::file::SafeModify is used to make strongly
+ * exception safe operations to files. By constructing an object of the class
+ * one can be assured that the original situation is reverted unless the made
+ * change is committed to the object.
+ *
+ * The class is used in myrrh::file::Resizer to make the file resizing strongly
+ * exception safe.
+ *
+ * @section myrrh_file_features_temporary Temporary files
+ *
+ * In many situations it is handy to create temporary files. It is required
+ * that the files should be deleted once they are not needed, or eventually the
+ * hard disk is filled up with unnecessary data. The class
+ * myrrh::file::Temporary implements handling of a temporary file lifetime by
+ * using RAII. Regardless of exceptions the temporary files are always deleted
+ * once the current scope is exited.
+ *
+ * The class is not currently used in production code of myrrh. Instead it has
+ * proved to be very handy in the unit tests to handle automatic deletion of
+ * test files.
+ */
+
+/**
+ * @page myrrh_util Documentation for myrrh::util
+ *   - @subpage myrrh_util_introduction
+ *   - @subpage myrrh_util_features
+ */
+
+/**
+ * @page myrrh_util_introduction Introduction to myrrh::util
+ *
+ * Just like myrrh::file, myrrh::util is a library that has not been designed
+ * with a specific purpose in mind. More like, it is a collection of classes
+ * and functions that have proved to be useful in the development of myrrh::log
+ * and myrrh::file. Some functionalities have not been even used in production
+ * code, but have just been implemented earlier on, while experimenting some
+ * area of c++.
+ *
+ * The myrrh::util library is the most generic part of myrrh. Most of the
+ * classes and functions are independent on their own (except dependencies to
+ * STL and boost of course, what would I do without them), though there are a
+ * few exceptions.
+ */
+
+/**
+ * @page myrrh_util_features Features of myrrh::util
+ *
+ * @section myrrh_util_features_copy_if Implementation of copy_if
+ *
+ * STL is missing an implementation of copy_if algorithm. I happened to need it
+ * and Scott Meyers had kindly provided it in his book Effective++. I just
+ * copied his implementation in my library, arranged it according to the coding
+ * style I prefer and added documentation.
+ *
+ * @section myrrh_util_features_catch Catching exceptions
+ *
+ * When I was writing small test programs (before getting converted to TDD
+ * believer) I used to write plenty of main functions that were very similar.
+ * They called some function that did the actual implementation and reported
+ * any errors. Code duplication is bad, so I made a template implementation
+ * out of it. Function myrrh::util::CatchExceptions calls given functor with
+ * one given argument and reports any exceptions to given stream.
+ *
+ * @section myrrh_util_features_generate Generating output
+ *
+ * In some unit tests it was required to generate fairly large amounts of data
+ * into an output stream. For that purpose I made myrrh::util::GenerateOutput
+ * function. It reads a specific count of bytes from an input stream and copies
+ * it to output stream over and over again until a specified limit is reached.
+ *
+ * @section myrhh_util_features_percentage Percentage
+ *
+ * Some parts of myrrh library required the usage of percentages. It was
+ * clearer to user to use a separate class, so I made a wrapper class
+ * myrrh::util::Percentage. It does not offer much by way of functionality. It
+ * is more of use for static type checking (using specific class instead of
+ * just number).
+ *
+ * @section myrrh_util_features_preprocessor Preprocessor helpers
+ *
+ * Determining whether current build is a debug build or a release build is
+ * easy. The use of preprocessor statements tend to disrupt the code somewhat
+ * though. So I created a wrapper that can be used to determine this in a
+ * function call like style. The name of the function is
+ * myrrh::util::IsDebugBuild. I have not used it anywhere, though, so it may
+ * not have been as useful as I thought at some point.
+ *
+ * The same header file also contains macros ease disabling warnings from
+ * compilation. I usually tend to put the warning level to the highest and
+ * remove all warnings from my own code. This same way of working is however
+ * not followed by all library implementers (or they have been using different
+ * versions of compilers when creating the original piece), so I have to
+ * occasionally disable the warnings that come from library headers. This
+ * happens by using some preprocessor commands before including the header in
+ * question. The resulting code is not pretty and I'm not really happy about
+ * it. Improvement suggestions are taken gladly.
+ *
+ * @section myrrh_util_features_print Printing STL containers
+ *
+ * At some point I was trying out template code and I became a bit obsessed in
+ * finding a way to print the contents of any STL container. I did not succeed
+ * very well. As I look at the code now, I have to admit that the interface
+ * does not look that easy to use. It even does not work with std::map, so it
+ * is far cry from the original goal. The attempt is however accessible through
+ * class myrrh::util::Print.
+ *
+ * @section myrrh_util_features_timer Timing
+ *
+ * The boost::progress_timer class is a small and handy low level tool for
+ * timing tasks that occur in a scope. However it is printing out only the
+ * time spent in the measurement. If one is measuring several things at the
+ * same time, there is no way to identify the different measurements from
+ * output. The class myrrh::util::ProgressTimer is a modified version of the
+ * class, that prints also a text identifier that is given in constructor.
+ *
+ * Also a few other utility functions are contained. The first one, class
+ * myrrh::util::Repeat, can be used to repeat a given functor a specific
+ * number of times. The second one, function myrrh::util::TimePerformance, can
+ * be used to time the performance of a given functor.
+ *
+ * @section myrrh_util_features_random_string Generating random strings
+ *
+ * At one point I thought it was a good idea to use random strings in some of
+ * the unit tests. Later I have learned that this is not really a good idea as
+ * unit tests are supposed to have repeatable results. For whatever purpose,
+ * three functions for generating random character data are presented.
+ * Function myrrh::util::RandChar gives a random character,
+ * myrrh::util::ReplaceWithRandom replaces original std::string content with
+ * random characters and myrrh::util::GetRandomString creates a new random
+ * std::string.
+ *
+ * @section myrrh_util_features_stream Creating new stream manipulators
+ *
+ * While implementing myrrh::util::Print I investigated also the ways on making
+ * generic stream manipulators. The simple ones are, well, simple, and no
+ * special actions is needed. Things become more complicated when there is need
+ * to pass arguments to the manipulator. One approach (that owes a lot to
+ * Cay S. Horstmann http://www.horstmann.com/cpp/iostreams.html) is implemented
+ * here. I'm not really sure is this functionality that useful. As a practise
+ * on STL streams and templates it was for me, at least.
+ * 
+ *
+ * @section myrrh_util_features_timestamps Portable timestamps
+ *
+ * The boost::date_time library contains excellent functionality for getting
+ * the current timestamp and converting that to string. In myrrh::log I needed
+ * this functionality for getting the current timestamp into the log entry
+ * headers. I originally implemented it using boost::date_time, but that seemed
+ * to have a negative effect on performance. Therefore I implemented my very
+ * own, simple and unsafe functions for getting the timestamp. I'm not really
+ * sure was that such a great idea. The performance difference was measured,
+ * but it was not that great and the measurement application was doing nothing
+ * but logging. Most of the applications produce logging only as a side effect.
+ * Also if I had made some realu performance profiling with a measurment tool,
+ * instead of just using myrrh::util::TimePerformance, I might have seen that
+ * the real performance hog was really something else, or that there would
+ * have been smarter ways to use boost::date_time.
+ *
+ * If you need similar functionality in your own code, I suggest you use
+ * boost::date_time. If you discover through profiling that it is too slow,
+ * you can try the functions implemented here.
+ *
+ * First function, myrrh::util::TimeStamp, can be used to get the current
+ * timestamp in millisecond resolution. The second function,
+ * myrrh::util::TimeStampToCString, returns the current timestamp as a c
+ * string.
+ */
+
+/**
+ * @page myrrh_license Myrrh license
+ *
+ * The myrrh library is distributed under the Boost Software License, Version
+ * 1.0. The following is the complete license text:
+ * <hr>
+ *
+ * Boost Software License - Version 1.0 - August 17th, 2003
+ *
+ * Permission is hereby granted, free of charge, to any person or organization
+ * obtaining a copy of the software and accompanying documentation covered by
+ * this license (the "Software") to use, reproduce, display, distribute,
+ * execute, and transmit the Software, and to prepare derivative works of the
+ * Software, and to permit third-parties to whom the Software is furnished to
+ * do so, all subject to the following:
+ * 
+ * The copyright notices in the Software and this entire statement, including
+ * the above license grant, this restriction and the following disclaimer,
+ * must be included in all copies of the Software, in whole or in part, and
+ * all derivative works of the Software, unless such copies or derivative
+ * works are solely in the form of machine-executable object code generated by
+ * a source language processor.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
+ * SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
+ * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */

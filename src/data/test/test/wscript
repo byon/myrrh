@@ -1,0 +1,6 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+def build(bld):
+	bld.program(source='TestFiles.cpp', target='myrrh.data.test.test',
+                    use='myrrh.data.test BOOST', includes='../../../..')

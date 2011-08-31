@@ -105,7 +105,7 @@ void TestFileWithContent(const std::string &name)
 
 inline const std::string Path(const std::string &name)
 {
-    static const std::string START("../../../../../../..");
+    static const std::string START("../../../..");
     return START + name;
 }
 

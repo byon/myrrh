@@ -32,6 +32,7 @@ typedef boost::unit_test::test_suite TestSuite;
 
 void SleepRandomTime(int maxSeconds, int maxNSeconds)
 {
+    /// @todo Remove this. Sleeping and randomness in unit test. Not good.
     boost::xtime toWait;
     boost::xtime_get(&toWait, boost::TIME_UTC);
     toWait.sec += (std::rand( ) % maxSeconds);
@@ -189,6 +190,7 @@ TestSuite *init_unit_test_suite(int, char *[])
     TestSuite* test =
         BOOST_TEST_SUITE("Test suite for myrhh::util::ProgressTimer");
     test->add(BOOST_TEST_CASE(TestProgressTimer));
-    test->add(BOOST_TEST_CASE(TestTimePerformance));
+    /// @todo Should not be part of unit test suite. Also taking VERY long time
+    //test->add(BOOST_TEST_CASE(TestTimePerformance));
     return test;
 }

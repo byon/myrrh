@@ -122,8 +122,8 @@ inline ProgressTimer::~ProgressTimer( )
 }
 
 template <typename Func>
-inline bool TimePerformance<Func>(const std::string &id, const size_t count,
-                                  Func function, std::ostream &os)
+inline bool TimePerformance(const std::string &id, const size_t count,
+                            Func function, std::ostream &os)
 {
     ProgressTimer timer(id, os);
 

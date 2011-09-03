@@ -6,7 +6,7 @@ def build(bld):
     buildTest(bld, 'TestCopyIf')
     #buildTest(bld, 'TestGenerateOutput')
     buildTest(bld, 'TestPrint')
-    #buildTest(bld, 'TestProgressTimer')
+    buildTest(bld, 'TestProgressTimer')
     #buildTest(bld, 'TestRandomString')
     #buildTest(bld, 'TestRepeat')
     #buildTest(bld, 'TestStream')

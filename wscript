@@ -18,9 +18,11 @@ def configure(conf):
                    mandatory=False)
 
         if sys.platform != 'win32':
-                conf.env.STLIB_BOOST   = ['boost_unit_test_framework']
-                conf.env.STLIBPATH_BOOST   = ['/usr/lib']
-                conf.env.INCLUDES_BOOST  = ['/usr/include']
+                conf.env.STLIB_BOOST = ['boost_thread',
+                                        'boost_unit_test_framework']
+                conf.env.LIB_BOOST = ['pthread']
+                conf.env.STLIBPATH_BOOST = ['/usr/lib']
+                conf.env.INCLUDES_BOOST = ['/usr/include']
 
 def build(bld):
 	bld.recurse('src')

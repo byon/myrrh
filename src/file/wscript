@@ -1,0 +1,6 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+def build(bld):
+    bld.stlib(source='Copy.cpp PositionScanner.cpp ReadOnly.cpp', target='myrrh.file', includes='../..')
+    #bld.recurse('test')

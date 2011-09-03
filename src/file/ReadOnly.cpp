@@ -14,14 +14,15 @@
 
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
-
 #include "boost/lexical_cast.hpp"
+#pragma warning(pop)
+
+#include <fstream>
 
 #ifdef WIN32
-
-#pragma warning(pop)
 #include <windows.h>
-
+#else
+#include <sys/stat.h>
 #endif
 
 namespace myrrh
@@ -84,6 +85,8 @@ ReadOnly::AlreadyExists::AlreadyExists(const boost::filesystem::path &path) :
 namespace
 {
 
+#if WIN32 /// @todo not compiled on windows, not sure if works
+
 void SetReadOnly(const boost::filesystem::path &path)
 {
     if (!SetFileAttributes(path.string( ).c_str( ), FILE_ATTRIBUTE_READONLY))
@@ -95,8 +98,29 @@ void SetReadOnly(const boost::filesystem::path &path)
 void RemoveReadOnly(const boost::filesystem::path &path)
 {
     // We are calling this in destructor -> we do not care of errors
-    SetFileAttributes(path.string( ).c_str( ), FILE_ATTRIBUTE_NORMAL);
+    const int RESULT = SetFileAttributes(path.string( ).c_str( ),
+                                         FILE_ATTRIBUTE_NORMAL);
+    assert(RESULT);
 }
+
+#else
+
+void SetReadOnly(const boost::filesystem::path &path)
+{
+    const int RESULT = chmod(path.string( ).c_str( ), S_IREAD);
+    if (RESULT)
+    {
+        throw ReadOnly::SetFailed(path, RESULT);
+    }
+}
+
+void RemoveReadOnly(const boost::filesystem::path &path)
+{
+    const int RESULT = chmod(path.string( ).c_str( ), S_IREAD);
+    assert(!RESULT);
+}
+
+#endif
 
 std::string ErrorString(const boost::filesystem::path &path, int errorCode)
 {

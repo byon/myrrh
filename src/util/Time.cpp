@@ -12,7 +12,8 @@
  * $Id: Time.cpp 286 2007-03-18 15:04:53Z Byon $
  */
 
-#include "myrrh/util/time.hpp"
+#include "myrrh/util/Time.hpp"
+#include <cstdio>
 #pragma warning(disable : 4996)
 
 namespace myrrh

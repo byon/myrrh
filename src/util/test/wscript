@@ -8,7 +8,7 @@ def build(bld):
     buildTest(bld, 'TestPrint')
     buildTest(bld, 'TestProgressTimer')
     buildTest(bld, 'TestRandomString')
-    #buildTest(bld, 'TestRepeat')
+    buildTest(bld, 'TestRepeat')
     #buildTest(bld, 'TestStream')
     #buildTest(bld, 'TestTime')
     #buildTest(bld, 'TestGenerateOutput')

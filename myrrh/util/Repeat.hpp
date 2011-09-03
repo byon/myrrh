@@ -41,7 +41,7 @@ public:
      * The functor operator that does the repeating
      * @param count The count of times to repeat
      */
-    void operator ( )(size_t count);
+    void operator ( )(unsigned count);
 
 private:
 
@@ -58,9 +58,9 @@ inline Repeat<Func>::Repeat(Func function) :
 }
 
 template <typename Func>
-inline void Repeat<Func>::operator ( )(size_t count)
+inline void Repeat<Func>::operator ( )(unsigned count)
 {
-    for (size_t i = 0; i < count; ++i)
+    for (unsigned i = 0; i < count; ++i)
     {
         function_( );
     }

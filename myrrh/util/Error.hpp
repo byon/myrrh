@@ -19,6 +19,7 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <typeinfo>
 
 namespace myrrh
 {
@@ -64,9 +65,8 @@ int CatchExceptions(Func function, const Arg &argument, Stream &os,
 // Inline implementations
 
 template <typename Func, typename Arg, typename Stream>
-inline int CatchExceptions<Func, Arg, Stream>(Func function,
-                                              const Arg &argument,
-                                              Stream &os, bool rethrow)
+inline int CatchExceptions(Func function, const Arg &argument,
+                           Stream &os, bool rethrow)
 {
     const static std::string ERROR_START_TXT("catchException: ");
     try

@@ -1,0 +1,11 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+def build(bld):
+    buildTest(bld, 'TestCatchExceptions')
+
+def buildTest(bld, file):
+    name = 'myrrh.util.test.' + file
+    bld.program(source=file + '.cpp', target=name,
+                use='myrrh.util BOOST', includes='../../..')
+    bld(rule='src/util/test/' + name, source=name)

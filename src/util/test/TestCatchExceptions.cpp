@@ -111,12 +111,17 @@ void TestErrors(Func function, const T &argument,
     BOOST_CHECK_EQUAL(expectedOutput, stream.str( ));
 }
 
+std::string ExceptionName( )
+{
+    return typeid(TestException).name( );
+}
+
 template <typename T>
 void Test(const T &argument)
 {
     TestSuccess(Function<T, false>, argument);
-    TestErrors(Function<T, true>, argument,
-        "catchException: 'class TestException': 'An expected exception'\n");
+    TestErrors(Function<T, true>, argument, "catchException: '" +
+               ExceptionName( ) + "': 'An expected exception'\n");
     TestErrors(ThrowUnknown<T>, argument,
         "catchException: unknown exception\n");
 }

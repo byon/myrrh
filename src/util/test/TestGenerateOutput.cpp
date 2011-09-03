@@ -282,7 +282,7 @@ void OutputStreamNotOpen( )
             }
         }
     };
-    
+
     Case( )( );
 }
 
@@ -296,7 +296,7 @@ void InputStreamNotOpen( )
         {
         }
     };
-    
+
     Case( )( );
 }
 
@@ -311,7 +311,7 @@ void ZeroOutputSize( )
             return 0;
         }
     };
-    
+
     Case( )( );
 }
 
@@ -418,7 +418,7 @@ void InputStreamAtItsEnd( )
 
 std::string Path(const std::string &restOfPath)
 {
-    const std::string START("../../../../..");
+    const std::string START("..");
     return START + restOfPath;
 }
 

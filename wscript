@@ -20,6 +20,8 @@ def configure(conf):
         if sys.platform != 'win32':
                 conf.env.STLIB_BOOST = ['boost_thread',
                                         'boost_regex',
+                                        'boost_system',
+                                        'boost_filesystem',
                                         'boost_unit_test_framework']
                 conf.env.LIB_BOOST = ['pthread']
                 conf.env.STLIBPATH_BOOST = ['/usr/lib']

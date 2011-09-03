@@ -5,7 +5,7 @@ def build(bld):
     buildTest(bld, 'TestCatchExceptions')
     buildTest(bld, 'TestCopyIf')
     #buildTest(bld, 'TestGenerateOutput')
-    #buildTest(bld, 'TestPrint')
+    buildTest(bld, 'TestPrint')
     #buildTest(bld, 'TestProgressTimer')
     #buildTest(bld, 'TestRandomString')
     #buildTest(bld, 'TestRepeat')

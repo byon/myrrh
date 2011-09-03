@@ -169,7 +169,7 @@ std::istream &operator>>(std::istream &is, std::pair<T1, T2> &pair)
 template <typename T1, typename T2>
 void CheckValues(const std::pair<T1, T2> &value1, const std::string &value2)
 {
-    typedef boost::remove_const<T1>::type NonConstT1;
+    typedef typename boost::remove_const<T1>::type NonConstT1;
     std::pair<NonConstT1, T2> convertedValue2;
     std::istringstream stream(value2);
     stream >> convertedValue2;
@@ -243,7 +243,7 @@ template <typename T>
 void TestPrintRangeImpl(const T &container, const std::string &delimiter)
 {
     BOOST_REQUIRE(delimiter.size( ) == 1);
-    IsItemLegal<T::value_type> itemChecker(delimiter[0]);
+    IsItemLegal<typename T::value_type> itemChecker(delimiter[0]);
 
     std::for_each(container.begin( ), container.end( ), itemChecker);
 
@@ -256,7 +256,7 @@ void TestPrintRangeImpl(const T &container, const std::string &delimiter)
     }
 
     const int HALF_WAY = static_cast<int>(container.size( ) / 2);
-    T::const_iterator halfWayIterator(container.begin( ));
+    typename T::const_iterator halfWayIterator(container.begin( ));
     std::advance(halfWayIterator, HALF_WAY);
     BOOST_REQUIRE(container.end( ) != halfWayIterator);
 
@@ -304,7 +304,7 @@ template <typename T>
 T NewSequenceContainer(int size)
 {
     T container(size);
-    Generator<T::value_type> generator;
+    Generator<typename T::value_type> generator;
     std::generate_n(container.begin( ), size, generator);
 
     return container;
@@ -373,7 +373,7 @@ std::vector<int> GetTestCounts( )
     return testCounts;
 }
 
-void TestPrintRange( )
+void DoTestPrintRange( )
 {
     std::vector<int> testCounts(GetTestCounts( ));
     typedef std::vector<int>::iterator IntIter;
@@ -393,7 +393,7 @@ void TestContainerTypes(int size)
     TestWithSequenceContainer<std::vector<T> >(size);
 }
 
-void TestPrintContainer( )
+void DoTestPrintContainer( )
 {
     std::vector<int> testCounts(GetTestCounts( ));
     typedef std::vector<int>::iterator IntIter;
@@ -412,7 +412,7 @@ TestSuite *init_unit_test_suite(int, char *[])
 
     TestSuite* test = BOOST_TEST_SUITE("Test suite for Print");
     //test->add(BOOST_TEST_CASE(TestPrintPairOperator));
-    test->add(BOOST_TEST_CASE(TestPrintRange));
-    test->add(BOOST_TEST_CASE(TestPrintContainer));
+    test->add(BOOST_TEST_CASE(DoTestPrintRange));
+    test->add(BOOST_TEST_CASE(DoTestPrintContainer));
     return test;
 }

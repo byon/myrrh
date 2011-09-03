@@ -3,6 +3,7 @@
 
 def build(bld):
     buildTest(bld, 'TestCatchExceptions')
+    buildTest(bld, 'TestCopyIf')
 
 def buildTest(bld, file):
     name = 'myrrh.util.test.' + file

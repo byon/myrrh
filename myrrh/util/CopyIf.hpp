@@ -48,11 +48,9 @@ OutputIterator CopyIf(InputIterator begin, InputIterator end,
 template <typename InputIterator,
           typename OutputIterator,
           typename Predicate>
-inline OutputIterator CopyIf<InputIterator,
-                             OutputIterator,
-                             Predicate>(InputIterator begin, InputIterator end,
-                                        OutputIterator destinationBegin,
-                                        Predicate predicate)
+inline OutputIterator CopyIf(InputIterator begin, InputIterator end,
+                             OutputIterator destinationBegin,
+                             Predicate predicate)
 {
     while (begin != end)
     {

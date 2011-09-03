@@ -140,8 +140,8 @@ void GenerateExpectedAndCompare(const SourceIterator &begin,
 template <typename Target, typename Source, typename Predicate>
 void TestRanges(const Source &source, Predicate predicate)
 {
-    Source::const_iterator begin = source.begin( );
-    Source::const_iterator end = source.end( );
+    typename Source::const_iterator begin = source.begin( );
+    typename Source::const_iterator end = source.end( );
     GenerateExpectedAndCompare<Target>(begin, end, predicate);
 
     const int MIN_SIZE_TO_TEST_HALF_WAY = 3;
@@ -151,7 +151,7 @@ void TestRanges(const Source &source, Predicate predicate)
     }
 
     const int HALF_WAY = static_cast<int>(source.size( ) / 2);
-    Source::const_iterator halfWayIterator(source.begin( ));
+    typename Source::const_iterator halfWayIterator(source.begin( ));
     std::advance(halfWayIterator, HALF_WAY);
     BOOST_REQUIRE(source.end( ) != halfWayIterator);
 
@@ -160,7 +160,7 @@ void TestRanges(const Source &source, Predicate predicate)
 }
 
 template <typename Target, typename Source = Target,
-          typename Gener = Generator<Target::value_type> >
+          typename Gener = Generator<typename Target::value_type> >
 class TestContainer
 {
 public:
@@ -197,10 +197,10 @@ private:
 template <typename Tester>
 void TestPredicate(const Tester &tester)
 {
-    tester(Always<true, Tester::Type>);
-    tester(Always<false, Tester::Type>);
-    Tester::TypeGenerator generator;
-    tester(Test<Tester::Type>(generator( )));
+    tester(Always<true, typename Tester::Type>);
+    tester(Always<false, typename Tester::Type>);
+    typename Tester::TypeGenerator generator;
+    tester(Test<typename Tester::Type>(generator( )));
 }
 
 template <typename T>
@@ -226,7 +226,7 @@ void TestMap(int testCount)
     TestPredicate(TestContainer<Map, Map, PairGenerator<T1, T2> >(testCount));
 }
 
-void TestCopyIf( )
+void TestCopyIfImplementation( )
 {
     const int TEST_COUNT = 50;
     TestNonPairContainer<int>(TEST_COUNT);
@@ -242,8 +242,7 @@ TestSuite *init_unit_test_suite(int, char *[])
 {
     std::srand(static_cast<unsigned int>(std::time(0)));
 
-    TestSuite* test =
-        BOOST_TEST_SUITE("Test suite for Copyif");
-    test->add(BOOST_TEST_CASE(TestCopyIf));
+    TestSuite* test = BOOST_TEST_SUITE("Test suite for Copyif");
+    test->add(BOOST_TEST_CASE(TestCopyIfImplementation));
     return test;
 }

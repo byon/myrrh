@@ -3,3 +3,4 @@
 
 def build(bld):
 	bld.recurse('data')
+	bld.recurse('util')

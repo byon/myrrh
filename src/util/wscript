@@ -1,0 +1,7 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+def build(bld):
+	bld.stlib(source='GenerateOutput.cpp', target='myrrh.util',
+                  includes='../..')
+	#bld.recurse('test')

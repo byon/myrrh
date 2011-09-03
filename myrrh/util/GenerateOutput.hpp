@@ -14,6 +14,7 @@
 #define MYRRH_UTIL_GENERATEOUTPUT_H_INCLUDED
 
 #include <ios>
+#include <stdexcept>
 
 namespace myrrh
 {

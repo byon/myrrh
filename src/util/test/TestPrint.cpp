@@ -411,7 +411,6 @@ TestSuite *init_unit_test_suite(int, char *[])
     std::srand(static_cast<unsigned int>(std::time(0)));
 
     TestSuite* test = BOOST_TEST_SUITE("Test suite for Print");
-    //test->add(BOOST_TEST_CASE(TestPrintPairOperator));
     test->add(BOOST_TEST_CASE(DoTestPrintRange));
     test->add(BOOST_TEST_CASE(DoTestPrintContainer));
     return test;

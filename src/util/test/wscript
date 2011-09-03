@@ -4,6 +4,20 @@
 def build(bld):
     buildTest(bld, 'TestCatchExceptions')
     buildTest(bld, 'TestCopyIf')
+    #buildTest(bld, 'TestGenerateOutput')
+    #buildTest(bld, 'TestPrint')
+    #buildTest(bld, 'TestProgressTimer')
+    #buildTest(bld, 'TestRandomString')
+    #buildTest(bld, 'TestRepeat')
+    #buildTest(bld, 'TestStream')
+    #buildTest(bld, 'TestTime')
+    #buildTest(bld, 'TestGenerateOutput')
+    #buildTest(bld, 'TestPrint')
+    #buildTest(bld, 'TestProgressTimer')
+    #buildTest(bld, 'TestRandomString')
+    #buildTest(bld, 'TestRepeat')
+    #buildTest(bld, 'TestStream')
+    #buildTest(bld, 'TestTime')
 
 def buildTest(bld, file):
     name = 'myrrh.util.test.' + file

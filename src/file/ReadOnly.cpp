@@ -116,7 +116,7 @@ void SetReadOnly(const boost::filesystem::path &path)
 
 void RemoveReadOnly(const boost::filesystem::path &path)
 {
-    const int RESULT = chmod(path.string( ).c_str( ), S_IREAD);
+    const int RESULT = chmod(path.string( ).c_str( ), S_IREAD|S_IWRITE);
     assert(!RESULT);
 }
 

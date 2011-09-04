@@ -1,0 +1,19 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+def build(bld):
+    buildTest(bld, 'TestCopy')
+    # buildTest(bld, 'TestEraser')
+    # buildTest(bld, 'TestMatchFiles')
+    # buildTest(bld, 'TestPositionScanner')
+    # buildTest(bld, 'TestReadOnly')
+    # buildTest(bld, 'TestResize')
+    # buildTest(bld, 'TestSafeModify')
+    # buildTest(bld, 'TestTemporary')
+
+def buildTest(bld, file):
+    name = 'myrrh.file.test.' + file
+    bld.program(source=file + '.cpp', target=name,
+                use='myrrh.file myrrh.util myrrh.data.test BOOST',
+                includes='../../..')
+    bld(rule='src/file/test/' + name, source=name)

@@ -5,4 +5,4 @@ def build(bld):
     bld.stlib(source='Copy.cpp PositionScanner.cpp ReadOnly.cpp Resizer.cpp ' +
                      'SafeModify.cpp Temporary.cpp',
               target='myrrh.file', includes='../..')
-    #bld.recurse('test')
+    bld.recurse('test')

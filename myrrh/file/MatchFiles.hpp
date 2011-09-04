@@ -14,7 +14,7 @@
 #define MYRRH_FILE_MATCHFILES_HPP_INCLUDED
 
 #include "myrrh/util/CopyIf.hpp"
-#include "boost/filesystem/path.hpp"
+#include "boost/filesystem/operations.hpp"
 #include "boost/regex.hpp"
 #include <vector>
 

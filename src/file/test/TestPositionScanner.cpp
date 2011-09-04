@@ -273,68 +273,68 @@ template <typename Types>
 void AddBasicCases(TestSuite *suite)
 {
     // File is not open case
-    suite->add(NewCase(Host<Types::Scanner,
-                            Types::Params,
+    suite->add(NewCase(Host<typename Types::Scanner,
+                            typename Types::Params,
                             FalseOpener,
                             ExistingFileNamer<Files::Index::SEVERAL_LINES>,
-                            Types::ExpectedOutcome,
+                            typename Types::ExpectedOutcome,
                             ErrorScan<PositionScanner::NotOpen> >( )));
     // File is deleted after opening
     /** @todo Not working test->add(NewCase(Host<Types::Scanner,
-                            Types::Params,
+                            typename Types::Params,
                             DeleteAfterOpener,
                             ExistingFileNamer<Files::Index::SEVERAL_LINES>,
-                            Types::ExpectedOutcome,
+                            typename Types::ExpectedOutcome,
                             NormalScan>( )));*/
     // Reading empty file
-    suite->add(NewCase(Host<Types::Scanner,
-                            Types::Params,
+    suite->add(NewCase(Host<typename Types::Scanner,
+                            typename Types::Params,
                             Opener,
                             ExistingFileNamer<Files::Index::EMPTY>,
-                            Types::ExpectedOutcome,
+                            typename Types::ExpectedOutcome,
                             NormalScan>( )));
     // Reading file of one character
-    suite->add(NewCase(Host<Types::Scanner,
-                            Types::Params,
+    suite->add(NewCase(Host<typename Types::Scanner,
+                            typename Types::Params,
                             Opener,
                             ExistingFileNamer<Files::Index::ONE_CHAR>,
-                            Types::ExpectedOutcome,
+                            typename Types::ExpectedOutcome,
                             NormalScan>( )));
     // Reading file of one line
-    suite->add(NewCase(Host<Types::Scanner,
-                            Types::Params,
+    suite->add(NewCase(Host<typename Types::Scanner,
+                            typename Types::Params,
                             Opener,
                             ExistingFileNamer<Files::Index::ONE_LINE>,
-                            Types::ExpectedOutcome,
+                            typename Types::ExpectedOutcome,
                             NormalScan>( )));
     // Reading file of one long line
-    suite->add(NewCase(Host<Types::Scanner,
-                            Types::Params,
+    suite->add(NewCase(Host<typename Types::Scanner,
+                            typename Types::Params,
                             Opener,
                             ExistingFileNamer<Files::Index::ONE_LONG_LINE>,
-                            Types::ExpectedOutcome,
+                            typename Types::ExpectedOutcome,
                             NormalScan>( )));
     // Reading file of several lines
-    suite->add(NewCase(Host<Types::Scanner,
-                            Types::Params,
+    suite->add(NewCase(Host<typename Types::Scanner,
+                            typename Types::Params,
                             Opener,
                             ExistingFileNamer<Files::Index::SEVERAL_LINES>,
-                            Types::ExpectedOutcome,
+                            typename Types::ExpectedOutcome,
                             NormalScan>( )));
     // Reading file of several lines that are not of equal length
-    suite->add(NewCase(Host<Types::Scanner,
-                            Types::Params,
+    suite->add(NewCase(Host<typename Types::Scanner,
+                            typename Types::Params,
                             Opener,
                             ExistingFileNamer<
                                 Files::Index::SEVERAL_LINES_NOT_EQUAL_LENGTH>,
-                            Types::ExpectedOutcome,
+                            typename Types::ExpectedOutcome,
                             NormalScan>( )));
     // Reading large file
-    suite->add(NewCase(Host<Types::Scanner,
-                            Types::Params,
+    suite->add(NewCase(Host<typename Types::Scanner,
+                            typename Types::Params,
                             Opener,
                             CreatedFileNamer,
-                            Types::ExpectedOutcome,
+                            typename Types::ExpectedOutcome,
                             NormalScan,
                             CreateLargeFile>( )));
 }
@@ -624,7 +624,7 @@ void CheckStream(Stream &stream, const std::string &fileName)
 
 std::string Path(const std::string &fileName)
 {
-    return "../../../../.." + fileName;
+    return ".." + fileName;
 }
 
 void CheckScan(std::ifstream &stream, PositionScanner &scanner,

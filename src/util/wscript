@@ -2,6 +2,6 @@
 # encoding: utf-8
 
 def build(bld):
-	bld.stlib(source='GenerateOutput.cpp Time.cpp', target='myrrh.util',
-                  includes='../..')
-	bld.recurse('test')
+    bld.stlib(source='GenerateOutput.cpp Time.cpp', target='myrrh.util',
+              includes='../..')
+    bld.recurse('test')

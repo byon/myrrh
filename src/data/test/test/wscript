@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 def build(bld):
-	bld.program(source='TestFiles.cpp', target='myrrh.data.test.test',
-                    use='myrrh.data.test BOOST', includes='../../../..')
-        bld(rule='src/data/test/test/myrrh.data.test.test',
-            source='myrrh.data.test.test')
+    bld.program(source='TestFiles.cpp', target='myrrh.data.test.test',
+                use='myrrh.data.test BOOST', includes='../../../..')
+    bld(rule='src/data/test/test/myrrh.data.test.test',
+        source='myrrh.data.test.test')

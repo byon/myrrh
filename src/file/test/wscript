@@ -8,8 +8,8 @@ def build(bld):
     buildTest(bld, 'TestPositionScanner')
     buildTest(bld, 'TestReadOnly')
     buildTest(bld, 'TestResize')
-    # buildTest(bld, 'TestSafeModify')
-    # buildTest(bld, 'TestTemporary')
+    buildTest(bld, 'TestSafeModify')
+    buildTest(bld, 'TestTemporary')
 
 def buildTest(bld, file):
     name = 'myrrh.file.test.' + file

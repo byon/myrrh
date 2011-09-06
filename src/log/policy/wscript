@@ -1,0 +1,11 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+def build(bld):
+    # Note that currently the ErrorBoxStream is only working on windows, so it
+    # is not included in the build currently.
+    bld.stlib(source='Appender.cpp Creator.cpp Examples.cpp Opener.cpp '
+              'Path.cpp PathPart.cpp Policy.cpp Resizer.cpp Restriction.cpp '
+              'RestrictionStore.cpp Stream.cpp',
+              target='myrrh.log.policy', includes='../../..')
+    #bld.recurse('test')

@@ -6,5 +6,5 @@ def build(bld):
     # is not included in the build currently.
     bld.stlib(source='Header.cpp Log.cpp',
               target='myrrh.log', includes='../..')
-    #bld.recurse('policy')
+    bld.recurse('policy')
     bld.recurse('test')

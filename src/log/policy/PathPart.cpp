@@ -25,11 +25,12 @@
 #include "boost/date_time/posix_time/ptime.hpp"
 #include "boost/date_time/local_time/local_time_types.hpp"
 #include "boost/algorithm/string/replace.hpp"
+#pragma warning(pop)
 
 #ifdef WIN32
-
 #include <process.h>
-#pragma warning(pop)
+#else
+#include <unistd.h>
 #endif
 
 namespace myrrh
@@ -236,7 +237,7 @@ Date::operator PartSum( ) const
 // Date class implementation
 
 /**
- * Private class of Time. Encapsulates the generation of unique identifier 
+ * Private class of Time. Encapsulates the generation of unique identifier
  * for a timestamp, if there are similar timestamps generated after each other.
  * This can happen, if new files are generated very fast with small maximum
  * size (or some other restriction). Although this is quite unlikely, it can
@@ -303,7 +304,7 @@ Time::~Time( )
 
 Time &Time::operator=(const Time &orig)
 {
-    private_ = new TimePrivate(*orig.private_);
+    private_.reset(new TimePrivate(*orig.private_));
     return *this;
 }
 
@@ -501,7 +502,7 @@ std::string GetProcessId( )
 #ifdef WIN32
     const int PID(_getpid( ));
 #else
-#error Unimplemented
+    const int PID(getpid( ));
 #endif
 
     return boost::lexical_cast<std::string>(PID);

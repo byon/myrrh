@@ -32,6 +32,8 @@ namespace log
 namespace policy
 {
 
+class Opener;
+
 /**
  * File class encapsulates the functionality relating to writing of data into
  * a physical file and storing the data of the write operations.

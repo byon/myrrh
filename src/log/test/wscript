@@ -1,0 +1,13 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+def build(bld):
+    buildTest(bld, 'TestHeader')
+    buildTest(bld, 'TestLog')
+
+def buildTest(bld, file):
+    name = 'myrrh.log.test.' + file
+    bld.program(source=file + '.cpp', target=name,
+                use='myrrh.log myrrh.file myrrh.util myrrh.data.test BOOST',
+                includes='../../..')
+    bld(rule='src/log/test/' + name, source=name)

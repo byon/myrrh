@@ -7,4 +7,4 @@ def build(bld):
     bld.stlib(source='Header.cpp Log.cpp',
               target='myrrh.log', includes='../..')
     #bld.recurse('policy')
-    #bld.recurse('test')
+    bld.recurse('test')

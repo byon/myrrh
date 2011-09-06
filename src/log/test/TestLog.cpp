@@ -27,7 +27,7 @@
  * -If multiple output targets are selected, the output is similar in all
  * -When output guard is released the guarded target is removed
  * -When output guard object goes out of scope, the output target is removed
- * -Removing all output targets 
+ * -Removing all output targets
  * -Adding a non-open stream as output target
  * -Writing does nothing, if there are no output targets
  * -Writing from several threads at the same time.
@@ -484,7 +484,7 @@ void WritingLongString( )
         virtual std::string GetExpectedLine( )
         {
             using namespace myrrh::data::test;
-            const std::string NAME("../../../../.." +
+            const std::string NAME(".." +
                                    Files::SEVERAL_LINES_NOT_EQUAL_LENGTH);
             std::ifstream file(NAME.c_str( ));
             BOOST_REQUIRE(file.is_open( ));
@@ -555,7 +555,7 @@ void WritingUserDefinedClass( )
     {
         virtual void Write( )
         {
-            const DummyClass dummy;
+            DummyClass dummy;
             Critical( ) << dummy;
             Error( ) << dummy;
             Warn( ) << dummy;
@@ -910,7 +910,7 @@ void UseManipulators( )
 
         virtual std::string GetExpectedLine( )
         {
-            return "1234.123457 1.234123e+003";
+            return "1234.123457 1.234123e+03";
         }
     };
 

@@ -13,6 +13,7 @@
 #include "myrrh/util/Time.hpp"
 #include <memory>
 #include <ostream>
+#include <cstdio>
 
 #pragma warning(disable : 4996)
 

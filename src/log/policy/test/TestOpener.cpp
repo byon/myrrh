@@ -66,8 +66,11 @@
 #pragma warning(pop)
 #endif
 
+/// @todo Disabling warning for the whole of the file?
 #pragma warning(disable: 4511)
 #pragma warning(disable: 4512)
+
+#include <iostream>
 
 using namespace myrrh::log::policy;
 
@@ -81,6 +84,7 @@ void TestConstruction( );
 template <typename T>
 void TestConstruction(T &opener);
 std::string GetFileContent(const boost::filesystem::path &path);
+unsigned GetEndOfLineSize( );
 std::streamsize StringSize(const std::string &text);
 template <typename T>
 void DoWritingEmptyLine(T &opener);
@@ -231,7 +235,7 @@ BOOST_AUTO_TEST_CASE(OpeningFromSubFolderThroughCreator)
 {
     myrrh::file::Eraser eraser("subfolder1");
     using namespace boost::filesystem;
-    Creator creator; 
+    Creator creator;
     DoOpeningFromSubFolder(creator, "subfolder1/subfolder2/subfolder3/");
 }
 
@@ -239,7 +243,7 @@ BOOST_AUTO_TEST_CASE(OpeningFromSubFolderThroughResizer)
 {
     myrrh::file::Eraser eraser("subfolder1");
     using namespace boost::filesystem;
-    Resizer resizer(128); 
+    Resizer resizer(128);
     DoOpeningFromSubFolder(resizer, "subfolder1/subfolder2/subfolder3/");
 }
 
@@ -395,10 +399,18 @@ std::string GetFileContent(const boost::filesystem::path &path)
     return stream.str( );
 }
 
+unsigned GetEndOfLineSize( )
+{
+    std::ostringstream stream;
+    stream << std::endl;
+    return stream.str( ).size( );
+}
+
 std::streamsize StringSize(const std::string &text)
 {
+    static const unsigned EXTRA_LINE_SIZE = GetEndOfLineSize( ) - 1;
     const size_t LINES = std::count(text.begin( ), text.end( ), '\n');
-    return static_cast<std::streamsize>(text.size( ) + LINES);
+    return static_cast<std::streamsize>(text.size( ) + LINES * EXTRA_LINE_SIZE);
 }
 
 template <typename T>

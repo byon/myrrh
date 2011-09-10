@@ -414,7 +414,7 @@ std::string GetProcessId( )
 #ifdef WIN32
     const int PID(_getpid( ));
 #else
-    BOOST_FAIL("Unimplemented");
+    const int PID(getpid( ));
 #endif
 
     return boost::lexical_cast<std::string>(PID);

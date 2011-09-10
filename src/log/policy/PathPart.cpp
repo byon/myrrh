@@ -497,6 +497,7 @@ std::string FractionString( )
     return boost::lexical_cast<std::string>(FRACTION_SIZE);
 }
 
+/// @todo This is now duplicated both into production and test code
 std::string GetProcessId( )
 {
 #ifdef WIN32

@@ -6,7 +6,7 @@ def build(bld):
     buildTest(bld, 'TestOpener')
     buildTest(bld, 'TestPath')
     buildTest(bld, 'TestPathPart')
-    #buildTest(bld, 'TestPolicy')
+    buildTest(bld, 'TestPolicy')
     #buildTest(bld, 'TestRestriction')
     #buildTest(bld, 'TestRestrictionStore')
     #buildTest(bld, 'TestStream')

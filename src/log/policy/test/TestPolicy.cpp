@@ -38,13 +38,13 @@
 
 #ifdef WIN32
 #pragma warning(pop)
+#include <windows.h>
 #endif
 
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
 
 #include <vector>
-#include <windows.h>
 
 #undef TEXT
 
@@ -188,7 +188,9 @@ TestSuite *init_unit_test_suite(int, char *[])
     test->add(BOOST_TEST_CASE(SubsequentFileIsUnrestrictedForSeveralWritings));
     test->add(BOOST_TEST_CASE(WritingFails));
     test->add(BOOST_TEST_CASE(PathIsRestricted));
+#if WIN32
     test->add(BOOST_TEST_CASE(TryingToOpenProtectedFile));
+#endif
     test->add(BOOST_TEST_CASE(TryingToOpenReadOnlyFile));
     test->add(BOOST_TEST_CASE(FileBecomesReadOnly));
     return test;
@@ -550,6 +552,10 @@ void PathIsRestricted( )
     BOOST_CHECK_EQUAL("Something", GetFileContent("TestFolder/Test2.txt"));
 }
 
+#if WIN32
+
+/// @todo Find a similar scenario for linux as well?
+
 void TryingToOpenProtectedFile( )
 {
     class ProtectedFile
@@ -557,14 +563,9 @@ void TryingToOpenProtectedFile( )
     public:
         explicit ProtectedFile(const boost::filesystem::path &path)
         {
-            const DWORD ATTRIBUTES = FILE_FLAG_DELETE_ON_CLOSE;
-            file_ = CreateFile(path.string( ).c_str( ),
-                               GENERIC_WRITE,
-                               FILE_SHARE_READ,
-                               0,
-                               CREATE_ALWAYS,
-                               ATTRIBUTES,
-                               0);
+            file_ = CreateFile(path.string( ).c_str( ), GENERIC_WRITE,
+                               FILE_SHARE_READ, 0, CREATE_ALWAYS,
+                               FILE_FLAG_DELETE_ON_CLOSE, 0);
             BOOST_REQUIRE(file_ != INVALID_HANDLE_VALUE);
         }
 
@@ -597,6 +598,7 @@ void TryingToOpenProtectedFile( )
     Policy policy(path, opener, opener);
     BOOST_CHECK_EQUAL(-1, policy.Write("Hubbadeijaa"));
 }
+#endif
 
 void TryingToOpenReadOnlyFile( )
 {

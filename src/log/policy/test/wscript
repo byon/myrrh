@@ -4,7 +4,7 @@
 def build(bld):
     #buildTest(bld, 'TestExamples')
     buildTest(bld, 'TestOpener')
-    #buildTest(bld, 'TestPath')
+    buildTest(bld, 'TestPath')
     #buildTest(bld, 'TestPathPart')
     #buildTest(bld, 'TestPolicy')
     #buildTest(bld, 'TestRestriction')

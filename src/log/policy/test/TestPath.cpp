@@ -87,6 +87,13 @@ private:
 
 };
 
+template <bool IS_RESTRICTED>
+class RestrictionImplementation : public myrrh::log::policy::Restriction
+{
+public:
+    bool IsRestricted(const File &, std::size_t) const;
+};
+
 }
 
 BOOST_AUTO_TEST_CASE(DefaultConstruction)
@@ -381,8 +388,8 @@ BOOST_AUTO_TEST_CASE(SeveralEntities)
     Path path;
     path += Text(TEXT) + Folder( ) +
             Text(TEXT) + Folder( ) +
-            Text(TEXT) + Folder( ) + 
-            Text(TEXT) + Folder( ) + 
+            Text(TEXT) + Folder( ) +
+            Text(TEXT) + Folder( ) +
             Text(TEXT);
 
     const std::string EXPECTED(
@@ -591,16 +598,7 @@ template <bool IS_RESTRICTED>
 void RestrictionHardCoded<IS_RESTRICTED>::
 AppendRestrictions(RestrictionStore &store)
 {
-    class RestrictionImplementation : public myrrh::log::policy::Restriction
-    {
-    public:
-        virtual bool IsRestricted(const File &, std::size_t) const
-        {
-            return IS_RESTRICTED;
-        }
-    };
-
-    RestrictionPtr restriction(new RestrictionImplementation);
+    RestrictionPtr restriction(new RestrictionImplementation<IS_RESTRICTED>);
     store.Add(restriction);
 }
 
@@ -610,6 +608,13 @@ RestrictionHardCoded<IS_RESTRICTED>::operator PartSum( ) const
     PartSum sum;
     sum.Add(*this);
     return sum;
+}
+
+template <bool IS_RESTRICTED>
+bool RestrictionImplementation<IS_RESTRICTED>::IsRestricted(const File &,
+                                                            std::size_t) const
+{
+        return IS_RESTRICTED;
 }
 
 }

@@ -62,6 +62,7 @@ template <typename Types, typename FileInitializer, typename Line,
          typename Case>
 void AddCase(TestSuite *test);
 
+#if WIN32
 SYSTEMTIME GetCurrentWindowsTime( );
 bool IsTimeChangePossible( );
 
@@ -81,6 +82,7 @@ private:
 
     const SYSTEMTIME ORIG_TIME_;
 };
+#endif
 
 class TestSetup
 {
@@ -286,27 +288,28 @@ TestSuite *init_unit_test_suite(int, char *[])
 template <typename Types, typename Case>
 void AddFileStateCases(TestSuite *test)
 {
-    test->add(NewCase(Host<Types::Creator, Types::Params,
+    test->add(NewCase(Host<typename Types::Creator, typename Types::Params,
                            FileClosed, FixedSizeLine<0>, FixedOutcome<false>,
                            Case>( )));
-    test->add(NewCase(Host<Types::Creator, Types::Params,
+    test->add(NewCase(Host<typename Types::Creator, typename Types::Params,
                            FileClosed, FixedSizeLine<10>, FixedOutcome<false>,
                            Case>( )));
 
-    Types::AddSizeCases<EmptyFile, Case>(test);
-    Types::AddSizeCases<FileWithContent<16>, Case>(test);
-    Types::AddSizeCases<FileWithContent<32>, Case>(test);
-    Types::AddSizeCases<FileWithContent<64>, Case>(test);
-    Types::AddSizeCases<FileWithContent<128>, Case>(test);
-    Types::AddSizeCases<FileWithContent<256>, Case>(test);
+    Types::template AddSizeCases<EmptyFile, Case>(test);
+    Types::template AddSizeCases<FileWithContent<16>, Case>(test);
+    Types::template AddSizeCases<FileWithContent<32>, Case>(test);
+    Types::template AddSizeCases<FileWithContent<64>, Case>(test);
+    Types::template AddSizeCases<FileWithContent<128>, Case>(test);
+    Types::template AddSizeCases<FileWithContent<256>, Case>(test);
 }
 
 template <typename Types, typename FileInitializer, typename Line,
          typename Case>
 void AddCase(TestSuite *test)
 {
-    test->add(NewCase(Host<Types::Creator, Types::Params, FileInitializer,
-                           Line, Types::DefaultOutcome, Case>( )));
+    test->add(NewCase(Host<typename Types::Creator, typename Types::Params,
+                           FileInitializer, Line,
+                           typename Types::DefaultOutcome, Case>( )));
 }
 
 template <typename T>
@@ -358,6 +361,9 @@ inline size_t PlusOne::operator( )(size_t size) const
     return size + 1;
 }
 
+#if WIN32
+/// @todo Change the production code (DateRestriction) not to be dependant of
+///       the real time
 TimeChanger::TimeChanger( ) :
     ORIG_TIME_(GetCurrentWindowsTime( ))
 {
@@ -380,6 +386,37 @@ void TimeChanger::Change(const SYSTEMTIME &requiredTime)
     BOOST_REQUIRE(SetSystemTime(&universalTime));
 }
 
+SYSTEMTIME GetCurrentWindowsTime( )
+{
+    SYSTEMTIME result;
+    GetSystemTime(&result);
+
+    return result;
+}
+
+bool IsTimeChangePossible( )
+{
+    HANDLE processToken;
+    BOOST_REQUIRE(OpenProcessToken(GetCurrentProcess( ),
+                                   TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
+                                   &processToken));
+
+    LUID localId;
+    BOOST_REQUIRE(LookupPrivilegeValue(0, SE_SYSTEMTIME_NAME, &localId));
+
+    TOKEN_PRIVILEGES privileges = {1, {localId, SE_PRIVILEGE_ENABLED}};
+
+    BOOST_REQUIRE(AdjustTokenPrivileges(processToken, false, &privileges,
+                                        0, 0, 0));
+    const bool RESULT = (ERROR_SUCCESS == GetLastError( ));
+
+    CloseHandle (processToken);
+
+    return RESULT;
+}
+
+#endif
+
 TestSetup::TestSetup( )
 {
     boost::filesystem::remove_all(FILE_NAME);
@@ -388,14 +425,6 @@ TestSetup::TestSetup( )
 TestSetup::~TestSetup( )
 {
     boost::filesystem::remove_all(FILE_NAME);
-}
-
-SYSTEMTIME GetCurrentWindowsTime( )
-{
-    SYSTEMTIME result;
-    GetSystemTime(&result);
-
-    return result;
 }
 
 // Creator class implementations
@@ -541,7 +570,7 @@ void ChangeDateCase::Test(T &host)
                       restriction->IsRestricted(*file, host.Line(host)));
 
 #else
-    BOOST_FAIL("Unimplemented");
+    BOOST_WARN("Unimplemented for linux");
 #endif
 }
 
@@ -560,25 +589,4 @@ void Host<Creator,
 {
     TestSetup setup;
     Test(*this);
-}
-
-bool IsTimeChangePossible( )
-{
-    HANDLE processToken;
-    BOOST_REQUIRE(OpenProcessToken(GetCurrentProcess( ),
-                                   TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
-                                   &processToken));
-
-    LUID localId;
-    BOOST_REQUIRE(LookupPrivilegeValue(0, SE_SYSTEMTIME_NAME, &localId));
-
-    TOKEN_PRIVILEGES privileges = {1, {localId, SE_PRIVILEGE_ENABLED}};
-
-    BOOST_REQUIRE(AdjustTokenPrivileges(processToken, false, &privileges,
-                                        0, 0, 0));
-    const bool RESULT = (ERROR_SUCCESS == GetLastError( ));
-
-    CloseHandle (processToken);
-
-    return RESULT;
 }

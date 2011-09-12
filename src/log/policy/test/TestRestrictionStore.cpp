@@ -44,6 +44,17 @@ class DummyOpener : public Opener
     virtual boost::filesystem::path DoOpen(std::filebuf &file, Path& path);
 };
 
+struct OwnRestriction : public Restriction
+{
+public:
+    OwnRestriction( );
+    unsigned CallTimes( ) const;
+private:
+    virtual bool IsRestricted(const File &, std::size_t) const;
+
+    mutable unsigned callTimes_;
+};
+
 }
 
 // Test implementations
@@ -98,27 +109,14 @@ BOOST_AUTO_TEST_CASE(CheckingIsRestricted)
 
 BOOST_AUTO_TEST_CASE(RestrictionGetsCalled)
 {
-    static int callTimes = 0;
-    struct OwnRestriction : public Restriction
-    {
-
-    private:
-        virtual bool IsRestricted(const File &, std::size_t) const
-        {
-            ++callTimes;
-            return false;
-        }
-    };
-
     RestrictionStore store;
 
-    RestrictionPtr restriction(new OwnRestriction);
+    boost::shared_ptr<OwnRestriction> restriction(new OwnRestriction);
     store.Add(restriction);
 
     Path path;
-    BOOST_CHECK_EQUAL(0, callTimes);
     BOOST_CHECK(!store.IsRestricted(*DummyOpener( ).Open(path), 0));
-    BOOST_CHECK_EQUAL(1, callTimes);
+    BOOST_CHECK_EQUAL(1, restriction->CallTimes( ));
 }
 
 // Local implementations
@@ -136,6 +134,22 @@ bool CodedRestriction<Restricted>::IsRestricted(const File &,
 boost::filesystem::path DummyOpener::DoOpen(std::filebuf &, Path&)
 {
     return "";
+}
+
+OwnRestriction::OwnRestriction( ) :
+    callTimes_(0)
+{
+}
+
+unsigned OwnRestriction::CallTimes( ) const
+{
+    return callTimes_;
+}
+
+bool OwnRestriction::IsRestricted(const File &, std::size_t) const
+{
+    ++callTimes_;
+    return false;
 }
 
 }

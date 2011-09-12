@@ -96,7 +96,7 @@ BufferedStream::overflow(std::streambuf::int_type character)
 inline std::streamsize BufferedStream::xsputn(const char *text,
                                               std::streamsize length)
 {
-    text_ += text;
+    text_.append(text, length);
 
     return length;
 }

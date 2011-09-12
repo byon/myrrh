@@ -9,7 +9,7 @@ def build(bld):
     buildTest(bld, 'TestPolicy')
     buildTest(bld, 'TestRestriction')
     buildTest(bld, 'TestRestrictionStore')
-    #buildTest(bld, 'TestStream')
+    buildTest(bld, 'TestStream')
 
 def buildTest(bld, file):
     name = 'myrrh.log.policy.test.' + file

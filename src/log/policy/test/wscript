@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 def build(bld):
-    #buildTest(bld, 'TestExamples')
+    buildExamples(bld)
     buildTest(bld, 'TestOpener')
     buildTest(bld, 'TestPath')
     buildTest(bld, 'TestPathPart')
@@ -11,9 +11,16 @@ def build(bld):
     buildTest(bld, 'TestRestrictionStore')
     buildTest(bld, 'TestStream')
 
+def buildExamples(bld):
+    buildTestWithSources(bld, 'myrrh.log.policy.test.TestExamples',
+                         'TestExamples.cpp File.cpp')
+
 def buildTest(bld, file):
     name = 'myrrh.log.policy.test.' + file
-    bld.program(source=file + '.cpp', target=name,
+    buildTestWithSources(bld, name, file + '.cpp')
+
+def buildTestWithSources(bld, name, sources):
+    bld.program(source=sources, target=name,
                 use='myrrh.log.policy myrrh.file BOOST',
                 includes='../../../..')
     bld(rule='src/log/policy/test/' + name, source=name)

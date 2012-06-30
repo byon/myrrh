@@ -18,6 +18,9 @@
 
 typedef boost::unit_test::test_suite TestSuite;
 
+namespace
+{
+
 class Dummy
 {
 public:
@@ -126,7 +129,11 @@ void Test(const T &argument)
         "catchException: unknown exception\n");
 }
 
-void TestInt( )
+}
+
+BOOST_AUTO_TEST_SUITE(TestCatchExceptions)
+
+BOOST_AUTO_TEST_CASE(TestInt)
 {
     Test(0);
     Test(1234);
@@ -136,7 +143,7 @@ void TestInt( )
     TestSuccess(CheckArgument<1234>, 1234);
 }
 
-void TestString( )
+BOOST_AUTO_TEST_CASE(TestString)
 {
     Test(std::string("A string"));
     Test("A string");
@@ -144,17 +151,9 @@ void TestString( )
     Test(std::string(""));
 }
 
-void TestClass( )
+BOOST_AUTO_TEST_CASE(TestClass)
 {
     Test(Dummy("Just some string"));
 }
 
-TestSuite *init_unit_test_suite(int, char *[])
-{
-    TestSuite* test =
-        BOOST_TEST_SUITE("Test suite for myrhh::util::CatchExceptions");
-    test->add(BOOST_TEST_CASE(TestInt));
-    test->add(BOOST_TEST_CASE(TestString));
-    test->add(BOOST_TEST_CASE(TestClass));
-    return test;
-}
+BOOST_AUTO_TEST_SUITE_END( )

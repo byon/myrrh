@@ -20,8 +20,6 @@
 #pragma warning (pop)
 #endif
 
-typedef boost::unit_test::test_suite TestSuite;
-
 const std::string MANIPULATOR1_HEADER("Manipulator1 called with '");
 const std::string MANIPULATOR2_HEADER("Manipulator2 called with '");
 const std::string MANIPULATOR3_HEADER("Manipulator3 called with '");
@@ -183,6 +181,8 @@ void TestItemsAfterManipulator2(std::ostream & stream)
            << std::endl;
 }
 
+BOOST_AUTO_TEST_SUITE(DynamicSuite)
+
 void TestManipulatorOne( )
 {
     using namespace myrrh::util;
@@ -234,11 +234,4 @@ void TestManipulatorTwo( )
                MANIPULATOR4_RESULT);
 }
 
-TestSuite *init_unit_test_suite(int, char *[])
-{
-    TestSuite* test =
-        BOOST_TEST_SUITE("Test suite for Stream");
-    test->add(BOOST_TEST_CASE(TestManipulatorOne));
-    test->add(BOOST_TEST_CASE(TestManipulatorTwo));
-    return test;
-}
+BOOST_AUTO_TEST_SUITE_END( )

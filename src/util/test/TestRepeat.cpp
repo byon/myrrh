@@ -6,9 +6,7 @@
 
 #include "myrrh/util/Repeat.hpp"
 #include "myrrh/util/Preprocessor.hpp"
-
-#define BOOST_AUTO_TEST_MAIN
-#include "boost/test/auto_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 static int gFirstRepeatFunctionCalled = 0;
 void FirstRepeatFunction( )
@@ -96,6 +94,8 @@ private:
 
 int Functor::mTestCount = 0;
 
+BOOST_AUTO_TEST_SUITE(TestRepeat)
+
 BOOST_AUTO_TEST_CASE(TestFreeFunctions)
 {
     TestFuncCall(FirstRepeatFunction, 0, gFirstRepeatFunctionCalled);
@@ -120,3 +120,5 @@ BOOST_AUTO_TEST_CASE(TestPimplFunctor)
 
     BOOST_CHECK_EQUAL(PIMPL_FUNCTOR_TEST_COUNT, functor->GetTestCount( ));
 }
+
+BOOST_AUTO_TEST_SUITE_END( )

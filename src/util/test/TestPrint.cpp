@@ -41,6 +41,9 @@
 
 typedef boost::unit_test::test_suite TestSuite;
 
+namespace
+{
+
 class OwnClass
 {
 public:
@@ -373,7 +376,19 @@ std::vector<int> GetTestCounts( )
     return testCounts;
 }
 
-void DoTestPrintRange( )
+template <typename T>
+void TestContainerTypes(int size)
+{
+    TestWithSequenceContainer<std::deque<T> >(size);
+    TestWithSequenceContainer<std::list<T> >(size);
+    TestWithSequenceContainer<std::vector<T> >(size);
+}
+
+}
+
+BOOST_AUTO_TEST_SUITE(TestPrint)
+
+BOOST_AUTO_TEST_CASE(DoTestPrintRange)
 {
     std::vector<int> testCounts(GetTestCounts( ));
     typedef std::vector<int>::iterator IntIter;
@@ -385,15 +400,7 @@ void DoTestPrintRange( )
     std::for_each(begin, end, TestRangeContainerTypes<std::string>);
 }
 
-template <typename T>
-void TestContainerTypes(int size)
-{
-    TestWithSequenceContainer<std::deque<T> >(size);
-    TestWithSequenceContainer<std::list<T> >(size);
-    TestWithSequenceContainer<std::vector<T> >(size);
-}
-
-void DoTestPrintContainer( )
+BOOST_AUTO_TEST_CASE(DoTestPrintContainer)
 {
     std::vector<int> testCounts(GetTestCounts( ));
     typedef std::vector<int>::iterator IntIter;
@@ -406,12 +413,4 @@ void DoTestPrintContainer( )
     std::for_each(begin, end, TestContainerTypes<OwnClass>);
 }
 
-TestSuite *init_unit_test_suite(int, char *[])
-{
-    std::srand(static_cast<unsigned int>(std::time(0)));
-
-    TestSuite* test = BOOST_TEST_SUITE("Test suite for Print");
-    test->add(BOOST_TEST_CASE(DoTestPrintRange));
-    test->add(BOOST_TEST_CASE(DoTestPrintContainer));
-    return test;
-}
+BOOST_AUTO_TEST_SUITE_END( )

@@ -39,26 +39,12 @@
 #include <fstream>
 #include <iostream>
 
-typedef boost::unit_test::test_suite TestSuite;
-
 using namespace myrrh::util;
 using namespace myrrh::data::test;
 
-// Function declarations for separate test cases
-void OutputStreamNotOpen( );
-void InputStreamNotOpen( );
-void ZeroOutputSize( );
-void OutputSizeSmaller( );
-void OutputSizeEqual( );
-void OutputSizeLarger( );
-void OutputSizeSeveralTimesLarger( );
-void NoInputData( );
-void InputDataOfOneChar( );
-void InputDataOfSeveralLines( );
-void InputStreamInMidway( );
-void InputStreamAtItsEnd( );
+namespace
+{
 
-// Declarations for helper function
 std::string Path(const std::string &restOfPath);
 template <typename Stream>
 void CheckPath(const Stream &stream, const std::string &path);
@@ -124,28 +110,171 @@ private:
     const std::string FILE_NAME_;
 };
 
-/**
- *
- */
-TestSuite *init_unit_test_suite(int, char *[])
-{
-    TestSuite *test(BOOST_TEST_SUITE("Test suite for FileCopy"));
-
-    test->add(BOOST_TEST_CASE(OutputStreamNotOpen));
-    test->add(BOOST_TEST_CASE(InputStreamNotOpen));
-    test->add(BOOST_TEST_CASE(ZeroOutputSize));
-    test->add(BOOST_TEST_CASE(OutputSizeSmaller));
-    test->add(BOOST_TEST_CASE(OutputSizeEqual));
-    test->add(BOOST_TEST_CASE(OutputSizeLarger));
-    test->add(BOOST_TEST_CASE(OutputSizeSeveralTimesLarger));
-    test->add(BOOST_TEST_CASE(NoInputData));
-    test->add(BOOST_TEST_CASE(InputDataOfOneChar));
-    test->add(BOOST_TEST_CASE(InputDataOfSeveralLines));
-    test->add(BOOST_TEST_CASE(InputStreamInMidway));
-    test->add(BOOST_TEST_CASE(InputStreamAtItsEnd));
-
-    return test;
 }
+
+BOOST_AUTO_TEST_SUITE(TestGenerateOutput)
+
+BOOST_AUTO_TEST_CASE(OutputStreamNotOpen)
+{
+    class Case : public NoInputCase
+    {
+    protected:
+        virtual void OpenOutputStream(std::ofstream &)
+        {
+        }
+
+        virtual void DoTest(std::istream &input, std::ostream &output,
+                            std::streamsize outputSize)
+        {
+            try
+            {
+                NoInputCase::DoTest(input, output, outputSize);
+                BOOST_ERROR("Trying to generate output to non open file did "
+                            "not cause exception");
+            }
+            catch (const WriteFailed &)
+            {
+            }
+        }
+    };
+
+    Case( )( );
+}
+
+BOOST_AUTO_TEST_CASE(InputStreamNotOpen)
+{
+    class Case : public NoInputCase
+    {
+    protected:
+
+        virtual void OpenInputStream(std::ifstream &)
+        {
+        }
+    };
+
+    Case( )( );
+}
+
+BOOST_AUTO_TEST_CASE(ZeroOutputSize)
+{
+    class Case : public NoInputCase
+    {
+    protected:
+
+        virtual std::streampos GetOutputSize( )
+        {
+            return 0;
+        }
+    };
+
+    Case( )( );
+}
+
+BOOST_AUTO_TEST_CASE(OutputSizeSmaller)
+{
+    class Case : public SuccessfullCase
+    {
+        virtual std::streampos GetOutputSize( )
+        {
+            return SuccessfullCase::GetOutputSize( ) / 2;
+        }
+    };
+
+    Case( )( );
+}
+
+BOOST_AUTO_TEST_CASE(OutputSizeEqual)
+{
+    SuccessfullCase( )( );
+}
+
+BOOST_AUTO_TEST_CASE(OutputSizeLarger)
+{
+    class Case : public SuccessfullCase
+    {
+        virtual std::streampos GetOutputSize( )
+        {
+            const std::streampos ORIG(SuccessfullCase::GetOutputSize( ));
+            return static_cast<std::streamoff>(ORIG * 1.5);
+        }
+    };
+
+    Case( )( );
+}
+
+BOOST_AUTO_TEST_CASE(OutputSizeSeveralTimesLarger)
+{
+    class Case : public SuccessfullCase
+    {
+        virtual std::streampos GetOutputSize( )
+        {
+            return SuccessfullCase::GetOutputSize( ) * 9876;
+        }
+    };
+
+    Case( )( );
+}
+
+BOOST_AUTO_TEST_CASE(NoInputData)
+{
+    ResultFromFileCase testCase(Files::EMPTY);
+    testCase( );
+}
+
+BOOST_AUTO_TEST_CASE(InputDataOfOneChar)
+{
+    ResultFromFileCase testCase(Files::ONE_CHAR);
+    testCase( );
+}
+
+BOOST_AUTO_TEST_CASE(InputDataOfSeveralLines)
+{
+    ResultFromFileCase testCase(Files::SEVERAL_LINES);
+    testCase( );
+}
+
+BOOST_AUTO_TEST_CASE(InputStreamInMidway)
+{
+    class Case : public SuccessfullCase
+    {
+        virtual void OpenInputStream(std::ifstream &input)
+        {
+            TestCase::OpenInputStream(input);
+
+            const std::streampos START(input.tellg( ));
+            input.seekg(0, std::ios::end);
+            const std::streampos END(input.tellg( ));
+
+            input.seekg((END - START) / 2, std::ios::beg);
+        }
+    };
+
+    Case( )( );
+}
+
+BOOST_AUTO_TEST_CASE(InputStreamAtItsEnd)
+{
+    class Case : public SuccessfullCase
+    {
+        virtual void OpenInputStream(std::ifstream &input)
+        {
+            TestCase::OpenInputStream(input);
+            input.seekg(0, std::ios::end);
+        }
+
+        virtual std::streampos GetOutputSize( )
+        {
+            return 0;
+        }
+    };
+
+    Case( )( );
+}
+
+BOOST_AUTO_TEST_SUITE_END( )
+
+namespace
+{
 
 TestCase::~TestCase( )
 {
@@ -258,164 +387,6 @@ std::string ResultFromFileCase::InputStreamName( )
 {
     return Path(FILE_NAME_);
 }
-
-void OutputStreamNotOpen( )
-{
-    class Case : public NoInputCase
-    {
-    protected:
-        virtual void OpenOutputStream(std::ofstream &)
-        {
-        }
-
-        virtual void DoTest(std::istream &input, std::ostream &output,
-                            std::streamsize outputSize)
-        {
-            try
-            {
-                NoInputCase::DoTest(input, output, outputSize);
-                BOOST_ERROR("Trying to generate output to non open file did "
-                            "not cause exception");
-            }
-            catch (const WriteFailed &)
-            {
-            }
-        }
-    };
-
-    Case( )( );
-}
-
-void InputStreamNotOpen( )
-{
-    class Case : public NoInputCase
-    {
-    protected:
-
-        virtual void OpenInputStream(std::ifstream &)
-        {
-        }
-    };
-
-    Case( )( );
-}
-
-void ZeroOutputSize( )
-{
-    class Case : public NoInputCase
-    {
-    protected:
-
-        virtual std::streampos GetOutputSize( )
-        {
-            return 0;
-        }
-    };
-
-    Case( )( );
-}
-
-void OutputSizeSmaller( )
-{
-    class Case : public SuccessfullCase
-    {
-        virtual std::streampos GetOutputSize( )
-        {
-            return SuccessfullCase::GetOutputSize( ) / 2;
-        }
-    };
-
-    Case( )( );
-}
-
-void OutputSizeEqual( )
-{
-    SuccessfullCase( )( );
-}
-
-void OutputSizeLarger( )
-{
-    class Case : public SuccessfullCase
-    {
-        virtual std::streampos GetOutputSize( )
-        {
-            const std::streampos ORIG(SuccessfullCase::GetOutputSize( ));
-            return static_cast<std::streamoff>(ORIG * 1.5);
-        }
-    };
-
-    Case( )( );
-}
-
-void OutputSizeSeveralTimesLarger( )
-{
-    class Case : public SuccessfullCase
-    {
-        virtual std::streampos GetOutputSize( )
-        {
-            return SuccessfullCase::GetOutputSize( ) * 9876;
-        }
-    };
-
-    Case( )( );
-}
-
-void NoInputData( )
-{
-    ResultFromFileCase testCase(Files::EMPTY);
-    testCase( );
-}
-
-void InputDataOfOneChar( )
-{
-    ResultFromFileCase testCase(Files::ONE_CHAR);
-    testCase( );
-}
-
-void InputDataOfSeveralLines( )
-{
-    ResultFromFileCase testCase(Files::SEVERAL_LINES);
-    testCase( );
-}
-
-void InputStreamInMidway( )
-{
-    class Case : public SuccessfullCase
-    {
-        virtual void OpenInputStream(std::ifstream &input)
-        {
-            TestCase::OpenInputStream(input);
-
-            const std::streampos START(input.tellg( ));
-            input.seekg(0, std::ios::end);
-            const std::streampos END(input.tellg( ));
-
-            input.seekg((END - START) / 2, std::ios::beg);
-        }
-    };
-
-    Case( )( );
-}
-
-void InputStreamAtItsEnd( )
-{
-    class Case : public SuccessfullCase
-    {
-        virtual void OpenInputStream(std::ifstream &input)
-        {
-            TestCase::OpenInputStream(input);
-            input.seekg(0, std::ios::end);
-        }
-
-        virtual std::streampos GetOutputSize( )
-        {
-            return 0;
-        }
-    };
-
-    Case( )( );
-}
-
 std::string Path(const std::string &restOfPath)
 {
     const std::string START("..");
@@ -444,4 +415,6 @@ std::string ReadRangeFromFile(const std::string &fileName,
     stream << file.rdbuf( );
 
     return stream.str( ).substr(0, end - start);
+}
+
 }

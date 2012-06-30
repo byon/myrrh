@@ -23,39 +23,10 @@
 
 #include <vector>
 
-typedef boost::unit_test::test_suite TestSuite;
-
 inline void CheckChar(char toCheck)
 {
     BOOST_CHECK(toCheck >= 'A');
     BOOST_CHECK(toCheck <= 'z');
-}
-
-void TestRandChar( )
-{
-    static const int RANGE_SIZE = 'z' - 'A';
-
-    typedef std::vector<char> Chars;
-    Chars notArrived(RANGE_SIZE);
-
-    for (int i = 0; i < RANGE_SIZE; ++i)
-    {
-        notArrived[i] = 'A' + static_cast<char>(i);
-    }
-
-    while (!notArrived.empty( ))
-    {
-        char current = myrrh::util::RandChar( );
-
-        CheckChar(current);
-
-        Chars::iterator place =
-            std::find(notArrived.begin( ), notArrived.end( ), current);
-        if (place != notArrived.end( ))
-        {
-            notArrived.erase(place);
-        }
-    }
 }
 
 inline void CheckString(const std::string &toCheck)
@@ -145,24 +116,43 @@ void Test(Func func, int start, int end)
     }
 }
 
-void TestReplaceWithRandom( )
+BOOST_AUTO_TEST_SUITE(TestRandomString)
+
+BOOST_AUTO_TEST_CASE(TestRandChar)
+{
+    static const int RANGE_SIZE = 'z' - 'A';
+
+    typedef std::vector<char> Chars;
+    Chars notArrived(RANGE_SIZE);
+
+    for (int i = 0; i < RANGE_SIZE; ++i)
+    {
+        notArrived[i] = 'A' + static_cast<char>(i);
+    }
+
+    while (!notArrived.empty( ))
+    {
+        char current = myrrh::util::RandChar( );
+
+        CheckChar(current);
+
+        Chars::iterator place =
+            std::find(notArrived.begin( ), notArrived.end( ), current);
+        if (place != notArrived.end( ))
+        {
+            notArrived.erase(place);
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(TestReplaceWithRandom)
 {
     Test(TestReplaceWithRandomImpl( ), 0, 100);
 }
 
-void TestGetRandomString( )
+BOOST_AUTO_TEST_CASE(TestGetRandomString)
 {
     Test(TestGetRandomStringImpl( ), -10, 100);
 }
 
-TestSuite *init_unit_test_suite(int, char *[])
-{
-    std::srand(static_cast<int>(std::time(0)));
-
-    TestSuite* test = BOOST_TEST_SUITE("Test suite for RandomString");
-    test->add(BOOST_TEST_CASE(TestRandChar));
-    test->add(BOOST_TEST_CASE(TestReplaceWithRandom));
-    test->add(BOOST_TEST_CASE(TestGetRandomString));
-
-    return test;
 }

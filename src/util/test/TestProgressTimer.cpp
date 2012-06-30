@@ -28,7 +28,8 @@
 #include <string>
 #include <sstream>
 
-typedef boost::unit_test::test_suite TestSuite;
+namespace
+{
 
 void SleepRandomTime(int maxSeconds, int maxNSeconds)
 {
@@ -84,7 +85,11 @@ void DoTestProgressTimer(const std::string id)
     CheckTimerOutput(input, id, elapsedTime);
 }
 
-void TestProgressTimer( )
+}
+
+BOOST_AUTO_TEST_SUITE(TestProgressTimer)
+
+BOOST_AUTO_TEST_CASE(TestProgressTimer)
 {
     DoTestProgressTimer("Test1");
     DoTestProgressTimer("");
@@ -97,6 +102,11 @@ void TestProgressTimer( )
                         "No, the identifier is an ever-lasting entity that "
                         "will never ever st...");
 }
+
+BOOST_AUTO_TEST_SUITE_END( )
+
+namespace
+{
 
 class RandomSleep
 {
@@ -184,13 +194,4 @@ void TestTimePerformance( )
     DoTestTimePerformance("Failing sleep", 100000, failingSleep, false);
 }
 
-TestSuite *init_unit_test_suite(int, char *[])
-{
-    std::srand(static_cast<unsigned int>(std::time(0)));
-    TestSuite* test =
-        BOOST_TEST_SUITE("Test suite for myrhh::util::ProgressTimer");
-    test->add(BOOST_TEST_CASE(TestProgressTimer));
-    /// @todo Should not be part of unit test suite. Also taking VERY long time
-    //test->add(BOOST_TEST_CASE(TestTimePerformance));
-    return test;
 }

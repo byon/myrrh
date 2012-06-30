@@ -34,6 +34,9 @@
 
 typedef boost::unit_test::test_suite TestSuite;
 
+namespace
+{
+
 void BoostSleep(int maxSeconds, int maxNSeconds)
 {
     boost::xtime toWait;
@@ -248,21 +251,18 @@ private:
     }
 };
 
-void TestTimeStamp( )
+}
+
+BOOST_AUTO_TEST_SUITE(TestTime)
+
+BOOST_AUTO_TEST_CASE(TestTimeStamp)
 {
     TimeTestLoop( ).Loop(10);
 }
 
-void TestTimeStampToCString( )
+BOOST_AUTO_TEST_CASE(TestTimeStampToCString)
 {
     TestTimeToCString( ).Loop(10);
 }
 
-TestSuite *init_unit_test_suite(int, char *[])
-{
-    TestSuite* test = BOOST_TEST_SUITE("Test suite for Time");
-    test->add(BOOST_TEST_CASE(TestTimeStamp));
-    test->add(BOOST_TEST_CASE(TestTimeStampToCString));
-
-    return test;
-}
+BOOST_AUTO_TEST_SUITE_END( )

@@ -16,6 +16,7 @@
 #define DISABLE_SIGNED_UNSIGNED_MISMATCH
 #include "myrrh/util/Preprocessor.hpp"
 
+#define BOOST_TEST_MODULE "Unit test suite for myrrh::data::test"
 #include "boost/test/unit_test.hpp"
 
 #ifdef WIN32
@@ -24,42 +25,29 @@
 
 #include <fstream>
 
-typedef boost::unit_test::test_suite TestSuite;
+namespace
+{
 
-// Test case function declarations
-void TestFilesWithContent( );
-void TestNonExistingFile( );
-void TestEmptyFile( );
-void TestFileIndices( );
-
-// Helper function declarations
 void TestFileWithContent(const std::string &name);
 const std::string Path(const std::string &name);
 void CheckIsOpen(const std::ifstream &stream, const std::string &name);
 std::string GetFileContent(std::ifstream &stream);
 void TestFileIndex(size_t index, const std::string &name);
 
-using namespace myrrh::data::test;
-
-TestSuite *init_unit_test_suite(int, char *[])
-{
-    TestSuite *test(BOOST_TEST_SUITE("Test suite for Files"));
-    test->add(BOOST_TEST_CASE(TestNonExistingFile));
-    test->add(BOOST_TEST_CASE(TestEmptyFile));
-    test->add(BOOST_TEST_CASE(TestFilesWithContent));
-    test->add(BOOST_TEST_CASE(TestFileIndices));
-
-    return test;
 }
 
-void TestNonExistingFile( )
+using namespace myrrh::data::test;
+
+BOOST_AUTO_TEST_SUITE(DynamicSuite)
+
+BOOST_AUTO_TEST_CASE(TestNonExistingFile)
 {
     const std::string NAME(Path(Files::NOT_EXISTING));
     std::ifstream stream(NAME.c_str( ));
     BOOST_REQUIRE(!stream.is_open( ));
 }
 
-void TestEmptyFile( )
+BOOST_AUTO_TEST_CASE(TestEmptyFile)
 {
     const std::string NAME(Path(Files::EMPTY));
     std::ifstream stream(NAME.c_str( ));
@@ -68,7 +56,7 @@ void TestEmptyFile( )
     BOOST_CHECK_EQUAL(GetFileContent(stream).size( ), 0);
 }
 
-void TestFilesWithContent( )
+BOOST_AUTO_TEST_CASE(TestFilesWithContent)
 {
     TestFileWithContent(Path(Files::ONE_CHAR));
     TestFileWithContent(Path(Files::ONE_LINE));
@@ -77,7 +65,7 @@ void TestFilesWithContent( )
     TestFileWithContent(Path(Files::SEVERAL_LINES_NOT_EQUAL_LENGTH));
 }
 
-void TestFileIndices( )
+BOOST_AUTO_TEST_CASE(TestFileIndices)
 {
     TestFileIndex(Files::Index::NOT_EXISTING, Files::NOT_EXISTING);
     TestFileIndex(Files::Index::EMPTY, Files::EMPTY);
@@ -90,6 +78,10 @@ void TestFileIndices( )
     TestFileIndex(Files::Index::LARGE_FILE, Files::LARGE_FILE);
 }
 
+BOOST_AUTO_TEST_SUITE_END( )
+
+namespace
+{
 void TestFileIndex(size_t index, const std::string &name)
 {
     BOOST_CHECK_EQUAL(Files::GetAll( )[index], name);
@@ -123,4 +115,6 @@ std::string GetFileContent(std::ifstream &stream)
     stringStream << stream.rdbuf( );
 
     return stringStream.str( );
+}
+
 }

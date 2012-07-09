@@ -41,7 +41,7 @@ namespace
 void BoostSleep(int maxSeconds, int maxNSeconds)
 {
     boost::xtime toWait;
-    boost::xtime_get(&toWait, boost::TIME_UTC);
+    boost::xtime_get(&toWait, boost::TIME_UTC_);
     toWait.sec += maxSeconds;
     toWait.nsec += maxNSeconds;
     boost::thread::sleep(toWait);

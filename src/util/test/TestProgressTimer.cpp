@@ -36,7 +36,7 @@ void SleepRandomTime(int maxSeconds, int maxNSeconds)
 {
     /// @todo Remove this. Sleeping and randomness in unit test. Not good.
     boost::xtime toWait;
-    boost::xtime_get(&toWait, boost::TIME_UTC);
+    boost::xtime_get(&toWait, boost::TIME_UTC_);
     toWait.sec += (std::rand( ) % maxSeconds);
     toWait.nsec += (std::rand( ) % maxNSeconds);
     boost::thread::sleep(toWait);

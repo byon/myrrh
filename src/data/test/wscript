@@ -4,4 +4,4 @@
 def build(bld):
     bld.stlib(source='Files.cpp', target='myrrh.data.test',
               includes='../../..')
-    #bld.recurse('test')
+    bld.recurse('test')

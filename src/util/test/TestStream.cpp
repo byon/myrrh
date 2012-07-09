@@ -11,6 +11,7 @@
 
 #include "myrrh/util/Stream.hpp"
 
+#define BOOST_TEST_MODULE TestStream
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
 
@@ -183,7 +184,7 @@ void TestItemsAfterManipulator2(std::ostream & stream)
 
 BOOST_AUTO_TEST_SUITE(DynamicSuite)
 
-void TestManipulatorOne( )
+BOOST_AUTO_TEST_CASE(TestManipulatorOne)
 {
     using namespace myrrh::util;
 
@@ -213,7 +214,7 @@ void TestManipulatorOne( )
     TestOutput(TestItemsAfterManipulator2, AFTER_MANIPULATOR2_RESULT);
 }
 
-void TestManipulatorTwo( )
+BOOST_AUTO_TEST_CASE(TestManipulatorTwo)
 {
     const std::string MANIPULATOR1_RESULT(
         "Manipulator1 called with '1234' and '4321'\n"

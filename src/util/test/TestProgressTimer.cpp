@@ -11,6 +11,7 @@
 
 #include "myrrh/util/ProgressTimer.hpp"
 
+#define BOOST_TEST_MODULE TestProgressTimer
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
 #include "boost/test/unit_test.hpp"

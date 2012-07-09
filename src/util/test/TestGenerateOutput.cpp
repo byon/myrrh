@@ -27,6 +27,7 @@
 #include "myrrh/file/Temporary.hpp"
 #include "myrrh/data/test/Files.hpp"
 
+#define BOOST_TEST_MODULE TestGenerateOutput
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
 
@@ -389,7 +390,7 @@ std::string ResultFromFileCase::InputStreamName( )
 }
 std::string Path(const std::string &restOfPath)
 {
-    const std::string START("..");
+    const std::string START(".");
     return START + restOfPath;
 }
 

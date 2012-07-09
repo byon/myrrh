@@ -12,6 +12,7 @@
 #include "myrrh/util/Print.hpp"
 #include "myrrh/util/RandomString.hpp"
 
+#define BOOST_TEST_MODULE TestPrint
 #define DISABLE_ASSIGNMENT_OPERATOR_COULD_NOT_BE_GENERATED
 #define DISABLE_COPY_CONSTRUCTOR_COULD_NOT_BE_GENERATED
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT

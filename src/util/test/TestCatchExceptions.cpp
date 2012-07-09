@@ -11,6 +11,7 @@
 
 #include "myrrh/util/Error.hpp"
 
+#define BOOST_TEST_MODULE TestCatchExceptions
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
 #include "boost/test/unit_test.hpp"

@@ -14,7 +14,6 @@ def build(bld):
 
 def buildTest(bld, file):
     name = 'myrrh.util.test.' + file
-    bld.program(source=file + '.cpp', target=name,
-                use='myrrh.util myrrh.file myrrh.data.test BOOST',
+    bld.program(features='UnitTest', source=file + '.cpp',
+                target=name, use='myrrh.util myrrh.file myrrh.data.test BOOST',
                 includes='../../..')
-    bld(rule='src/util/test/' + name, source=name)

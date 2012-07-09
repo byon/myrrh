@@ -11,6 +11,7 @@
 
 #include "myrrh/util/RandomString.hpp"
 
+#define BOOST_TEST_MODULE TestRandomString
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #define DISABLE_TYPE_CONVERSION_LOSS_OF_DATA
 #include "myrrh/util/Preprocessor.hpp"

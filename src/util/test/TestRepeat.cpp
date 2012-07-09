@@ -6,6 +6,8 @@
 
 #include "myrrh/util/Repeat.hpp"
 #include "myrrh/util/Preprocessor.hpp"
+
+#define BOOST_TEST_MODULE TestRepeat
 #include "boost/test/unit_test.hpp"
 
 static int gFirstRepeatFunctionCalled = 0;

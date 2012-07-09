@@ -97,8 +97,8 @@ void TestFileWithContent(const std::string &name)
 
 inline const std::string Path(const std::string &name)
 {
-    static const std::string START("..");
-    return START + name;
+    static const std::string DIRECTORY(".");
+    return DIRECTORY + name;
 }
 
 inline void CheckIsOpen(const std::ifstream &stream, const std::string &name)

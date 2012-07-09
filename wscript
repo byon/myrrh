@@ -106,6 +106,7 @@ class UnitTest(utest):
 
     def run(self):
         self.addDllPaths( )
+        setattr(self.generator, 'ut_cwd', self.generator.bld.top_dir)
         utest.run(self)
         return self.reportFailures(self.generator.bld)
 

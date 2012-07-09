@@ -89,7 +89,7 @@ namespace
 
 void SetReadOnly(const boost::filesystem::path &path)
 {
-    if (!SetFileAttributes(path.string( ).c_str( ), FILE_ATTRIBUTE_READONLY))
+    if (!SetFileAttributesA(path.string( ).c_str( ), FILE_ATTRIBUTE_READONLY))
     {
         throw ReadOnly::SetFailed(path, GetLastError( ));
     }
@@ -98,8 +98,8 @@ void SetReadOnly(const boost::filesystem::path &path)
 void RemoveReadOnly(const boost::filesystem::path &path)
 {
     // We are calling this in destructor -> we do not care of errors
-    const int RESULT = SetFileAttributes(path.string( ).c_str( ),
-                                         FILE_ATTRIBUTE_NORMAL);
+    const int RESULT = SetFileAttributesA(path.string( ).c_str( ),
+                                          FILE_ATTRIBUTE_NORMAL);
     assert(RESULT);
 }
 

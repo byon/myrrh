@@ -59,7 +59,7 @@ public:
      * Returns the count of stored restrictions
      * @note Useful only for testing
      */
-    size_t Count( ) const;
+    std::size_t Count( ) const;
 
 private:
 

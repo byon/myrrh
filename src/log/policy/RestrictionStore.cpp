@@ -50,7 +50,7 @@ bool RestrictionStore::IsRestricted(const File &file,
     return false;
 }
 
-size_t RestrictionStore::Count( ) const
+std::size_t RestrictionStore::Count( ) const
 {
     return restrictions_.size( );
 }

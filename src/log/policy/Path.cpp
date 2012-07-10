@@ -142,13 +142,12 @@ Path::EntityIterator Path::EndEntity( ) const
 
 boost::filesystem::path Path::CombineEntities( )
 {
-    using namespace boost::filesystem;
-    path result;
+    boost::filesystem::path result;
 
     typedef EntityStore::iterator EntityIter;
     for (EntityIter i = entityStore_.begin( ); entityStore_.end( ) != i; ++i)
     {
-        result /= path(i->Generate( ), native);
+        result /= boost::filesystem::path(i->Generate( ));
     }
 
     return result;
@@ -170,7 +169,7 @@ Path::EntityStore Path::AddNewParts(const Path::EntityStore &store,
     EntityStore storeCopy(store);
 
     PartStore::iterator folder;
-    
+
     while (FindFirstFolder(partStore, folder))
     {
         PartStore newParts(PartsUntilFolder(partStore, folder,

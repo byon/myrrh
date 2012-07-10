@@ -5,4 +5,4 @@ def build(bld):
     bld.recurse('data')
     bld.recurse('file')
     bld.recurse('util')
-    #bld.recurse('log')
+    bld.recurse('log')

@@ -6,6 +6,6 @@ def build(bld):
     # is not included in the build currently.
     bld.stlib(source='Appender.cpp Creator.cpp Examples.cpp Opener.cpp '
               'Path.cpp PathPart.cpp Policy.cpp Resizer.cpp Restriction.cpp '
-              'RestrictionStore.cpp Stream.cpp',
+              'RestrictionStore.cpp Stream.cpp', use='boost',
               target='myrrh.log.policy', includes='../../..')
-    bld.recurse('test')
+    #bld.recurse('test')

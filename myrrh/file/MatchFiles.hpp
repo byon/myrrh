@@ -94,7 +94,7 @@ inline ExpressionMatcher::ExpressionMatcher(const boost::regex &expression) :
 inline
 bool ExpressionMatcher::operator( )(const boost::filesystem::path &path) const
 {
-    return boost::regex_match(path.leaf( ), expression_);
+    return boost::regex_match(path.leaf( ).string( ), expression_);
 }
 
 }
@@ -102,4 +102,3 @@ bool ExpressionMatcher::operator( )(const boost::filesystem::path &path) const
 }
 
 #endif
-

@@ -896,25 +896,38 @@ void UseManipulators( )
 {
     class Case : public TestCase
     {
+    public:
+        Case(double value, const std::string expected) :
+            VALUE_(value),
+            expected_(expected)
+        {
+        }
         virtual void Write( )
         {
-            const double F = 1234.12345678;
-            Critical( ) << std::fixed << F << " " << std::scientific << F;
-            Error( ) << std::fixed << F << " " << std::scientific << F;
-            Warn( ) << std::fixed << F << " " << std::scientific << F;
-            Notify( ) << std::fixed << F << " " << std::scientific << F;
-            Info( ) << std::fixed << F << " " << std::scientific << F;
-            Debug( ) << std::fixed << F << " " << std::scientific << F;
-            Trace( ) << std::fixed << F << " " << std::scientific << F;
+            using namespace std;
+            Critical( ) << fixed << VALUE_ << " " << scientific << VALUE_;
+            Error( ) << fixed << VALUE_ << " " << scientific << VALUE_;
+            Warn( ) << fixed << VALUE_ << " " << scientific << VALUE_;
+            Notify( ) << fixed << VALUE_ << " " << scientific << VALUE_;
+            Info( ) << fixed << VALUE_ << " " << scientific << VALUE_;
+            Debug( ) << fixed << VALUE_ << " " << scientific << VALUE_;
+            Trace( ) << fixed << VALUE_ << " " << scientific << VALUE_;
         }
 
         virtual std::string GetExpectedLine( )
         {
-            return "1234.123457 1.234123e+003";
+            return expected_;
         }
+
+        const double VALUE_;
+        std::string expected_;
     };
 
-    Case( )( );
+    std::ostringstream expected;
+    const double VALUE = 1234.12345678;
+    expected << std::fixed << VALUE << " " << std::scientific << VALUE;
+
+    Case(VALUE, expected.str( ))( );
 }
 
 void WritingFromContendingThreads( )

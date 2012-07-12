@@ -7,7 +7,6 @@ def build(bld):
 
 def buildTest(bld, file):
     name = 'myrrh.log.test.' + file
-    bld.program(source=file + '.cpp', target=name,
-                use='myrrh.log myrrh.file myrrh.util myrrh.data.test BOOST',
+    bld.program(features='UnitTest', source=file + '.cpp', target=name,
+                use='myrrh.log myrrh.file myrrh.util myrrh.data.test boost',
                 includes='../../..')
-    bld(rule='src/log/test/' + name, source=name)

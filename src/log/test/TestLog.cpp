@@ -484,7 +484,7 @@ void WritingLongString( )
         virtual std::string GetExpectedLine( )
         {
             using namespace myrrh::data::test;
-            const std::string NAME(".." +
+            const std::string NAME("." +
                                    Files::SEVERAL_LINES_NOT_EQUAL_LENGTH);
             std::ifstream file(NAME.c_str( ));
             BOOST_REQUIRE(file.is_open( ));
@@ -910,7 +910,7 @@ void UseManipulators( )
 
         virtual std::string GetExpectedLine( )
         {
-            return "1234.123457 1.234123e+03";
+            return "1234.123457 1.234123e+003";
         }
     };
 

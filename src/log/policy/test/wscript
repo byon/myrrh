@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 # encoding: utf-8
 
+import sys
+
 def build(bld):
     # @todo Find out the causes for the build failures
     #buildExamples(bld)
@@ -21,6 +23,9 @@ def buildTest(bld, file):
     buildTestWithSources(bld, name, file + '.cpp')
 
 def buildTestWithSources(bld, name, sources):
+    lib = ''
+    if sys.platform == 'win32':
+        lib = 'Advapi32'
     bld.program(features='UnitTest', source=sources, target=name,
-                use='myrrh.log.policy myrrh.file boost', lib='Advapi32',
+                use='myrrh.log.policy myrrh.file boost', lib=lib,
                 includes='../../../..')

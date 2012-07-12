@@ -44,16 +44,6 @@ std::ostream &operator<<(std::ostream &stream, const path &input)
     return stream;
 }
 
-bool operator==(const path &input, const std::string &text)
-{
-    return input.string( ) == text;
-}
-
-bool operator==(const std::string &text, const path &input)
-{
-    return input.string( ) == text;
-}
-
 }
 }
 
@@ -109,9 +99,7 @@ BOOST_AUTO_TEST_CASE(ParentPathPassing)
     TestParentPath(path("."));
     TestParentPath(path("folder/"));
     TestParentPath(path("folder/subFolder/"));
-
-    path absolutePath("c:\\folder\\subFolder\\", native);
-    TestParentPath(absolutePath);
+    TestParentPath(path("c:\\folder\\subFolder\\"));
 }
 
 BOOST_AUTO_TEST_CASE(AddingText)

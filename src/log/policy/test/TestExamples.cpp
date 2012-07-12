@@ -913,7 +913,7 @@ Files GetPhysicalFiles(const boost::filesystem::path &folder,
     using namespace boost::filesystem;
     for (directory_iterator i(folder); directory_iterator( ) != i; ++i)
     {
-        if (boost::regex_match(i->string( ), FILE_EXPRESSION))
+        if (boost::regex_match(i->path( ).string( ), FILE_EXPRESSION))
         {
             files.push_back(File(FileFromHardDisk(*i)));
         }
@@ -973,7 +973,7 @@ void EraseMatchingFiles(const std::string &expression)
     const path DIRECTORY(".");
     for (directory_iterator i(DIRECTORY); directory_iterator( ) != i; ++i)
     {
-        if (boost::regex_search(i->string( ), EXPRESSION))
+        if (boost::regex_search(i->path( ).string( ), EXPRESSION))
         {
             remove_all(*i);
         }

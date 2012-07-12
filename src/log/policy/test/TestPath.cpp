@@ -377,7 +377,8 @@ BOOST_AUTO_TEST_CASE(TwoEntities)
     Path path;
     path += Text(TEXT) + Folder( ) + Text(TEXT);
 
-    BOOST_CHECK_EQUAL(TEXT + "/" + TEXT, path.Generate( ).string( ));
+    BOOST_CHECK_EQUAL(boost::filesystem::path(TEXT + "/" + TEXT),
+                      path.Generate( ));
 
     CheckEntityCount(2, path);
 }
@@ -392,10 +393,10 @@ BOOST_AUTO_TEST_CASE(SeveralEntities)
             Text(TEXT) + Folder( ) +
             Text(TEXT);
 
-    const std::string EXPECTED(
+    const boost::filesystem::path EXPECTED(
         TEXT + "/" + TEXT + "/" + TEXT + "/" + TEXT + "/" + TEXT);
 
-    BOOST_CHECK_EQUAL(EXPECTED, path.Generate( ).string( ));
+    BOOST_CHECK_EQUAL(EXPECTED, path.Generate( ));
 
     CheckEntityCount(5, path);
 }
@@ -408,8 +409,9 @@ BOOST_AUTO_TEST_CASE(SeveralEntitiesFromSeveralParts)
             Text("First") + Text("Second") + Text("Third");
 
     const std::string COMBINED("FirstSecondThird");
-    const std::string EXPECTED(COMBINED + "/" + COMBINED + "/" + COMBINED);
-    BOOST_CHECK_EQUAL(EXPECTED, path.Generate( ).string( ));
+    const boost::filesystem::path EXPECTED(
+        COMBINED + "/" + COMBINED + "/" + COMBINED);
+    BOOST_CHECK_EQUAL(EXPECTED, path.Generate( ));
 
     CheckEntityCount(3, path);
 }
@@ -543,7 +545,7 @@ void TestAddingString(const std::string &part)
 {
     Path path;
     path += part;
-    BOOST_CHECK_EQUAL(part, path.Generate( ));
+    BOOST_CHECK_EQUAL(boost::filesystem::path(part), path.Generate( ));
 }
 
 template <typename T1, typename T2>

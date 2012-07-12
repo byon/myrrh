@@ -98,7 +98,10 @@ def setLinkerFlags(conf, flags):
     conf.env.LINKFLAGS += flags + commonLinkerFlags( )
 
 def commonLinkerFlags( ):
-    return ['/DEBUG', '/ERRORREPORT:QUEUE', '/SUBSYSTEM:CONSOLE']
+    # @todo Work to get rid of the linker warning instead of just hiding the
+    #       problem
+    return ['/DEBUG', '/ERRORREPORT:QUEUE', '/SUBSYSTEM:CONSOLE',
+            'ignore:4099']
 
 from waflib.Tools.waf_unit_test import utest
 

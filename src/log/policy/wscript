@@ -8,4 +8,4 @@ def build(bld):
               'Path.cpp PathPart.cpp Policy.cpp Resizer.cpp Restriction.cpp '
               'RestrictionStore.cpp Stream.cpp', use='boost',
               target='myrrh.log.policy', includes='../../..')
-    #bld.recurse('test')
+    bld.recurse('test')

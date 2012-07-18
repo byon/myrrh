@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # encoding: utf-8
 
-import sys
+import os, sys
 
 VERSION='0.0.1'
 APPNAME='myrrh'
@@ -109,9 +109,19 @@ class UnitTest(utest):
 
     def run(self):
         self.addDllPaths( )
-        setattr(self.generator, 'ut_cwd', self.generator.bld.top_dir)
+        self.setRunningDirectory(self.inputs[0])
         utest.run(self)
         return self.reportFailures(self.generator.bld)
+
+    def setRunningDirectory(self, node):
+        directory = self.runningDirectory(node)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        setattr(self.generator, 'ut_cwd', directory)
+
+    def runningDirectory(self, node):
+        base = os.path.splitext(node.name)[0]
+        return os.path.join(node.parent.abspath( ), base)
 
     def reportFailures(self, bld):
         returnValue = 0

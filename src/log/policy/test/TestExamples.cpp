@@ -770,7 +770,7 @@ std::size_t MaxSizeParams<MaxSize>::GetParam1(const T &) const
 
 inline const boost::filesystem::path NoSubFolder::GetPath( ) const
 {
-    return ".";
+    return "../../../../../..";
 }
 
 const boost::filesystem::path DatedSubFolder::GetPath( ) const
@@ -970,7 +970,7 @@ void EraseMatchingFiles(const std::string &expression)
     using namespace boost::filesystem;
 
     const boost::regex EXPRESSION(expression);
-    const path DIRECTORY(".");
+    const path DIRECTORY("../../../../../..");
     for (directory_iterator i(DIRECTORY); directory_iterator( ) != i; ++i)
     {
         if (boost::regex_search(i->path( ).string( ), EXPRESSION))

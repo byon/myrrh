@@ -97,7 +97,7 @@ void TestFileWithContent(const std::string &name)
 
 inline const std::string Path(const std::string &name)
 {
-    static const std::string DIRECTORY(".");
+    static const std::string DIRECTORY("../../../../../../..");
     return DIRECTORY + name;
 }
 

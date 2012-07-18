@@ -7,7 +7,13 @@ VERSION='0.0.1'
 APPNAME='myrrh'
 
 top = '.'
-out = 'build'
+if sys.platform == 'win32':
+    out = 'build'
+else:
+    # Win32 build has variants, which adds one layer to the directory
+    # hierarchy until unit test projects. We need to make the hierarchies of
+    # the same depth, so the tests work on both platforms.
+    out = 'build/linux'
 
 def options(opt):
     opt.load('compiler_cxx')
@@ -156,4 +162,5 @@ def make_test(self):
     if getattr(self, 'link_task', None):
         self.create_task('UnitTest', self.link_task.outputs)
 
-defineSeparateConfigurations( )
+if sys.platform == 'win32':
+    defineSeparateConfigurations( )

@@ -22,7 +22,7 @@ namespace myrrh
 namespace util
 {
 
-const char * const TimeStampToCString( )
+const char * const TimeStampAsCString( )
 {
     static char header[32] = {0};
     time_t currentTime;
@@ -42,4 +42,3 @@ const char * const TimeStampToCString( )
 }
 
 }
-

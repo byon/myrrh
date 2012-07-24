@@ -105,7 +105,7 @@ template <typename T>
 void TestLoggerWithType(const T &value)
 {
     using namespace myrrh::log;
-    
+
     TestLogLevel<Critical>(value);
     TestLogLevel<Error>(value);
     TestLogLevel<Warn>(value);
@@ -184,7 +184,7 @@ void TestPrintfLogging(int testCount)
     {
         for (int i = 0; i < testCount; ++i)
         {
-            const char * const header = myrrh::util::TimeStampToCString( );
+            const char * const header = myrrh::util::TimeStampAsCString( );
             fprintf(file, "%s %c %s %d. %s %.3f. %s %s %i.\n", header, '?',
                     "This is test string followed by an integer", i,
                     "Now follows a float", 123.1234,
@@ -338,7 +338,7 @@ void TestAllVerbosityLevels(int testCount)
     {
         currentLevel = static_cast<VerbosityLevel>(level);
         log.SetVerbosity(currentLevel);
-        
+
         std::cout << "NOW TESTING WITH " << level << std::endl;
         Critical( ) << "NOW TESTING WITH " << level;
         fprintf(file, "NOW TESTING WITH %d\n", level);
@@ -484,7 +484,7 @@ void TestCustomisedHeader( )
     Log::Instance( ).SetHeader(HeaderPtr(new CustomisedHeader( )));
 
     TestLogger(1);
-    
+
     Log::Instance( ).SetHeader( );
 }
 

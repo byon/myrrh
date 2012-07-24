@@ -54,7 +54,7 @@ void TimeStamp(time_t &seconds, unsigned int &milliSeconds);
  *         should not be modified, nor stored. If the value needs storing, copy
  *         the buffer.
  */
-const char * const TimeStampToCString( );
+const char * const TimeStampAsCString( );
 
 // inline implementations
 

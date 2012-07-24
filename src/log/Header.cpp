@@ -27,10 +27,10 @@ namespace log
 
 void TimestampHeader::Write(std::ostream &stream, char id)
 {
-    // Note that calling of TimeStampToCString is not thread safe. However this
+    // Note that calling of TimeStampAsCString is not thread safe. However this
     // function should not be called without lock in Verbosity's constructor.
     static char header[64] = {0};
-    sprintf(header, "%s %c ", myrrh::util::TimeStampToCString( ), id);
+    sprintf(header, "%s %c ", myrrh::util::TimeStampAsCString( ), id);
 
     stream << header;
 }

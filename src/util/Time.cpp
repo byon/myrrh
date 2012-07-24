@@ -24,18 +24,22 @@ namespace util
 
 const char * const TimeStampAsCString( )
 {
-    static char header[32] = {0};
     time_t currentTime;
     unsigned int milliSeconds;
 
     TimeStamp(currentTime, milliSeconds);
+    return TimeStampToCString(currentTime, milliSeconds);
+}
 
-    struct tm *nowStamp = localtime(&currentTime);
+const char * const TimeStampToCString(time_t seconds, unsigned milliSeconds)
+{
+    static char header[32] = {0};
+
+    struct tm *nowStamp = localtime(&seconds);
     sprintf(header, "%.4d.%.2d.%.2d %.2d:%.2d:%.2d:%.3d",
             nowStamp->tm_year + 1900, nowStamp->tm_mon +1,
             nowStamp->tm_mday, nowStamp->tm_hour,
             nowStamp->tm_min, nowStamp->tm_sec, milliSeconds);
-
     return header;
 }
 

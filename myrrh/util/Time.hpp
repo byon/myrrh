@@ -56,6 +56,20 @@ void TimeStamp(time_t &seconds, unsigned int &milliSeconds);
  */
 const char * const TimeStampAsCString( );
 
+
+/**
+ * Returns a null terminated c string buffer containing a timestamp of given
+ * time. The string follows the format "YYYY.MM.DD HH:mm:SS:sss", where Y is
+ * year, M is month, D is day of month, H is hour, m is minutes, S is seconds
+ * and s is milliseconds. The time is in localtime.
+ * @warning This function is not thread safe
+ * @return A pointer to null-terminated buffer containing the timestamp. Note
+ *         that this pointer is to a static buffer and therefore the value
+ *         should not be modified, nor stored. If the value needs storing, copy
+ *         the buffer.
+ */
+const char * const TimeStampToCString(time_t seconds, unsigned milliSeconds);
+
 // inline implementations
 
 #ifdef WIN32

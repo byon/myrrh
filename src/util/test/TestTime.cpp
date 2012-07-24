@@ -26,4 +26,35 @@ BOOST_AUTO_TEST_CASE(TimeStampFillsMilliseconds)
     BOOST_CHECK(0 != 1000);
 }
 
+BOOST_AUTO_TEST_CASE(CStringConversionGivesEpoch)
+{
+    BOOST_CHECK_EQUAL("1970.01.01 00:00:00:000",
+                      myrrh::util::TimeStampToCString(0, 0));
+}
+
+BOOST_AUTO_TEST_CASE(CStringConversionFillsDate)
+{
+    BOOST_CHECK_EQUAL("2012.07.24 00:00:00:000",
+                      myrrh::util::TimeStampToCString(1343084400, 0));
+}
+
+BOOST_AUTO_TEST_CASE(CStringConversionFillsTime)
+{
+    time_t seconds = 8 * 60 * 60 + 9 * 60 + 57;
+    BOOST_CHECK_EQUAL("1970.01.01 08:09:57:000",
+                      myrrh::util::TimeStampToCString(seconds, 0));
+}
+
+BOOST_AUTO_TEST_CASE(CStringConversionAddsMilliseconds)
+{
+    BOOST_CHECK_EQUAL("1970.01.01 00:00:00:123",
+                      myrrh::util::TimeStampToCString(0, 123));
+}
+
+BOOST_AUTO_TEST_CASE(CStringConversionAddsEverything)
+{
+    BOOST_CHECK_EQUAL("2012.07.24 17:50:05:999",
+                      myrrh::util::TimeStampToCString(1343148605, 999));
+}
+
 BOOST_AUTO_TEST_SUITE_END( )

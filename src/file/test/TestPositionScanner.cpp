@@ -131,11 +131,6 @@ struct Opener
     void Open(std::ifstream &stream, const boost::filesystem::path &path);
 };
 
-struct DeleteAfterOpener
-{
-    void Open(std::ifstream &stream, const boost::filesystem::path &path);
-};
-
 template <int Index>
 struct ExistingFileNamer
 {
@@ -279,13 +274,6 @@ void AddBasicCases(TestSuite *suite)
                             ExistingFileNamer<Files::Index::SEVERAL_LINES>,
                             typename Types::ExpectedOutcome,
                             ErrorScan<PositionScanner::NotOpen> >( )));
-    // File is deleted after opening
-    /** @todo Not working test->add(NewCase(Host<Types::Scanner,
-                            typename Types::Params,
-                            DeleteAfterOpener,
-                            ExistingFileNamer<Files::Index::SEVERAL_LINES>,
-                            typename Types::ExpectedOutcome,
-                            NormalScan>( )));*/
     // Reading empty file
     suite->add(NewCase(Host<typename Types::Scanner,
                             typename Types::Params,
@@ -439,13 +427,6 @@ void FalseOpener::Open(std::ifstream &stream, const boost::filesystem::path &)
 
 void Opener::Open(std::ifstream &stream, const boost::filesystem::path &path)
 {
-    OpenStream(stream, path.string( ), std::ios::in);
-}
-
-void DeleteAfterOpener::Open(std::ifstream &stream,
-                             const boost::filesystem::path &path)
-{
-    Eraser tmp(path.string( ));
     OpenStream(stream, path.string( ), std::ios::in);
 }
 

@@ -4,7 +4,7 @@
 def build(bld):
     #buildTest(bld, 'TestCopy')
     buildTest(bld, 'TestEraser')
-    # unit test does not work buildTest(bld, 'TestMatchFiles')
+    buildTest(bld, 'TestMatchFiles')
     buildTest(bld, 'TestPositionScanner')
     buildTest(bld, 'TestReadOnly')
     buildTest(bld, 'TestResize')

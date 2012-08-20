@@ -257,7 +257,7 @@ void EraseMatchingFiles(const boost::filesystem::path &folder,
     const boost::regex EXPRESSION(expression);
     for (directory_iterator i(folder); directory_iterator( ) != i; ++i)
     {
-        if (boost::regex_search(i->string( ), EXPRESSION))
+        if (boost::regex_search(i->path( ).string( ), EXPRESSION))
         {
             remove_all(*i);
         }

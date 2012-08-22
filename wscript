@@ -24,6 +24,7 @@ def configure(conf):
         configureReleaseBuild(conf)
     else:
         conf.load('compiler_cxx')
+        conf.env.CXXFLAGS += ['-std=c++0x']
         setBoostConfigurationLinux(conf)
 
 def build(bld):

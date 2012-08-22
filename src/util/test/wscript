@@ -10,7 +10,6 @@ def build(bld):
     buildTest(bld, 'TestRandomString')
     buildTest(bld, 'TestRepeat')
     buildTest(bld, 'TestStream')
-    buildTest(bld, 'TestTime')
 
 def buildTest(bld, file):
     name = 'myrrh.util.test.' + file

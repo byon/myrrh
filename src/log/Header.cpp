@@ -10,7 +10,6 @@
  */
 
 #include "myrrh/log/Header.hpp"
-#include "myrrh/util/Time.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include <memory>
 #include <ostream>

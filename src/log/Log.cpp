@@ -11,7 +11,6 @@
  * $Id: Log.cpp 355 2007-09-17 18:48:35Z byon $
  */
 
-#include "myrrh/util/Time.hpp"
 #include "myrrh/log/Log.hpp"
 #include <algorithm>
 #include <cassert>

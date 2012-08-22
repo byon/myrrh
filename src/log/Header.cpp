@@ -11,6 +11,7 @@
 
 #include "myrrh/log/Header.hpp"
 #include "myrrh/util/Time.hpp"
+#include "boost/date_time/posix_time/posix_time.hpp"
 #include <memory>
 #include <ostream>
 #include <cstdio>
@@ -27,12 +28,11 @@ namespace log
 
 void TimestampHeader::Write(std::ostream &stream, char id)
 {
-    // Note that calling of TimeStampAsCString is not thread safe. However this
-    // function should not be called without lock in Verbosity's constructor.
-    static char header[64] = {0};
-    sprintf(header, "%s %c ", myrrh::util::TimeStampAsCString( ), id);
-
-    stream << header;
+    /// @todo Most likely too inefficient. Consider changing later.
+    auto facet = new boost::posix_time::time_facet("%Y.%m.%d %H:%M:%s");
+    stream.imbue(std::locale(stream.getloc(), facet));
+    stream << boost::posix_time::microsec_clock::local_time( ) << " " << id
+           << " ";
 }
 
 }

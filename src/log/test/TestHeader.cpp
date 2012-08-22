@@ -106,12 +106,13 @@ bool TestCase::DoesMatchExpected(const std::string &result)
 {
     const std::string ID(1, GetVerbosityId( ));
     boost::regex expression("^\\d{4}\\.\\d{2}\\.\\d{2} " // date
-                            "\\d{2}:\\d{2}:\\d{2}:\\d{3} " // time
+                            "\\d{2}:\\d{2}:\\d{2}.\\d{6} " // time
                             + ID + " $"); // verbosity id
 
     if (!boost::regex_match(result, expression))
     {
-        BOOST_ERROR("Result '" + result + "' not expected");
+        BOOST_ERROR("Result '" + result + "' not expected with expression " +
+                    expression.str( ));
         return false;
     }
 
@@ -157,7 +158,7 @@ void UseSameHeaderForDifferentStreams( )
     std::ostringstream second;
     header.Write(second, '-');
 
-    const std::string EXAMPLE("1234.12.12 12:12:12:123 - ");
+    const std::string EXAMPLE("1234.12.12 12:12:12:123456 - ");
 
     typedef unsigned int uint;
     const uint EXPECTED_SIZE = static_cast<uint>(EXAMPLE.size( ));

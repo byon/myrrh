@@ -998,7 +998,7 @@ std::string RemoveTimestampHeader(const std::string &line)
 
 std::string RemoveTimestamp(const std::string &line)
 {
-    const std::string TIMESTAMP("1234.12.12 12:12:12:123");
+    const std::string TIMESTAMP("1234.12.12 12:12:12:123456");
     BOOST_CHECK(line.size( ) >= TIMESTAMP.size( ));
 
     return line.substr(TIMESTAMP.size( ));

@@ -23,51 +23,18 @@ namespace file
 namespace
 {
 
-/**
- * Checks if the given file stream is open, otherwise throws an exception.
- * @throws PositionScanner::NotOpen, if stream is not open
- */
 void CheckStream(const std::ifstream &stream);
-
-/**
- * Returns the end position of the given file stream, i.e. it's size.
- */
 std::streampos EndPosition(std::ifstream &stream);
-
-/**
- * Seeks the position of beginning of next start of line in the given file
- * stream from the given point. The position is returned. If there are no
- * new lines after the given point, returns the point at end of file.
- * @param stream Stream to be seeked
- * @param toSeek The point to seek to
- * @return The on which the new line starts or the file ends
- */
 std::streampos SeekNextLineStart(std::ifstream &stream, std::streampos toSeek);
-
-/**
- * Stores the position of a stream and reverts it after destruction. The
- * purpose of the class is to act as exception safe mechanism for the stream
- * position reversion.
- */
 class StreamStateReset
 {
 public:
-
-    /**
-     * Constructor
-     */
     StreamStateReset(std::ifstream &stream);
-
-    /**
-     * Destructor
-     */
     ~StreamStateReset( );
 
 private:
 
-    /// Disabled copy constructor
     StreamStateReset(const StreamStateReset &);
-    /// Disabled assignment operator
     StreamStateReset &operator=(const StreamStateReset &);
 
     std::ifstream &stream_;

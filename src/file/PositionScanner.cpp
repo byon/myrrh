@@ -25,7 +25,8 @@ namespace
 
 void CheckStream(const std::ifstream &stream);
 std::streampos EndPosition(std::ifstream &stream);
-std::streampos SeekNextLineStart(std::ifstream &stream, std::streampos toSeek);
+std::streampos SeekNextLineStart(std::ifstream &stream, std::streampos toSeek,
+                                 std::streampos end);
 class StreamStateReset
 {
 public:
@@ -95,7 +96,7 @@ std::streampos ScanFromStart::DoScan(std::ifstream &stream) const
         return END_POS;
     }
 
-    return SeekNextLineStart(stream, POINT_);
+    return SeekNextLineStart(stream, POINT_, END_POS);
 }
 
 ScanFromEnd::ScanFromEnd(std::streamsize bytesFromEnd) :
@@ -112,7 +113,7 @@ std::streampos ScanFromEnd::DoScan(std::ifstream &stream) const
         return END_POS;
     }
 
-    return SeekNextLineStart(stream, END_POS - BYTES_FROM_END_);
+    return SeekNextLineStart(stream, END_POS - BYTES_FROM_END_, END_POS);
 }
 
 namespace
@@ -144,10 +145,13 @@ inline StreamStateReset::~StreamStateReset( )
 }
 
 inline std::streampos SeekNextLineStart(std::ifstream &stream,
-                                        std::streampos toSeek)
+                                        std::streampos toSeek,
+                                        std::streampos end)
 {
+    assert(toSeek <= end);
+
     stream.seekg(toSeek);
-    stream.ignore(std::numeric_limits<int>::max( ), '\n');
+    stream.ignore(end - toSeek, '\n');
 
     return stream.tellg( );
 }

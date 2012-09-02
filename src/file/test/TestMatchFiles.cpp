@@ -84,6 +84,14 @@ private:
 
 }
 
+namespace boost
+{
+namespace filesystem
+{
+std::ostream& operator<<(std::ostream& stream, const std::vector<path>& store);
+}
+}
+
 // Test implementations
 
 BOOST_AUTO_TEST_CASE(ExpressionMatcherWithEmptyPath)
@@ -316,10 +324,11 @@ void TestCase::DoTest( )
     const boost::regex EXPRESSION(Expression( ));
     CheckExpressionStart(EXPRESSION.str( ));
 
-    const PathStore MATCHED(
-        MatchFiles(Folder( ), ExpressionMatcher(EXPRESSION)));
+    auto matcher = ExpressionMatcher(EXPRESSION);
+    PathStore matched(MatchFiles(Folder( ), matcher));
+    std::sort(matched.begin( ), matched.end( ));
 
-    BOOST_CHECK(ExpectedMatches( ) == MATCHED);
+    BOOST_CHECK_EQUAL(ExpectedMatches( ), matched);
 }
 
 PathStore TestCase::GetFiles( )
@@ -371,4 +380,19 @@ PathStore FilesExistCase::GetFiles( )
     return result;
 }
 
+}
+
+namespace boost
+{
+namespace filesystem
+{
+std::ostream& operator<<(std::ostream& stream, const PathStore& store)
+{
+    for (auto i = store.begin( ); store.end( ) != i; ++i)
+    {
+        stream << *i << ", ";
+    }
+    return stream;
+}
+}
 }

@@ -123,8 +123,10 @@ TestSuite *init_unit_test_suite(int, char *[])
     test->add(BOOST_TEST_CASE(FileHasOneCharacter));
     test->add(BOOST_TEST_CASE(FileHasOneLine));
     test->add(BOOST_TEST_CASE(FileHasSeveralLines));
-    /// @todo does not work
-    /// test->add(BOOST_TEST_CASE(TemporaryFileCannotBeOpened));
+#if WIN32
+    // No easy/practical way to test on linux
+    test->add(BOOST_TEST_CASE(TemporaryFileCannotBeOpened));
+#endif
 
     return test;
 }

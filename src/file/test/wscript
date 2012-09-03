@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 def build(bld):
-    #buildTest(bld, 'TestCopy')
+    buildTest(bld, 'TestCopy')
     buildTest(bld, 'TestEraser')
     buildTest(bld, 'TestMatchFiles')
     buildTest(bld, 'TestPositionScanner')

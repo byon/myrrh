@@ -35,7 +35,7 @@ namespace file
  * done with his operations. The destructor does nothing. If the Release method
  * is not called, it is assumed an error occured and the file will be erased
  * at destructor. The error may be either an user error (forgotten call to
- * Release) or an occurred exception. 
+ * Release) or an occurred exception.
  *
  * Of course it may be the user's intention that the file gets erased always.
  * This is useful for example when testing the above mentioned example that
@@ -90,9 +90,17 @@ inline Eraser::Eraser(const boost::filesystem::path &path) :
 
 inline Eraser::~Eraser( )
 {
-    if (!path_.empty( ))
+    if (path_.empty( ))
+    {
+        return;
+    }
+    try
     {
         boost::filesystem::remove_all(path_);
+    }
+    catch (...)
+    {
+        // Do not allow exceptions from destructor
     }
 }
 

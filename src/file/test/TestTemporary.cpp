@@ -111,8 +111,13 @@ void PathToAlreadyOpenFile( )
 
     UseTemporary(FILE_NAME, OUTPUT + OUTPUT);
 
-    // Cannot delete the file, if it is still open
+#if WIN32
+    // Cannot delete the file on windows, if it is still open
     BOOST_CHECK(boost::filesystem::exists(FILE_NAME));
+#else
+    // On linux, the file is happily deleted
+    BOOST_CHECK(!boost::filesystem::exists(FILE_NAME));
+#endif
 }
 
 void NoOutput( )

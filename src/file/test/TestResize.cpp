@@ -120,11 +120,9 @@ TestSuite *init_unit_test_suite(int, char *[])
     test->add(BOOST_TEST_CASE(FileResizedToHalf));
     test->add(BOOST_TEST_CASE(ResizingEmptyFile));
 
-    /// @todo These do not work on linux. Find out why.
-    ///       PositionScanner (ScanFromStart) is returning -1 from tellg
-    //test->add(BOOST_TEST_CASE(FileHasOneCharacter));
-    //test->add(BOOST_TEST_CASE(FileHasOneLine));
-    //test->add(BOOST_TEST_CASE(FileHasSeveralLines));
+    test->add(BOOST_TEST_CASE(FileHasOneCharacter));
+    test->add(BOOST_TEST_CASE(FileHasOneLine));
+    test->add(BOOST_TEST_CASE(FileHasSeveralLines));
     /// @todo does not work
     /// test->add(BOOST_TEST_CASE(TemporaryFileCannotBeOpened));
 

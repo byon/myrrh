@@ -19,12 +19,6 @@
 
 #include <fstream>
 
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <sys/stat.h>
-#endif
-
 namespace myrrh
 {
 namespace file
@@ -85,39 +79,18 @@ ReadOnly::AlreadyExists::AlreadyExists(const boost::filesystem::path &path) :
 namespace
 {
 
-#if WIN32 /// @todo not compiled on windows, not sure if works
-
 void SetReadOnly(const boost::filesystem::path &path)
 {
-    if (!SetFileAttributesA(path.string( ).c_str( ), FILE_ATTRIBUTE_READONLY))
-    {
-        throw ReadOnly::SetFailed(path, GetLastError( ));
-    }
+    using namespace boost::filesystem;
+    permissions(path, remove_perms | owner_write);
 }
 
 void RemoveReadOnly(const boost::filesystem::path &path)
 {
-    // We are calling this in destructor -> we do not care of errors
-    SetFileAttributesA(path.string( ).c_str( ), FILE_ATTRIBUTE_NORMAL);
+    using namespace boost::filesystem;
+    assert(exists(path));
+    permissions(path, add_perms | owner_write);
 }
-
-#else
-
-void SetReadOnly(const boost::filesystem::path &path)
-{
-    const int RESULT = chmod(path.string( ).c_str( ), S_IREAD);
-    if (RESULT)
-    {
-        throw ReadOnly::SetFailed(path, RESULT);
-    }
-}
-
-void RemoveReadOnly(const boost::filesystem::path &path)
-{
-    chmod(path.string( ).c_str( ), S_IREAD|S_IWRITE);
-}
-
-#endif
 
 std::string ErrorString(const boost::filesystem::path &path, int errorCode)
 {

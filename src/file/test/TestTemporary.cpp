@@ -109,8 +109,10 @@ void PathToAlreadyOpenFile( )
     std::ifstream file(FILE_NAME.c_str( ));
     BOOST_REQUIRE(file.is_open( ));
 
-    CatchConstructError<myrrh::file::Temporary::PathError>(
-        FILE_NAME, "Path to already open file should cause exception");
+    UseTemporary(FILE_NAME, OUTPUT + OUTPUT);
+
+    // Cannot delete the file, if it is still open
+    BOOST_CHECK(boost::filesystem::exists(FILE_NAME));
 }
 
 void NoOutput( )
@@ -175,10 +177,7 @@ TestSuite *init_unit_test_suite(int, char *[])
 
     test->add(BOOST_TEST_CASE(UsingDirectoryPath));
     test->add(BOOST_TEST_CASE(PathToAlreadyExistingFile));
-    /// @todo The following test has been disabled, because it does not work.
-    ///       This has been documented into Temporary interface as a
-    ///       restriction for constructor parameter.
-    //test->add(BOOST_TEST_CASE(PathToAlreadyOpenFile));
+    test->add(BOOST_TEST_CASE(PathToAlreadyOpenFile));
     test->add(BOOST_TEST_CASE(NoOutput));
     test->add(BOOST_TEST_CASE(ExceptionAfterConstruction));
     test->add(BOOST_TEST_CASE(PrintingToTemporary));

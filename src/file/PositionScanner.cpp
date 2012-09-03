@@ -148,12 +148,16 @@ inline std::streampos SeekNextLineStart(std::ifstream &stream,
                                         std::streampos toSeek,
                                         std::streampos end)
 {
-    assert(toSeek <= end);
-
     stream.seekg(toSeek);
     stream.ignore(end - toSeek, '\n');
 
-    return stream.tellg( );
+    if (stream.good( ))
+    {
+        return stream.tellg( );
+    }
+
+    stream.clear( );
+    return end;
 }
 
 }

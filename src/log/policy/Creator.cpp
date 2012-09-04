@@ -44,7 +44,10 @@ boost::filesystem::path Creator::DoOpen(std::filebuf &file, Path& path)
 
     try
     {
-        boost::filesystem::create_directories(PATH.branch_path( ));
+        if (PATH.has_parent_path( ))
+        {
+            boost::filesystem::create_directories(PATH.parent_path( ));
+        }
         file.open(PATH.string( ).c_str( ), std::ios::out | std::ios::trunc);
     }
     catch (...)

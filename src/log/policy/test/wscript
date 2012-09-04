@@ -6,7 +6,7 @@ import sys
 def build(bld):
     # @todo Find out the causes for the build failures
     #buildExamples(bld)
-    #buildTest(bld, 'TestOpener')
+    buildTest(bld, 'TestOpener')
     buildTest(bld, 'TestPath')
     buildTest(bld, 'TestPathPart')
     buildTest(bld, 'TestPolicy')

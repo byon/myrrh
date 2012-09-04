@@ -80,7 +80,10 @@ boost::filesystem::path Resizer::DoOpen(std::filebuf &file, Path& path)
         {
             // The creation of the directory path may throw, we will silently
             // ignore the possible exceptions.
-            boost::filesystem::create_directories(PATH.branch_path( ));
+            if (PATH.has_parent_path( ))
+            {
+                boost::filesystem::create_directories(PATH.parent_path( ));
+            }
         }
         catch (...)
         {

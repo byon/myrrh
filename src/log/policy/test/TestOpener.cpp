@@ -84,7 +84,6 @@ void TestConstruction( );
 template <typename T>
 void TestConstruction(T &opener);
 std::string GetFileContent(const boost::filesystem::path &path);
-unsigned GetEndOfLineSize( );
 std::streamsize StringSize(const std::string &text);
 template <typename T>
 void DoWritingEmptyLine(T &opener);
@@ -403,18 +402,10 @@ std::string GetFileContent(const boost::filesystem::path &path)
     return stream.str( );
 }
 
-unsigned GetEndOfLineSize( )
-{
-    std::ostringstream stream;
-    stream << std::endl;
-    return stream.str( ).size( );
-}
-
 std::streamsize StringSize(const std::string &text)
 {
-    static const unsigned EXTRA_LINE_SIZE = GetEndOfLineSize( ) - 1;
     const size_t LINES = std::count(text.begin( ), text.end( ), '\n');
-    return static_cast<std::streamsize>(text.size( ) + LINES * EXTRA_LINE_SIZE);
+    return static_cast<std::streamsize>(text.size( ) + LINES);
 }
 
 template <typename T>

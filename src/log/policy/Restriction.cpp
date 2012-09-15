@@ -12,8 +12,6 @@
 #include "myrrh/log/policy/Restriction.hpp"
 #include "myrrh/log/policy/Opener.hpp"
 
-using namespace boost::gregorian;
-
 namespace myrrh
 {
 
@@ -39,24 +37,6 @@ SizeRestriction::SizeRestriction(std::size_t maxSize) :
 bool SizeRestriction::IsRestricted(const File &file, std::size_t toWrite) const
 {
     return (file.WrittenSize( ) + toWrite > MAX_SIZE_);
-}
-
-// DateRestriction class implementations
-
-DateRestriction::DateRestriction( ) :
-    date_(day_clock::local_day( ))
-{
-}
-
-bool DateRestriction::IsRestricted(const File &, std::size_t) const
-{
-    if (date_ == day_clock::local_day( ))
-    {
-        return false;
-    }
-
-    date_ = day_clock::local_day( );
-    return true;
 }
 
 }

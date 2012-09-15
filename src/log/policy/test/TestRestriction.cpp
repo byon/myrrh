@@ -439,7 +439,7 @@ SizeRestrictionCreator::NewRestriction(const T &host) const
 template <typename T>
 inline RestrictionPtr DateRestrictionCreator::NewRestriction(const T &) const
 {
-    return RestrictionPtr(new DateRestriction);
+    return RestrictionPtr(new DateRestriction<>);
 }
 
 // Params class implementations

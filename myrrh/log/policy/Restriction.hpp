@@ -105,12 +105,22 @@ private:
     const std::size_t MAX_SIZE_;
 };
 
+class DateCreator
+{
+public:
+    typedef boost::gregorian::date Date;
+    static boost::gregorian::date NewDate( );
+};
+
 /**
  * Defines the file restricted after every date change.
  */
+template <typename Creator = DateCreator>
 class DateRestriction : public Restriction
 {
 public:
+
+    typedef typename Creator::Date Date;
 
     /**
      * Constructor
@@ -133,10 +143,36 @@ private:
     /// Assignment is prevented
     DateRestriction &operator=(const DateRestriction &);
 
-    mutable boost::gregorian::date date_;
+    mutable Date date_;
 };
 
+// Inline implementations
+/*
+inline boost::gregorian::date DateCreator::NewDate( )
+{
+    return boost::gregorian::day_clock::local_day( );
 }
+
+template <typename Creator>
+inline DateRestriction<Creator>::DateRestriction( ) :
+    date_(Creator::NewDate( ))
+{
+}
+
+template <typename Creator>
+inline bool DateRestriction<Creator>::
+IsRestricted(const File &, std::size_t) const
+{
+    auto today = Creator::NewDate( );
+    if (date_ == today)
+    {
+        return false;
+    }
+
+    date_ = today;
+    return true;
+}
+*/
 
 }
 

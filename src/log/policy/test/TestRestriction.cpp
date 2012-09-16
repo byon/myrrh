@@ -41,9 +41,6 @@
 
 #ifdef WIN32
 #pragma warning(pop)
-
-#include <windows.h>
-
 #endif
 
 using namespace myrrh::log::policy;
@@ -72,29 +69,6 @@ public:
         return isNewDate;
     }
 };
-
-
-#if WIN32
-SYSTEMTIME GetCurrentWindowsTime( );
-bool IsTimeChangePossible( );
-
-class TimeChanger
-{
-public:
-
-    TimeChanger( );
-
-    ~TimeChanger( );
-
-    void Change(const SYSTEMTIME &requiredTime);
-
-private:
-
-    TimeChanger &operator=(const TimeChanger &);
-
-    const SYSTEMTIME ORIG_TIME_;
-};
-#endif
 
 class TestSetup
 {
@@ -372,62 +346,6 @@ inline size_t PlusOne::operator( )(size_t size) const
 {
     return size + 1;
 }
-
-#if WIN32
-/// @todo Change the production code (DateRestriction) not to be dependant of
-///       the real time
-TimeChanger::TimeChanger( ) :
-    ORIG_TIME_(GetCurrentWindowsTime( ))
-{
-}
-
-TimeChanger::~TimeChanger( )
-{
-    BOOST_REQUIRE(SetSystemTime(&ORIG_TIME_));
-}
-
-void TimeChanger::Change(const SYSTEMTIME &requiredTime)
-{
-    TIME_ZONE_INFORMATION zoneInfo;
-    BOOST_REQUIRE(TIME_ZONE_ID_INVALID != GetTimeZoneInformation(&zoneInfo));
-
-    SYSTEMTIME required = requiredTime;
-    SYSTEMTIME universalTime;
-    BOOST_REQUIRE(TzSpecificLocalTimeToSystemTime(&zoneInfo, &required,
-                                                  &universalTime));
-    BOOST_REQUIRE(SetSystemTime(&universalTime));
-}
-
-SYSTEMTIME GetCurrentWindowsTime( )
-{
-    SYSTEMTIME result;
-    GetSystemTime(&result);
-
-    return result;
-}
-
-bool IsTimeChangePossible( )
-{
-    HANDLE processToken;
-    BOOST_REQUIRE(OpenProcessToken(GetCurrentProcess( ),
-                                   TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
-                                   &processToken));
-
-    LUID localId;
-    BOOST_REQUIRE(LookupPrivilegeValue(0, SE_SYSTEMTIME_NAME, &localId));
-
-    TOKEN_PRIVILEGES privileges = {1, {localId, SE_PRIVILEGE_ENABLED}};
-
-    BOOST_REQUIRE(AdjustTokenPrivileges(processToken, false, &privileges,
-                                        0, 0, 0));
-    const bool RESULT = (ERROR_SUCCESS == GetLastError( ));
-
-    CloseHandle (processToken);
-
-    return RESULT;
-}
-
-#endif
 
 TestSetup::TestSetup( )
 {

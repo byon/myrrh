@@ -192,8 +192,7 @@ TestSuite *init_unit_test_suite(int, char *[])
     test->add(BOOST_TEST_CASE(TryingToOpenProtectedFile));
 #endif
     test->add(BOOST_TEST_CASE(TryingToOpenReadOnlyFile));
-    /// @todo Find out why the test fails
-    //test->add(BOOST_TEST_CASE(FileBecomesReadOnly));
+    test->add(BOOST_TEST_CASE(FileBecomesReadOnly));
     return test;
 }
 

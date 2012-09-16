@@ -408,7 +408,6 @@ TestSuite *init_unit_test_suite(int, char *[])
     AddSizeRestrictedLogCases<SizeRestrictedDatedFolderLogCreator,
                               OneDoubleFile, DatedSubFolder>(test);
     // SizeRestrictedLogsCreator
-    /*
     AddSizeRestrictedLogsCases<SizeRestrictedLogsCreator,
                                NoStartFiles, NoSubFolder>(test);
     AddSizeRestrictedLogsCases<SizeRestrictedLogsCreator,
@@ -458,7 +457,6 @@ TestSuite *init_unit_test_suite(int, char *[])
                                OneDoubleAndTwoFiles, DatedSubFolder>(test);
     AddSizeRestrictedLogsCases<SizeRestrictedDatedFolderLogsCreator,
                                ThreeFiles, DatedSubFolder>(test);
-    */
     return test;
 }
 
@@ -770,7 +768,7 @@ std::size_t MaxSizeParams<MaxSize>::GetParam1(const T &) const
 
 inline const boost::filesystem::path NoSubFolder::GetPath( ) const
 {
-    return "../../../../../..";
+    return ".";
 }
 
 const boost::filesystem::path DatedSubFolder::GetPath( ) const
@@ -910,6 +908,7 @@ Files GetPhysicalFiles(const boost::filesystem::path &folder,
 
     Files files;
 
+
     using namespace boost::filesystem;
     for (directory_iterator i(folder); directory_iterator( ) != i; ++i)
     {
@@ -970,7 +969,8 @@ void EraseMatchingFiles(const std::string &expression)
     using namespace boost::filesystem;
 
     const boost::regex EXPRESSION(expression);
-    const path DIRECTORY("../../../../../..");
+    const path DIRECTORY(".");
+
     for (directory_iterator i(DIRECTORY); directory_iterator( ) != i; ++i)
     {
         if (boost::regex_search(i->path( ).string( ), EXPRESSION))
@@ -983,7 +983,7 @@ void EraseMatchingFiles(const std::string &expression)
 void EraseTestFiles( )
 {
     EraseMatchingFiles("myrrh.*\\.log$");
-    EraseMatchingFiles("^(\\.\\/)\\d{4}\\d{2}\\d{2}$");
+    EraseMatchingFiles("^(\\..)\\d{4}\\d{2}\\d{2}$");
 }
 
 File FileFromHardDisk(const boost::filesystem::path &path)
@@ -1017,7 +1017,7 @@ boost::regex CreateTimeStampExpression(const std::string &folderPath,
     std::string folderString;
     if (!folderPath.empty( ))
     {
-        folderString = folderPath + "/";
+        folderString = folderPath + ".";
     }
 
     const std::string PREFIX(folderString + match[1].str( ));

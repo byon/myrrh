@@ -1,0 +1,11 @@
+
+* myrrh
+
+myrrh is a logging library I implemented at around 2006-2007 so that I would
+have something to show when looking for work. I published it recently in
+GitHub for the same purpose.
+
+Admittedly the library would benefit from a face-lift. It is written in
+C++98 and would probably look prettier with additions from C++11. Also I've
+learned a few things so I would quite many things differently. Especially
+with unit test. Let's see if I ever come around to do it.

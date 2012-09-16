@@ -62,6 +62,18 @@ template <typename Types, typename FileInitializer, typename Line,
          typename Case>
 void AddCase(TestSuite *test);
 
+int isNewDate = 0;
+class DateCreatorForTests
+{
+public:
+    typedef int Date;
+    static int NewDate( )
+    {
+        return isNewDate;
+    }
+};
+
+
 #if WIN32
 SYSTEMTIME GetCurrentWindowsTime( );
 bool IsTimeChangePossible( );
@@ -439,7 +451,7 @@ SizeRestrictionCreator::NewRestriction(const T &host) const
 template <typename T>
 inline RestrictionPtr DateRestrictionCreator::NewRestriction(const T &) const
 {
-    return RestrictionPtr(new DateRestriction<>);
+    return RestrictionPtr(new DateRestriction<DateCreatorForTests>);
 }
 
 // Params class implementations
@@ -536,42 +548,16 @@ void NormalCase::Test(T &host)
 template <typename T>
 void ChangeDateCase::Test(T &host)
 {
-#ifdef WIN32
-
-    if (!IsTimeChangePossible( ))
-    {
-        return;
-    }
-
     FilePtr file(host.GetFile(host));
-
-    TimeChanger changer;
-    SYSTEMTIME timeStamp = GetCurrentWindowsTime( );
-
-    timeStamp.wHour = 23;
-    timeStamp.wMinute = 59;
-    timeStamp.wSecond = 59;
-    timeStamp.wMilliseconds = 750;
-
-    changer.Change(timeStamp);
-
     RestrictionPtr restriction(host.NewRestriction(host));
-    assert(restriction != 0);
 
     BOOST_CHECK_EQUAL(host.Expected(host),
                       restriction->IsRestricted(*file, host.Line(host)));
 
-    Sleep(300);
+    isNewDate = 1;
 
-    BOOST_CHECK_EQUAL(true,
-                      restriction->IsRestricted(*file, host.Line(host)));
-
-    BOOST_CHECK_EQUAL(false,
-                      restriction->IsRestricted(*file, host.Line(host)));
-
-#else
-    BOOST_WARN("Unimplemented for linux");
-#endif
+    BOOST_CHECK_EQUAL(true, restriction->IsRestricted(*file, host.Line(host)));
+    BOOST_CHECK_EQUAL(false, restriction->IsRestricted(*file, host.Line(host)));
 }
 
 template <typename Creator,

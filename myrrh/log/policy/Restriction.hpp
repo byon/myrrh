@@ -147,7 +147,7 @@ private:
 };
 
 // Inline implementations
-/*
+
 inline boost::gregorian::date DateCreator::NewDate( )
 {
     return boost::gregorian::day_clock::local_day( );
@@ -172,7 +172,8 @@ IsRestricted(const File &, std::size_t) const
     date_ = today;
     return true;
 }
-*/
+
+}
 
 }
 

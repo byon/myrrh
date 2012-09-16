@@ -220,7 +220,7 @@ boost::regex Date::DoGetExpression( ) const
 
 void Date::AppendRestrictions(RestrictionStore &store)
 {
-    RestrictionPtr restriction(new DateRestriction);
+    RestrictionPtr restriction(new DateRestriction<>);
     store.Add(restriction);
 }
 

@@ -399,10 +399,20 @@ std::string GetFileContent(const boost::filesystem::path &path)
     return stream.str( );
 }
 
+unsigned GetEndOfLineSize( )
+{
+#ifdef WIN32
+    return 2;
+#else
+    return 1;
+#endif
+}
+
 std::streamsize StringSize(const std::string &text)
 {
+    static const unsigned EXTRA_LINE_SIZE = GetEndOfLineSize( ) - 1;
     const size_t LINES = std::count(text.begin( ), text.end( ), '\n');
-    return static_cast<std::streamsize>(text.size( ) + LINES);
+    return static_cast<std::streamsize>(text.size( ) + LINES * EXTRA_LINE_SIZE);
 }
 
 template <typename T>

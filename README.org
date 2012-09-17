@@ -17,3 +17,10 @@ with unit tests. Let's see if I ever come around to do it.
   3) Build from command line
      - on linux: waf configure build
      - on windows: waf configure build_debug build_release
+
+** Status of the project
+
+If you find the project useful, feel free to use it. The code is published
+with boost 1.0 license. But be warned that the library has not ever been
+used in production code. There is no real-life knowledge of stability nor of
+performance.

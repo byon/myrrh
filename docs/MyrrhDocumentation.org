@@ -124,7 +124,7 @@ automatically. This simple idea is the center piece of myrrh::log.
 Everything else is basically just bits and pieces added later.
 
 This solution as everything else in the world is of course not perfect and
-has disadvantages (please see @ref myrrh_log_motivation_wn_performance).
+has disadvantages (please see [[*Unmeasured%20performance][Unmeasured performance]]).
 
 **** Other goals
 
@@ -253,7 +253,7 @@ In myrrh::log, you can write the following:
 
 ...without worrying about converting numbers to strings or allocating
 buffers for strings. Of course this safety comes with a price (please see
-@ref myrrh_log_motivation_wn_performance).
+[[*Unmeasured%20performance][Unmeasured performance]]).
 
 ***** Natural usage
 
@@ -608,8 +608,7 @@ For example the following line uses the Debug verbosity level when writing:
 #+END_SRC
 
 The previous example gets written only if the configured verbosity level is
-Debug or higher (for list of levels, please refer to @ref
-myrrh_log_design_concepts_verbosity).
+Debug or higher (for list of levels, please refer to [[*Verbosity%20levels][Verbosity levels]]).
 
 The log entries with TRACE get written only if the build is made with Debug
 configuration (preprocessor statement NDEBUG must not be defined). In
@@ -1134,8 +1133,7 @@ Thus the level of portability has been (on a quite general level) been
 defined so that, if you can get STL and boost libraries work in your
 compiler/environment, you are likely to get myrrh::log to work as well.
 
-Or that is the goal at least (please read more from @ref
-myrrh_log_motivation_why_not).
+Or that is the goal at least (please read more from [[*Why%20not%20use%20myrrh::log?][Why not use myrrh::log?]]).
 
 As design decision this has affected so that I have been able to use
 exceptions, templates and type runtime info. With them I have also been able

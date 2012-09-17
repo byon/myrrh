@@ -21,4 +21,4 @@ If you find the project useful, feel free to use it. The code is published with 
 
 There is fairly large document that describes the entire myrrh library. It mostly concentrates on trying to sell the library instead of actually documenting it. It might be of some use though.
 
-You can find the documentation under [[file:docs/MyrrhDocumentation.org::*Documentation%20of%20myrrh%20library][docs directory]]
+You can find the documentation under [[file:docs/MyrrhDocumentation.org][docs directory]].

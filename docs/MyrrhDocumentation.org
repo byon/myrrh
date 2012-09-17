@@ -47,10 +47,10 @@ undefined behaviour. An example with such an error is shown (printf style
 functions usually expect a char array when using %s, the example gives
 an std::string object and results are undefined):
 
-@code
+#+BEGIN_SRC C++
    std::string toBePrinted("AString");
    Logger(LoggerLevel::Info, "Value of string %s", toBePrinted);
-@endcode
+#+END_SRC
 
 A program that uses printf-like functions for logging
 is likely to have at least one such mistake lurking in some code segment
@@ -72,12 +72,12 @@ block that would ensure correct log files in the context of multiple
 threads. Each use would have then required four lines of code. An example
 in C++:ish pseudocode:
 
-@code
+#+BEGIN_SRC C++
    SomeLoggerClass object;
    Lock( );
    object << "Action done";
    Unlock( );
-@endcode
+#+END_SRC
 
 This can of course be hidden by using macros, but I just happen to dislike
 macros. I've taken to heart the advice from nearly every c++ book not to use
@@ -91,9 +91,9 @@ of output. This way each new use of the logging object would cause the
 entering of the thread safe portion of code and the manipulator would exit
 it. This would have been as easy to use as std::cout:
 
-@code
+#+BEGIN_SRC C++
    SomeLogger::Info( ) << "Action done" << SomeLogger::Done;
-@endcode
+#+END_SRC
 
 Unfortunately this shares the problems that comes with manual usage of new /
 and delete. It is easy to forget to add the manipulator to the end of output
@@ -115,9 +115,9 @@ log entry. Constructor does any needed initialization, the log entry is
 compiled by using output operators and destructor writes the completed
 entry. As an example of use:
 
-@code
+#+BEGIN_SRC C++
    myrrh::log::Info( ) << "Action done";
-@endcode
+#+END_SRC
 
 No end manipulator is needed, because destructor takes care of it
 automatically. This simple idea is the center piece of myrrh::log.
@@ -174,9 +174,9 @@ has the following format 'YYYY.MM.DD hh:mm:ss:SSS I Entry' (where most of
 the header is easy-to-guess timestamp and 'I' is identifier for the used
 level of verbosity), for instance:
 
-@code
+#+BEGIN_SRC C++
 2007.03.19 23:06:41:123 I This is an example log entry line in Info level
-@endcode
+#+END_SRC
 
 This line header can be removed or configured to be more fitting to other
 requirements. The configuration can be changed during runtime.
@@ -247,9 +247,9 @@ programming book. I trust the people writing those books.
 
 In myrrh::log, you can write the following:
 
-@code
+#+BEGIN_SRC C++
     myrrh::log::Info( ) << "String with integer " << 1234;
-@endcode
+#+END_SRC
 
 ...without worrying about converting numbers to strings or allocating
 buffers for strings. Of course this safety comes with a price (please see
@@ -266,9 +266,9 @@ make the API a bit too cumbersome.
 What is the first thing that a programmer learns about c++? Probably the
 next line:
 
-@code
+#+BEGIN_SRC C++
     std::cout << "Hello world" << std::endl;
-@endcode
+#+END_SRC
 
 The output operator is the most natural way to output things in c++. This
 brings a sense of familiarity makes myrrh::log easier to learn. I've also
@@ -286,9 +286,9 @@ Sure enough there were type safe options available before as well. One
 could just use std::ofstream objects. You could use them even with the same
 one-line syntax:
 
-@code
+#+BEGIN_SRC C++
     std::ofstream("my.log") << LogHeader( ) << "A log entry" << std::endl;
-@endcode
+#+END_SRC
 
 This would annoy me, because I would have to add the file name, the log
 header and the flush manipulator everytime writing the log. Repeating code
@@ -407,11 +407,11 @@ things that probably could be better in myrrh::log.
 
 At this point myrrh::log has no unicode support. This means that the
 following lines of code will fail to compile:
-@code
+#+BEGIN_SRC C++
     std::wstring unicodeString("Streaming this to myrrh::log fails");
     myrrh::log::Info( ) << unicodeString;
     myrrh::log::Info( ) << L"The same is true for this";
-@endcode
+#+END_SRC
 
 This is quite a big flaw in myrrh::log, but it can be fixed. As the fix is
 (at least supposedly) quite mechanical, I have had no plans to do it as it
@@ -603,9 +603,9 @@ myrrh::log must set the verbosity level for each log entry. This happens
 easily by selecting the myrrh::log::Log::Verbosity objects as the target.
 For example the following line uses the Debug verbosity level when writing:
 
-@code
+#+BEGIN_SRC C++
     myrrh::log::Debug( ) << "This gets written only with high verbosity";
-@endcode
+#+END_SRC
 
 The previous example gets written only if the configured verbosity level is
 Debug or higher (for list of levels, please refer to @ref
@@ -632,12 +632,12 @@ processor time to produce. If the data is not needed for any other purpose,
 it may not be worthwhile to get it at all, if verbosity level is too low.
 For instance:
 
-@code
+#+BEGIN_SRC C++
    if (myrrh::log::Log::Instance( ).IsWritable(myrrh::log::DEBUG))
    {
        myrrh::log::Debug( ) << "Result: " << AlgorithmThatTakesLongTime( );
    }
-@endcode
+#+END_SRC
 
 **** Extendability
 
@@ -699,11 +699,11 @@ exists a folder for each execution (identified by process id). Inside these
 subfolders reside the actual log files that contain the timestamp of the
 file creation in their name.
 
-@code
+#+BEGIN_SRC C++
     using namespace myrrh::log::policy;
     Path path("/usr/logs/");
     path += Date( ) + "/" ProcessId( ) + "/myrrh" + Time( ) + ".log";
-@endcode
+#+END_SRC
 
 You can also create your own rules for making the paths and use them
 separately or in combination of existing rules. This happens by making a new

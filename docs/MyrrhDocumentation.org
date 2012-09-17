@@ -173,8 +173,7 @@ So, use of a logging library is a smart thing. But what if the implementer of th
 
 For fear of being called with ugly names, I've tried to make myrrh::log very configurable. I first wrote "as configurable as possible", but that is not really true. I've aimed for making some features that really work instead of plenty of features that usually work. Still, you can change the verbosity of your logging, the header written in front of your log entries, the path where your log is written to, the way your log is named, whether your log is cropped to shorter when it grows too large or if a new file is started or if the same file is used until disk capacity ends. All these choices can be made during runtime.
 
-And if you are not really happy with the selection of choices given, you can contact me and we'll see if we can come up with a solution. No promises made, though. This is a hobby, not a 24/7 commitment.
-:)
+And if you are not really happy with the selection of choices given, you can contact me and we'll see if we can come up with a solution. No promises made, though. This is a hobby, not a 24/7 commitment. :)
 
 ***** Basic policies already implemented
 

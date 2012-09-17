@@ -559,7 +559,7 @@ enough to work in an environment, where you get core dumps or something
 equivalent).
 
 For this reason, it pays to use type safe mechanism in log writing.
-[@@todo Would this rant be more natural in the Motivation section?]
+[@todo Would this rant be more natural in the Motivation section?]
 
 **** Exception safety
 
@@ -578,9 +578,9 @@ There is obvious disadvantage from this as well. If there is some error
 situation, there is not immediate feedback. For instance, there could be
 some incorrect path rule that would point to a hard disk that does not
 exist. The error is obvious, but as exceptions are banned, the developer
-does not get immediate error. Instead he must [@@todo what?].
+does not get immediate error. Instead he must [@todo what?].
 
-[@@todo Make sure that there is some way to check for output error.]
+[@todo Make sure that there is some way to check for output error.]
 
 **** Thread safety
 
@@ -588,7 +588,7 @@ Use of myrrh:log is safe also in multi-threaded environment. You can have as
 many threads writing log entries at the same time, as you want, and the log
 entries will come to log as whole. The execution order of the threads is not
 of course defined.
-@@todo Is this actually true? There are locks only in myrrh::log::Log.
+@todo Is this actually true? There are locks only in myrrh::log::Log.
 
 **** Verbosity levels
 
@@ -1027,7 +1027,6 @@ used as myrrh::log output targets.
 
 There also a few examples provided in the myrrh::log::policy namespace. They
 are actually examples of valid use cases, so they are usable as they are.
-@@todo Possible to add a link?
 
 **** Major design decisions in myrrh::log
 

@@ -90,9 +90,9 @@ The syslog entries in UNIX that talked previously about had a specific header in
 
 The log entries written by using myrrh::log have a default line header that has the following format 'YYYY.MM.DD hh:mm:ss:SSS I Entry' (where most of the header is easy-to-guess timestamp and 'I' is identifier for the used level of verbosity), for instance:
 
-#+BEGIN_SRC C++
+#+BEGIN_EXAMPLE
 2007.03.19 23:06:41:123 I This is an example log entry line in Info level
-#+END_SRC
+#+END_EXAMPLE
 
 This line header can be removed or configured to be more fitting to other requirements. The configuration can be changed during runtime.
 

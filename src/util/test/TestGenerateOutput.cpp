@@ -350,6 +350,7 @@ std::string NoInputCase::GetExpectedResult( )
     return "";
 }
 
+// Too big method
 std::string SuccessfullCase::GetExpectedResult( )
 {
     std::ifstream stream;

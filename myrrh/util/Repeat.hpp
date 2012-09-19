@@ -26,6 +26,7 @@ namespace util
 /**
  * A helper functor for repeating a function a count of times.
  */
+// Used only in one place, which is about to be scrapped. Scrap this too.
 template <typename Func>
 class Repeat
 {

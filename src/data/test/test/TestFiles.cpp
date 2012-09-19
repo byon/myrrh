@@ -36,6 +36,9 @@ void TestFileIndex(size_t index, const std::string &name);
 
 }
 
+// The idea of the test data files as this kind of structure is
+// questionable. Testing them seems even more foolish.
+
 using namespace myrrh::data::test;
 
 BOOST_AUTO_TEST_SUITE(DynamicSuite)

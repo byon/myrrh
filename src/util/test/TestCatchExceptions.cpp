@@ -26,7 +26,7 @@ class Dummy
 {
 public:
 
-    Dummy(const std::string &text) :
+    explicit Dummy(const std::string &text) :
         text_(text)
     {
     }
@@ -108,7 +108,7 @@ void TestErrors(Func function, const T &argument,
         CatchExceptions(function, argument, stream, true);
         BOOST_ERROR("The previous line should have caused an exception");
     }
-    catch(...)
+    catch(const TestException&)
     {
     }
 

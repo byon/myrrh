@@ -10,6 +10,8 @@
  * $Id: BufferedStream.hpp 365 2007-09-20 18:14:42Z byon $
  */
 
+// Why is this class in myrrh::util namespace and not in myrrh::file?
+
 #ifndef MYRHH_UTIL_BUFFEREDSTREAM_HPP_INCLUDED
 #define MYRHH_UTIL_BUFFEREDSTREAM_HPP_INCLUDED
 
@@ -30,7 +32,7 @@ namespace util
  * one solution that is reusable.
  * @note The current implementation just uses a std::string for storing the
  *       buffer. Other ways would probably improve performance. The current
- *       implementation was fast and safe and was thus selected.
+ *       implementation was fast to implement and safe.
  */
 class BufferedStream : public std::streambuf
 {
@@ -74,6 +76,8 @@ private:
      * Implements the actual output. Subclasses need to implement this method.
      * @return 0 If succeeded, otherwise -1.
      */
+    // Poorly named
+    // Can use booleans for return values, no real need to monkey original API
     virtual int SyncImpl( ) = 0;
 
     /** Our buffer for the error text */
@@ -81,6 +85,8 @@ private:
 };
 
 // Inline implementations
+
+// Any particular reason to have these inlined?
 
 inline std::streambuf::int_type
 BufferedStream::overflow(std::streambuf::int_type character)

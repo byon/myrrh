@@ -1,0 +1,42 @@
+
+* Generic review comments
+** File structure
+   - Division of header files into a separate directory structure makes
+     accessing the files tedious
+   - AddLicensing.py is not really worth saving
+   - The idea of data files stored as generally accessible c++ concepts
+     smells a bit.
+     - The tests are in general testing too much with the actual files
+     - There is not good enough isolation from the file system
+     - The idea of storing the files in a vector is also suspicious. It is
+       kind of handy for looping through the files yes.
+     - But then again it is hard to understand the tests who are currently
+       taking this into use. The tests should be small, readable and easily
+       understandable. They should not have an algorithm of their own.
+   - Precompiled header files would make compilation faster
+** Conventions
+   - The description bits on top of files is just useless maintenance burden
+   - No need for version information at top of file (subversion)
+   - At the time of writing myrrh, boost created a plenty of compilation
+     warnings. There is a separate system in place for hiding these.
+     Potentially this could just be removed.
+** Tests
+   - Tests are not easily readable, because each test is testing several
+     things
+   - Also they try to be overtly smart in avoiding code duplication. This
+     makes the readibility even worse.
+   - Tests should not be dependant on random input
+   - Nor of system clock
+   - The dependency to real file system should also be isolated
+     - I.e. test in one place and have dummy implementations elsewhere
+   - The tests could avoid boilerplate by using the automatic test
+     registration
+   - One test should test one thing
+   - Take better advantage of boost::test utilities, like BOOST_TEST_EXCEPTION
+** Miscellaneous
+   - Take better care in isolating the implementation to cpp
+   - Don't worry too much about performance -> lose bunch of inlines
+   - It generally (my current opinion) makes the code easier to read, if the
+     the higher level implementation are higher in the file as well.
+     - This would be better implemented by just declaring the helper
+       functions at top and then implementing them at bottom.

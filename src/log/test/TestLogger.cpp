@@ -3,8 +3,11 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+// Note: these are not really good tests. They are more like a collection of
+// different use scenarios. The results are not tested. Testing happens by
+// viewing the output.
 /**
- * This file contains unit tests for myrrh::log::Log and related classes.
+ * This file contains tests for myrrh::log::Log and related classes.
  * The tested functionalities include:
  *  - Using Verbosity classes to write c-strings, std::strings, integers,
  *    floats, characters and classes that have std::ostream output stream

@@ -16,6 +16,7 @@
 #ifndef MYRRH_UTILITY_RANDOMSTRING_H_INCLUDED
 #define MYRRH_UTILITY_RANDOMSTRING_H_INCLUDED
 
+// Could hide the implementation into cpp
 #include <algorithm>
 #include <ctime>
 #include <string>
@@ -25,6 +26,8 @@ namespace myrrh
 
 namespace util
 {
+
+// Used for unit testing, but unit tests should be deterministic. Scrap.
 
 /**
  * Returns a random character that can be anything from from ranges A-Z, a-z

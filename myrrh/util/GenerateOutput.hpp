@@ -13,13 +13,18 @@
 #ifndef MYRRH_UTIL_GENERATEOUTPUT_H_INCLUDED
 #define MYRRH_UTIL_GENERATEOUTPUT_H_INCLUDED
 
-#include <ios>
+#include <iosfwd>
 #include <stdexcept>
 
 namespace myrrh
 {
 namespace util
 {
+
+// This is used for generating test data. Better designed tests would be
+// able to either use string literals specific to the test or use
+// std::string constructor with size parameter for large strings. As a result
+// the uses of this should be removed and then this could be removed.
 
 /**
  * Generates large size of output from given input stream. The contents of the
@@ -44,7 +49,7 @@ class WriteFailed : public std::runtime_error
 {
 public:
 
-    WriteFailed(const std::string &what);
+    explicit WriteFailed(const std::string &what);
 };
 
 }

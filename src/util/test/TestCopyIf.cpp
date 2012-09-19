@@ -64,6 +64,7 @@ private:
     T testAgainst_;
 };
 
+// Forward declaration needed?
 template <class T>
 class Generator;
 
@@ -76,6 +77,7 @@ public:
 
     int operator( )( )
     {
+        // don't generate randomness into unit tests
         return std::rand( );
     }
 };
@@ -89,6 +91,7 @@ public:
 
     std::string operator( )( )
     {
+        // don't generate randomness into unit tests
         return myrrh::util::GetRandomString(20);
     }
 };

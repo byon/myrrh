@@ -35,6 +35,10 @@ namespace util
  * then ignored. Note that the default functionality can be replaced by
  * a function parameter.
  */
+/* Does not sound too good idea. Either the problem is real, and the
+ * exception should always be propagated, or the intention is for whatever
+ * reason to catch all (destructors?).
+ */
 #ifdef NDEBUG
     const bool DEFAULT_RETHROW = false;
 #else
@@ -57,12 +61,22 @@ namespace util
  * @return EXIT_SUCCESS if all is ok.
  *         EXIT_FAILURE if exception is caught and rethrow is false.
  */
+/* The same function is doing too much. Better to have different versions,
+ * some that output errors, some that don't. Or pass error handlers as
+ * template parameters.
+ */
 template <typename Func, typename Arg, typename Stream>
 int CatchExceptions(Func function, const Arg &argument, Stream &os,
                     bool rethrow = DEFAULT_RETHROW);
 
 
 // Inline implementations
+
+// In practice this is implementation is useful for something that runs in
+// its own thread. Is the pattern repeating so often that we actually need
+// the implementation?
+
+// Supports only one argument. Does not support no arguments.
 
 template <typename Func, typename Arg, typename Stream>
 inline int CatchExceptions(Func function, const Arg &argument,

@@ -63,6 +63,13 @@ namespace myrrh
 namespace util
 {
 
+// Need to check whether this idea is really usable. Possibly scrap this too
+// as unneeded. At least the implementation is not used anywhere
+// If still needed, probably might be better to guide to use std::bind instead
+// of these classes, which are tied to specific argument count.
+// Seems to be used only in Print, which is to be scrapped. Feel free to remove
+// unless there is a valid use case for users.
+
 /**
  * This class can be used as a helper class in implementing a user defined
  * output stream manipulators that take one argument (for instance std::setw).
@@ -109,6 +116,11 @@ private:
      * @param stream The stream to put the output into
      * @return The output stream to allow chain use of the operator
      */
+    // What's the point of having private operator? Operators are just
+    // syntactic sugar to make the class use more readable. Inside the class
+    // there is a need to always dereference the this object. The result
+    // will not be pretty.
+    // Modify to normal method
     std::ostream &operator( )(std::ostream &stream) const;
 
     /// Assignment operator disabled
@@ -278,4 +290,3 @@ Manipulate(Function function, const ArgumentOne &argumentOne,
 }
 
 #endif
-

@@ -57,6 +57,9 @@ namespace util
  *          with std::map, but as there has been no test driver, I would not
  *          trust the code to work.
  */
+// Do I use the range printing version enough to warrant the implementation?
+// For the container printing I could have a template function instead.
+// Actually the whole class is not used anywhere, just remove this.
 class Print
 {
 public:
@@ -143,6 +146,7 @@ inline std::ostream &Print::PrintRange(std::ostream &stream,
                                        const Iterator &begin,
                                        const Iterator &end) const
 {
+    // Could be extracted to be smaller
     if (begin != end)
     {
         typedef typename Iterator::value_type Value;

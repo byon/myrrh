@@ -13,6 +13,7 @@
 #ifndef MYRRH_FILE_ERASER_HPP_INCLUDED
 #define MYRRH_FILE_ERASER_HPP_INCLUDED
 
+// The entire implementation could be put into cpp and be isolated
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
 
@@ -56,7 +57,7 @@ public:
      *          directory, it will be deleted with its entire content.
      * @param path Path to the file or directory to be erased unless released.
      */
-    Eraser(const boost::filesystem::path &path);
+    explicit Eraser(const boost::filesystem::path &path);
 
     /**
      * Destructor
@@ -76,6 +77,7 @@ private:
     /// Disabled assignment operator
     Eraser operator=(const Eraser &);
 
+    // Isolate and forward declare?
     boost::filesystem::path path_;
 };
 

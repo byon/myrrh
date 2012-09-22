@@ -18,6 +18,7 @@ namespace myrrh
 namespace file
 {
 
+// Refactor the method smaller
 Temporary::Temporary(const boost::filesystem::path &path) :
     PATH_(path),
     eraser_(path),

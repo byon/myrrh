@@ -12,6 +12,7 @@
 #ifndef MYRRH_FILE_READONLYFILE_HPP_INCLUDED
 #define MYRRH_FILE_READONLYFILE_HPP_INCLUDED
 
+// Forward declare
 #include "boost/filesystem/path.hpp"
 #include <string>
 
@@ -53,6 +54,7 @@ private:
     ReadOnly(const ReadOnly&);
     ReadOnly operator=(const ReadOnly&);
 
+    // isolate
     boost::filesystem::path path_;
 };
 

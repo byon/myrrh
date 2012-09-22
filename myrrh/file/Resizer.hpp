@@ -12,7 +12,9 @@
 #ifndef MYRRH_FILE_RESIZER_H_INCLUDED
 #define MYRRH_FILE_RESIZER_H_INCLUDED
 
+// Forward declare and isolate
 #include "myrrh/file/Copy.hpp"
+// Forward declare and isolate
 #include "boost/filesystem/path.hpp"
 
 namespace myrrh

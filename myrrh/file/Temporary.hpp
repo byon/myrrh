@@ -12,6 +12,7 @@
 #ifndef MYRRH_FILE_TEMPORARY_HPP_INCLUDED
 #define MYRRH_FILE_TEMPORARY_HPP_INCLUDED
 
+// Isolate the implementation better and avoid include statements
 #include "myrrh/file/Eraser.hpp"
 #include "boost/filesystem/path.hpp"
 
@@ -98,6 +99,7 @@ private:
 };
 
 // Inline implementations
+/// Move to cpp
 
 inline std::ostream &Temporary::Stream( )
 {

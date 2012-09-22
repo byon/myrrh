@@ -13,8 +13,11 @@
 #ifndef MYRRH_FILE_COPY_HPP_INCLUDED
 #define MYRRH_FILE_COPY_HPP_INCLUDED
 
+// Forward declaration should be enough
 #include "myrrh/file/PositionScanner.hpp"
+// Apparently not needed
 #include "boost/filesystem/path.hpp"
+// Not actually used?
 #include "boost/shared_ptr.hpp"
 #include <ios>
 
@@ -41,11 +44,10 @@ public:
 
     /**
      * Constructor. Operation is undefined if either of the given parameters
-     * is null (debug builds will assert).
+     * is null (debug builds will assert). Does not throw exceptions.
      * @warning The input stream must be opened using std::ios::binary or the
      *          result will not be exact. This is because windows carriage
      *          return is not counted into copied size otherwise.
-     * Does not throw.
      * @param startScanner Object that knows the beginning point of copying
      * @param endScanner Object that knows the end point of copying
      */
@@ -97,4 +99,3 @@ private:
 }
 
 #endif
-

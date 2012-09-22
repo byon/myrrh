@@ -46,6 +46,7 @@ Copy::Copy(PositionScannerPtr startScanner, PositionScannerPtr endScanner) :
 {
 }
 
+// Too big method
 void Copy::operator( )(std::ifstream &input, std::ofstream &output) const
 {
     // if input stream is not open scanners will throw
@@ -68,6 +69,7 @@ void Copy::operator( )(std::ifstream &input, std::ofstream &output) const
         return;
     }
 
+    // What if the file is large? Would be better to copy in smaller fragments
     boost::scoped_array<char> buffer(new char[SIZE + 1]);
 
     input.seekg(START);

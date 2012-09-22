@@ -40,3 +40,6 @@
      the higher level implementation are higher in the file as well.
      - This would be better implemented by just declaring the helper
        functions at top and then implementing them at bottom.
+   - Search & replace boost::shared_ptr -> std::shared_ptr?
+   - Don't bother to document private methods or anonymous implementations
+   - Get rid of the massive amount of warnings on Windows side

@@ -12,6 +12,7 @@
 #ifndef MYRRH_UTILITY_TEMPORARYFILE_HPP_INCLUDED
 #define MYRRH_UTILITY_TEMPORARYFILE_HPP_INCLUDED
 
+// Isolate the class better and avoid the include statements
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
 #include <string>
@@ -47,7 +48,7 @@ public:
      *         points to a non-existing file or there is a directory that is
      *         named like result of SafeModify::Name(original).
      */
-    SafeModify(const boost::filesystem::path &original);
+    explicit SafeModify(const boost::filesystem::path &original);
 
     /**
      * Destructor. Ensures that if an exception occurs and the changes have
@@ -91,6 +92,7 @@ private:
 };
 
 // inline implementations
+/// Isolate to cpp file
 
 inline void SafeModify::Commit( ) const
 {

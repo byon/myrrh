@@ -282,6 +282,8 @@ void CreateFiles(const PathStore &store)
     }
 }
 
+// Why have this compiled only in DEBUG mode? The function only has asserts,
+// so the content will be the same in release and debug.
 #ifndef NDEBUG
 
 void CheckExpressionStart(const std::string &toCheck)

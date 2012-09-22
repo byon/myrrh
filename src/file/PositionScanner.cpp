@@ -67,6 +67,9 @@ ToEdgeScanner::ToEdgeScanner(std::ios::seekdir direction) :
 
 std::streampos ToEdgeScanner::DoScan(std::ifstream &stream) const
 {
+    // The implementation is so tiny, that perhaps it does not make sense to
+    // have a base class just for this. The implementation can be hidden
+    // into anonymous function.
     stream.seekg(0, DIRECTION_);
 
     return stream.tellg( );
@@ -156,6 +159,7 @@ inline std::streampos SeekNextLineStart(std::ifstream &stream,
         return stream.tellg( );
     }
 
+    /// @todo This will clear also any original stream errors.
     stream.clear( );
     return end;
 }

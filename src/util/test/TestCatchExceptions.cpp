@@ -65,10 +65,7 @@ void Function(const T &)
 template <typename T>
 void ThrowUnknown(const T &)
 {
-    class UnknownException
-    {
-    };
-    throw UnknownException( );
+    throw 3;
 }
 
 template <int ExpectedValue>
@@ -108,7 +105,7 @@ void TestErrors(Func function, const T &argument,
         CatchExceptions(function, argument, stream, true);
         BOOST_ERROR("The previous line should have caused an exception");
     }
-    catch(const TestException&)
+    catch(...)
     {
     }
 

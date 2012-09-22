@@ -39,12 +39,6 @@ using namespace file;
 namespace
 {
 
-/**
- * Constructs a new Resizer object
- * @param path The path to the file to be resized
- * @param sizeLeftAfter The maximum size that should be left after resize
- * @returns The new Resizer object
- */
 file::Resizer NewResizer(const boost::filesystem::path &path,
                          std::streamsize sizeLeftAfter);
 }
@@ -56,6 +50,7 @@ Resizer::Resizer(std::streamsize sizeLeftAfter) :
 {
 }
 
+// Divide smaller
 boost::filesystem::path Resizer::DoOpen(std::filebuf &file, Path& path)
 {
     const boost::filesystem::path PATH(path.Generate( ));
@@ -82,6 +77,7 @@ boost::filesystem::path Resizer::DoOpen(std::filebuf &file, Path& path)
             // ignore the possible exceptions.
             if (PATH.has_parent_path( ))
             {
+                // There is also a version with no-throw guarantee
                 boost::filesystem::create_directories(PATH.parent_path( ));
             }
         }

@@ -9,12 +9,13 @@
  * enumeration VerbosityLevel all in namespace myrrh::log.
  *
  * $Id: Log.hpp 355 2007-09-17 18:48:35Z byon $
- * 
+ *
  */
 
 #ifndef MYRRH_LOG_LOGGER_H_INCLUDED
 #define MYRRH_LOG_LOGGER_H_INCLUDED
 
+// Isolate the implementation better
 #include "myrrh/log/Header.hpp"
 #include "boost/thread/mutex.hpp"
 #include <sstream>
@@ -26,6 +27,7 @@ namespace myrrh
 namespace log
 {
 
+// Do not undef on header files, find some other way
 #undef ERROR
 
 /**
@@ -35,6 +37,7 @@ namespace log
  */
 enum VerbosityLevel
 {
+    // Why starting from 2?
     CRIT = 2,
     ERROR,
     WARN,
@@ -60,6 +63,7 @@ enum VerbosityLevel
  *   <LI> myrrh::log::Trace
  * </UL>
  */
+// Singletons are generally speaking a bad practise, find another way
 class Log
 {
 public:
@@ -78,6 +82,8 @@ public:
      * to the new object. The original object has no real reason to be stored
      * and its destruction will not cause changes in output targets.
      */
+    // Another option would be to use shared_ptr, with the deletion logic
+    // replaced with cleanup
     class OutputGuard
     {
     public:
@@ -177,6 +183,14 @@ public:
      *       level. When that is used, the output is printed only in debug
      *       builds.
      */
+    /// This class should be moved to a header of it's own, with isolated
+    /// implementation on actual writing. This is the actual interface to
+    /// logging, which means the header where it is contained will be
+    /// included in many, many places. The header should be fast to build,
+    /// and thus the other details here should be in other header files.
+    ///
+    /// The VerbosityLevel enumeration prevents users from customizing the
+    /// levels
     template <VerbosityLevel Limit, char Id>
     class Verbosity : public VerbosityBase<Limit, Id>
     {
@@ -238,6 +252,8 @@ public:
      * specialization is empty and the use should be optimized so that there
      * is no performance cost.
      */
+    // I no longer think this is a good idea. I will want to have the
+    // ability to trace also on release builds.
     template <>
     class Verbosity<TRACE, 'T'> : public VerbosityBase<TRACE, 'T'>
     {
@@ -372,10 +388,14 @@ private:
     /** Storage of output targets */
     OutputTargets targets_;
     /** Current verbosity level */
+    // Why is this volatile? Volatile is not sufficient to guarantee
+    // thread-safety, if that is the purpose.
     volatile VerbosityLevel verbosity_;
     /** Line that is currently being written containing the header */
     std::ostringstream line_;
     /** Mutex that guards concurrent writing access */
+    // The mutex is now global to all. Wouldn't it be better, if it was
+    // specific to one output target?
     boost::mutex mutex_;
     /** Knows how to write the header of each line */
     HeaderPtr header_;
@@ -392,11 +412,10 @@ typedef log::Log::Verbosity<DEBUG, 'D'> Debug;
 typedef log::Log::Verbosity<TRACE, 'T'> Trace;
 
 // Inline implementations
+// Move to cpp and isolate better
 
 inline Log &Log::Instance( )
 {
-    /// @todo According to Eckel this is dangerous, because the instance is
-    ///       duplicated into all translation units.
     static Log logInstance;
     return logInstance;
 }
@@ -422,6 +441,9 @@ inline void Log::WriteHeader(char id)
     }
 }
 
+// The lock is now reserved for the duration of the verbosity object. If
+// locking really is needed, it would be better to have it only around the
+// actual writing.
 template <VerbosityLevel Limit, char Id>
 inline Log::Verbosity<Limit, Id>::Verbosity( ) :
     lock_(GetLock( ))
@@ -462,6 +484,8 @@ Log::Verbosity<Limit, Id>::operator<<(
 {
     if (lock_)
     {
+        // I no longer understand what happens here, but looks too complex
+        // with all the casts to be safe.
         (*manipulator)(*(std::ios_base *)&(Log::Instance( ).line_));
     }
     return (*this);

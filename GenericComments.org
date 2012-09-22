@@ -24,7 +24,8 @@
    - Tests are not easily readable, because each test is testing several
      things
    - Also they try to be overtly smart in avoiding code duplication. This
-     makes the readibility even worse.
+     makes the readibility even worse. Especially where the implementation
+     is done by using complex template logic.
    - Tests should not be dependant on random input
    - Nor of system clock
    - The dependency to real file system should also be isolated
@@ -34,7 +35,7 @@
    - One test should test one thing
    - Take better advantage of boost::test utilities, like BOOST_TEST_EXCEPTION
 ** Miscellaneous
-   - Take better care in isolating the implementation to cpp
+   - Take better care in isolating the implementation to cpp files
    - Don't worry too much about performance -> lose bunch of inlines
    - It generally (my current opinion) makes the code easier to read, if the
      the higher level implementation are higher in the file as well.

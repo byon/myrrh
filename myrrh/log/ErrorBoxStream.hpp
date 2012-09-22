@@ -25,6 +25,11 @@ namespace myrrh
 namespace log
 {
 
+// I think this is a horrible idea. The act of logging should not be
+// confused with error handling. This could serve the purpose of showing an
+// example on how to implement your own BufferedStream. Most likely I will
+// just remove this.
+
 /**
  * This class implements std output stream interface for showing error dialogs.
  * It has perhaps little use on its own. When used in conjunction with
@@ -46,7 +51,7 @@ public:
      * @param caption A text string that will be shown as caption of the error
      *                dialog.
      */
-    ErrorBoxBuffer(const std::string &caption);
+    explicit ErrorBoxBuffer(const std::string &caption);
 
 private:
 
@@ -86,7 +91,7 @@ public:
      * @param caption A text string that will be shown as caption of the error
      *                dialog.
      */
-    ErrorBoxStream(const std::string &caption);
+    explicit ErrorBoxStream(const std::string &caption);
 
 protected:
 

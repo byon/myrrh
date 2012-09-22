@@ -30,6 +30,7 @@ namespace policy
  * interface. It is not designed to be usable by itself, but through Stream
  * class.
  */
+// Move to separate header
 class Buffer : public util::BufferedStream
 {
 public:
@@ -48,14 +49,9 @@ private:
      */
     virtual int SyncImpl( );
 
-    /**
-     * Copy constructor declared to prevent unintended usage.
-     */
+    /// Prevent copying
     Buffer(const Buffer &);
-
-    /**
-     * Assignment operator declared to prevent unintended usage.
-     */
+    /// Prevent assignment
     Buffer &operator=(const Buffer &);
 
     /// Contains the policy rules for log writing
@@ -97,14 +93,9 @@ private:
     /// Implements the directing of output to myrrh::log::policy
     Buffer buffer_;
 
-    /**
-     * Copy constructor declared to prevent unintended usage.
-     */
+    /// Prevent copying
     Stream(const Stream &);
-
-    /**
-     * Assignment operator declared to prevent unintended usage.
-     */
+    /// Prevent assingment
     Stream &operator=(const Stream &);
 };
 

@@ -60,6 +60,9 @@ boost::filesystem::path File::TryOpening(Opener &opener, policy::Path &path,
     // The opening is done in this separate function, because it is possible
     // to fail for lack of memory. Any other exceptions are programming errors
     // and thus we'll assert if those are caught.
+
+    /// How about just requiring no-throw quarantee from the DoOpen
+    /// implementations?
     try
     {
         return opener.DoOpen(*file.rdbuf( ), path);

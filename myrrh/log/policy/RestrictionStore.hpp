@@ -33,7 +33,7 @@ class Restriction;
 typedef boost::shared_ptr<Restriction> RestrictionPtr;
 
 /**
- * This file is used to store Restriction objects and to check if any of the
+ * This class is used to store Restriction objects and to check if any of the
  * contained restrictions apply to the current conditions.
  */
 class RestrictionStore

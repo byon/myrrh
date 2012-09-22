@@ -13,6 +13,7 @@
 #ifndef MYRRH_LOG_POLICY_PATHPART_H_INCLUDED
 #define MYRRH_LOG_POLICY_PATHPART_H_INCLUDED
 
+// Isolate better
 #include "myrrh/log/policy/RestrictionAppender.hpp"
 #include "boost/filesystem/path.hpp"
 #include "boost/regex.hpp"
@@ -42,16 +43,7 @@ class PartSum;
  * In isolation PathPart classes do not really make that much sense. They are
  * intended to by used in conjunction with myrrh::log::policy::Path objects.
  *
- * @note No virtual destructor needed, because there is already a parent class
- *       that has one.
- *
- * @note Uses NVI interface
- *
- * @note Much of the implementation of PathPart and related classes are small
- *       enough to be inlined. However as the intended use is for creating
- *       paths for log files, the performance is not likely to be an issue.
- *       Log files should be created only quite rarely and the performance of
- *       I/O operation will probably have more effect any way.
+ * @note Uses NVI pattern
  */
 class PathPart : public RestrictionAppender
 {
@@ -128,6 +120,7 @@ public:
      * Constructor
      * @param path The path from which the PartSum will be generated from
      */
+    /// @todo This probably should be explicit?
     PartSum(const std::string &path);
 
     /**
@@ -138,6 +131,7 @@ public:
     /**
      * Adds a new path part to the sum.
      */
+    // Why is this template and not PathPart?
     template <typename T>
     void Add(const T &part);
 
@@ -204,7 +198,7 @@ public:
 
     /**
      * Text objects have no restriction, so does nothing.
-     * @param store The store for the possible restrictions 
+     * @param store The store for the possible restrictions
      */
     void AppendRestrictions(RestrictionStore &store);
 
@@ -252,7 +246,7 @@ private:
 
 /**
  * This PathPart subclass can be used to create folder separators into paths.
- * The use is easier through string literals or std::string objects. See 
+ * The use is easier through string literals or std::string objects. See
  * documentation of Text for more explanation and examples of use.
  * @note Not intended for explicit use. Declared here to be testable. Use
  * instead string literals (or std::strings) that are passed to Path object.
@@ -264,7 +258,7 @@ public:
 
     /**
      * Folder objects have no restriction, so does nothing.
-     * @param store The store for the possible restrictions 
+     * @param store The store for the possible restrictions
      */
     void AppendRestrictions(RestrictionStore &store);
 
@@ -318,7 +312,7 @@ public:
      * Date objects have a restriction. When the date changes, the file path
      * should also be changed. Therefore a new DateRestriction object is
      * appended to given store.
-     * @param store The store for the possible restrictions 
+     * @param store The store for the possible restrictions
      */
     void AppendRestrictions(RestrictionStore &store);
 
@@ -397,7 +391,7 @@ public:
 
     /**
      * Time objects have no restriction, so does nothing.
-     * @param store The store for the possible restrictions 
+     * @param store The store for the possible restrictions
      */
     void AppendRestrictions(RestrictionStore &store);
 
@@ -456,7 +450,7 @@ public:
 
     /**
      * Index objects have no restriction, so does nothing.
-     * @param store The store for the possible restrictions 
+     * @param store The store for the possible restrictions
      */
     void AppendRestrictions(RestrictionStore &store);
 
@@ -511,7 +505,7 @@ public:
 
     /**
      * ProcessId objects have no restriction, so does nothing.
-     * @param store The store for the possible restrictions 
+     * @param store The store for the possible restrictions
      */
     void AppendRestrictions(RestrictionStore &store);
 

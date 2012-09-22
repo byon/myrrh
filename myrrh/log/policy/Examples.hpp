@@ -45,7 +45,7 @@ PolicyPtr DatedFolderLog( );
 
 /**
  * Constructs a log policy that always uses the same file. If the file exists
- * at startup, the new entries are appended to the end. If the file reaches 
+ * at startup, the new entries are appended to the end. If the file reaches
  * maximum size, it is resized to half of the maximum size. The file is
  * written to the execution directory of the program with name "myrrh.log".
  * @param maxSize Maximum size in kilobytes for the file
@@ -66,6 +66,7 @@ PolicyPtr SizeRestrictedDatedFolderLog(std::size_t maxSize);
  * reached a new file is started. The files are identified from each other by
  * time stamps.
  *
+ * @todo Check whether the timestamp format documentation is still valid
  * The files are named by the following format:
  * myrrhHHMMSS-IIIIII-n, where
  *  HH is hours
@@ -86,6 +87,7 @@ PolicyPtr SizeRestrictedLogs(std::size_t maxSize);
  * maximum size is reached a new file is started. The files are identified from
  * each other by time stamps.
  *
+ * @todo Check whether the timestamp format documentation is still valid
  * The files are named by the following format:
  * YYYYmmDD/myrrhHHMMSS-IIIIII-n, where
  *  YYYY is year

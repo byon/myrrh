@@ -25,21 +25,7 @@ namespace policy
 namespace
 {
 
-/**
- * Compares the size of the given string to the given size. If they are not
- * equal, an adjustment is tried by adding the count of lines to the string
- * size. If either of the comparisons succeed, the string size is returned,
- * otherwise the compared size is returned.
- * The purpose of the function is to check if the File::Write call succeeded or
- * not. It succeeded if the size is equal to given string size. In windows
- * we need to check if the written size contains the additional end-of-line
- * characters.
- * @param toWrite The string to check
- * @param written The size to check against
- * @return The adjusted size
- */
-std::streamsize AdjustSize(const std::string &toWrite,
-                           std::streamsize written);
+std::streamsize AdjustSize(const std::string &toWrite, std::streamsize written);
 
 #ifdef WIN32
 const bool ADJUSTING_NEEDED = true;
@@ -52,12 +38,14 @@ const bool ADJUSTING_NEEDED = false;
  * implementation is used if size adjusting is needed, otherwise the
  * specialization is used.
  */
+// Is this really worth the template specialization? Are there many places
+// where ADJUSTING_NEEDED would be compared?
 template <bool AdjustingNeeded = true>
 class SizeAdjusterImpl
 {
 public:
 
-    SizeAdjusterImpl(const std::string &toWrite);
+    explicit SizeAdjusterImpl(const std::string &toWrite);
     std::streamsize GetSize( ) const;
     std::streamsize Adjust(std::streamsize written) const;
 
@@ -78,7 +66,7 @@ class SizeAdjusterImpl<false>
 {
 public:
 
-    SizeAdjusterImpl(const std::string &toWrite);
+    explicit SizeAdjusterImpl(const std::string &toWrite);
     std::streamsize GetSize( ) const;
     std::streamsize Adjust(std::streamsize written) const;
 
@@ -110,6 +98,7 @@ void Policy::AddRestriction(RestrictionPtr restriction)
     restrictions_.Add(restriction);
 }
 
+// Divide smaller
 std::streamsize Policy::Write(const std::string &toWrite)
 {
     boost::filesystem::path originalPath(file_->Path( ));
@@ -119,6 +108,8 @@ std::streamsize Policy::Write(const std::string &toWrite)
     // text size is returned.
     const SizeAdjuster ADJUSTER(toWrite);
 
+    // Is the file size counting the responsibility of this class? It is
+    // only used by the policies which are based on file size.
     while (restrictions_.IsRestricted(*file_, ADJUSTER.GetSize( )))
     {
         // The file needs to be explicitly destructed before opening the next

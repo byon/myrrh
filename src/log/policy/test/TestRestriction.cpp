@@ -25,6 +25,8 @@
  * $Id: TestRestriction.cpp 356 2007-09-18 19:55:21Z byon $
  */
 
+// Rewrite
+
 #include "myrrh/log/policy/Restriction.hpp"
 #include "myrrh/log/policy/Creator.hpp"
 #include "myrrh/log/policy/PathPart.hpp"

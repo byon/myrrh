@@ -36,6 +36,7 @@ void TestStream( );
 // Helper function declarations
 std::string GetFileContent(const std::string &path);
 
+// Use automatic test initialization
 TestSuite *init_unit_test_suite(int, char *[])
 {
     TestSuite* test = BOOST_TEST_SUITE("Test suite for Stream");
@@ -43,6 +44,7 @@ TestSuite *init_unit_test_suite(int, char *[])
     return test;
 }
 
+// Just one test? And even that is commented out...
 void TestStream( )
 {
     const std::string FILE_NAME("myrrh.log");

@@ -71,6 +71,7 @@ void TestPidPathPart( );
 void TestAddingPartsTogether( );
 void TestDotInText( );
 
+// Use the automatic test initialization
 TestSuite *init_unit_test_suite(int, char *[])
 {
     TestSuite* test = BOOST_TEST_SUITE("Test suite for PathPart");
@@ -96,6 +97,7 @@ TestSuite *init_unit_test_suite(int, char *[])
 
 // Implementations of tester functions
 
+// Divide smaller
 void TestTextPathPart( )
 {
     const std::string TEXT("SomeText");
@@ -123,6 +125,7 @@ void TestTextPathPart( )
     BOOST_CHECK(!text.IsFirstEarlier(TEXT, TEXT));
 }
 
+// Use BOOST_CHECK_EQUAL_COLLECTION in cases like this
 void TestStringToPartSum( )
 {
     PartSum sum;
@@ -282,6 +285,7 @@ void TestDatePathPart( )
     BOOST_CHECK(!date.IsFirstEarlier("20060109", "20060109"));
 }
 
+// Divide smaller
 void TestTimePathPart( )
 {
     // The generated string is not checked exactly, because it contains a
@@ -317,6 +321,7 @@ void TestTimePathPart( )
                                          "101010-000100-0"));
 }
 
+// Perhaps we don't really need to test 10000 times...
 void TestTimeGenerationIsAlwaysUnique( )
 {
     Time timePart;
@@ -329,6 +334,7 @@ void TestTimeGenerationIsAlwaysUnique( )
     }
 }
 
+// Divide smaller
 void TestIndexPathPart( )
 {
     Index index;
@@ -352,6 +358,7 @@ void TestIndexPathPart( )
     IsFirstLater(index, "200020100", "200020099");
 }
 
+// Divide smaller
 void TestPidPathPart( )
 {
     const std::string PID(GetProcessId( ));
@@ -375,9 +382,10 @@ void TestAddingPartsTogether( )
     const std::string TEXT1("Text1");
     const std::string TEXT2("Text2");
     TestTextSum(TEXT1, TEXT2);
-    TestTextSum(TEXT2, TEXT1);
+    TestTextSum(TEXT2, TEXT1); // Why the second test?
 }
 
+// Divide smaller
 void TestDotInText( )
 {
     const std::string TEXT("Some.thing");
@@ -461,7 +469,7 @@ void TestTextSum(const std::string &text1, const std::string &text2)
 
 template <typename T>
 inline void IsFirstLater(const T &part, const std::string &later,
-                           const std::string &earlier)
+                         const std::string &earlier)
 {
     if (part.IsFirstEarlier(later, earlier))
     {

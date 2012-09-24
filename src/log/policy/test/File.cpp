@@ -46,6 +46,7 @@ void File::AddLine(const std::string &line)
     content_ += line + '\r';
 }
 
+// Divide smaller
 void File::CropToSize(std::size_t size)
 {
     if (size >= content_.size( ))

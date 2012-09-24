@@ -12,6 +12,12 @@
  * $Id: TestExamples.cpp 369 2007-09-20 20:08:51Z byon $
  */
 
+// This file is not really worth maintaining. If there are problems later,
+// rewrite. Problems:
+// - Too much complexity
+// - Not clear which tests fail
+// - Not clear what fails when a test fails
+
 #include "myrrh/log/policy/Examples.hpp"
 #include "File.hpp"
 #include "myrrh/file/Eraser.hpp"

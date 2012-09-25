@@ -58,6 +58,7 @@ Files GetPhysicalFiles(const boost::filesystem::path &folder,
                        PlainFileNamer &namer);
 Files GetPhysicalFiles(const boost::filesystem::path &folder,
                        TimestampedFileNamer &namer);
+bool CompareFilesOnName(const File &left, const File &right);
 template <typename Host>
 void SetupOneStartFileForChecking(Files &files, Host &host);
 void WriteFiles(const Files &files);
@@ -908,7 +909,6 @@ Files GetPhysicalFiles(const boost::filesystem::path &folder,
 
     Files files;
 
-
     using namespace boost::filesystem;
     for (directory_iterator i(folder); directory_iterator( ) != i; ++i)
     {
@@ -918,7 +918,14 @@ Files GetPhysicalFiles(const boost::filesystem::path &folder,
         }
     }
 
+    std::sort(files.begin( ), files.end( ), CompareFilesOnName);
+
     return files;
+}
+
+bool CompareFilesOnName(const File &left, const File &right)
+{
+    return left.Path( ) < right.Path( );
 }
 
 template <typename Host>

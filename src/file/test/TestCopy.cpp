@@ -27,6 +27,7 @@
  */
 
 #include "myrrh/file/Copy.hpp"
+#include "myrrh/file/PositionScanner.hpp"
 #include "myrrh/file/Eraser.hpp"
 #include "myrrh/util/GenerateOutput.hpp"
 #include "myrrh/data/test/Files.hpp"
@@ -34,6 +35,7 @@
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
 
+#include "boost/filesystem/path.hpp"
 #include "boost/test/unit_test.hpp"
 #include "boost/scoped_array.hpp"
 

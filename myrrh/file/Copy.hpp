@@ -13,18 +13,18 @@
 #ifndef MYRRH_FILE_COPY_HPP_INCLUDED
 #define MYRRH_FILE_COPY_HPP_INCLUDED
 
-// Forward declaration should be enough
-#include "myrrh/file/PositionScanner.hpp"
-// Apparently not needed
-#include "boost/filesystem/path.hpp"
-// Not actually used?
 #include "boost/shared_ptr.hpp"
-#include <ios>
+#include <iosfwd>
+
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {
 namespace file
 {
+
+class PositionScanner;
+typedef boost::shared_ptr<PositionScanner> PositionScannerPtr;
 
 /**
  * The class is intented for partial copying of a file to a new file. Although

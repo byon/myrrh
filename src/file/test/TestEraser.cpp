@@ -9,7 +9,7 @@
  * The following situations are tested:
  * -Giving path to file in current folder
  * -Giving relative path to file in a subfolder
- * -Giving absolute path to file 
+ * -Giving absolute path to file
  * -Giving path to a directory
  * -No call to Release
  * -Exception before Release
@@ -26,6 +26,8 @@
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
 
+#include "boost/filesystem/path.hpp"
+#include "boost/filesystem/operations.hpp"
 #include "boost/test/unit_test.hpp"
 
 #include <fstream>

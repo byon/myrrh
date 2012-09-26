@@ -10,6 +10,7 @@
  */
 
 #include "myrrh/file/Copy.hpp"
+#include "myrrh/file/PositionScanner.hpp"
 
 #include "boost/scoped_array.hpp"
 

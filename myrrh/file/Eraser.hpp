@@ -13,9 +13,9 @@
 #ifndef MYRRH_FILE_ERASER_HPP_INCLUDED
 #define MYRRH_FILE_ERASER_HPP_INCLUDED
 
-// The entire implementation could be put into cpp and be isolated
-#include "boost/filesystem/path.hpp"
-#include "boost/filesystem/operations.hpp"
+#include "boost/shared_ptr.hpp"
+
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {
@@ -77,39 +77,8 @@ private:
     /// Disabled assignment operator
     Eraser operator=(const Eraser &);
 
-    // Isolate and forward declare?
-    boost::filesystem::path path_;
+    boost::shared_ptr<boost::filesystem::path> path_;
 };
-
-// Inline implementations
-
-inline Eraser::Eraser(const boost::filesystem::path &path) :
-    path_(path)
-{
-    assert(!boost::filesystem::equivalent(path,
-                                          boost::filesystem::current_path( )));
-}
-
-inline Eraser::~Eraser( )
-{
-    if (path_.empty( ))
-    {
-        return;
-    }
-    try
-    {
-        boost::filesystem::remove_all(path_);
-    }
-    catch (...)
-    {
-        // Do not allow exceptions from destructor
-    }
-}
-
-inline void Eraser::Release( )
-{
-    path_ = "";
-}
 
 }
 

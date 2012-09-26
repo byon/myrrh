@@ -14,7 +14,7 @@
 #define MYRRH_FILE_COPY_HPP_INCLUDED
 
 #include "boost/shared_ptr.hpp"
-#include <ios>
+#include <iosfwd>
 
 namespace boost { namespace filesystem { class path; } }
 

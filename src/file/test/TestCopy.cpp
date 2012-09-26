@@ -27,6 +27,7 @@
  */
 
 #include "myrrh/file/Copy.hpp"
+#include "myrrh/file/PositionScanner.hpp"
 #include "myrrh/file/Eraser.hpp"
 #include "myrrh/util/GenerateOutput.hpp"
 #include "myrrh/data/test/Files.hpp"

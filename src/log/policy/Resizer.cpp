@@ -12,6 +12,8 @@
 #include "myrrh/log/policy/Resizer.hpp"
 #include "myrrh/log/policy/Path.hpp"
 #include "myrrh/file/Resizer.hpp"
+#include "myrrh/file/PositionScanner.hpp"
+
 #include "boost/filesystem/operations.hpp"
 
 #define DISABLE_SIGNED_UNSIGNED_MISMATCH

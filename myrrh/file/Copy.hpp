@@ -13,15 +13,18 @@
 #ifndef MYRRH_FILE_COPY_HPP_INCLUDED
 #define MYRRH_FILE_COPY_HPP_INCLUDED
 
-#include "myrrh/file/PositionScanner.hpp"
-#include "boost/filesystem/path.hpp"
 #include "boost/shared_ptr.hpp"
 #include <ios>
+
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {
 namespace file
 {
+
+class PositionScanner;
+typedef boost::shared_ptr<PositionScanner> PositionScannerPtr;
 
 /**
  * The class is intented for partial copying of a file to a new file. Although
@@ -97,4 +100,3 @@ private:
 }
 
 #endif
-

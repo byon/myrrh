@@ -13,8 +13,6 @@
 #ifndef MYRRH_FILE_MATCHFILES_HPP_INCLUDED
 #define MYRRH_FILE_MATCHFILES_HPP_INCLUDED
 
-// Isolate implementations to cpp file and reduce the amount of include
-// statements
 #include "myrrh/util/CopyIf.hpp"
 #include "boost/filesystem/operations.hpp"
 #include "boost/regex.hpp"
@@ -47,7 +45,6 @@ PathStore MatchFiles(const boost::filesystem::path &folder, Matcher matcher);
 /**
  * A predicate useful to check if a path matches a regular expression.
  */
-// Isolate to cpp and hide boost::regex
 // Check out what was the benefit of using std::unary_function
 // A version that recursively looks for the pattern might also be useful
 class ExpressionMatcher :

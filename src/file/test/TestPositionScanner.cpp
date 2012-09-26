@@ -21,6 +21,7 @@
 #include "boost/shared_ptr.hpp"
 #include "boost/algorithm/string/erase.hpp"
 #include "boost/algorithm/string/replace.hpp"
+#include "boost/filesystem/path.hpp"
 #include "boost/test/unit_test.hpp"
 
 #ifdef WIN32

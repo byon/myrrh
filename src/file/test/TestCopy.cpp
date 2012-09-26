@@ -35,6 +35,7 @@
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
 
+#include "boost/filesystem/path.hpp"
 #include "boost/test/unit_test.hpp"
 #include "boost/scoped_array.hpp"
 

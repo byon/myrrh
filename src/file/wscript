@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 def build(bld):
-    bld.stlib(source='Copy.cpp PositionScanner.cpp ReadOnly.cpp Resizer.cpp ' +
-                     'SafeModify.cpp Temporary.cpp',
+    bld.stlib(source='Copy.cpp Eraser.cpp PositionScanner.cpp ReadOnly.cpp ' +
+                     'Resizer.cpp SafeModify.cpp Temporary.cpp',
               use='boost', target='myrrh.file', includes='../..')
     bld.recurse('test')

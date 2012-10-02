@@ -51,6 +51,7 @@
 #include "myrrh/log/policy/Resizer.hpp"
 #include "myrrh/log/policy/PathPart.hpp"
 #include "myrrh/file/Temporary.hpp"
+#include "myrrh/file/Eraser.hpp"
 
 #define DISABLE_TYPE_CONVERSION_LOSS_OF_DATA
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT

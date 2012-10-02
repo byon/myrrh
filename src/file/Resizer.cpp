@@ -11,7 +11,9 @@
 
 #include "myrrh/file/Resizer.hpp"
 
+#include "myrrh/file/Copy.hpp"
 #include "myrrh/file/SafeModify.hpp"
+#include "boost/filesystem/path.hpp"
 #include <string>
 #include <fstream>
 
@@ -37,17 +39,53 @@ std::ios::openmode GetOpenMode<std::ifstream>( );
 
 }
 
+class Resizer::Implementation
+{
+public:
+    Implementation(const boost::filesystem::path &file,
+                   PositionScannerPtr startScanner,
+                   PositionScannerPtr endScanner);
+    void Resize( ) const;
+
+private:
+
+    boost::filesystem::path file_;
+    Copy copier_;
+};
+
 // Class implementation
 
 Resizer::Resizer(const boost::filesystem::path &file,
                  PositionScannerPtr startScanner,
                  PositionScannerPtr endScanner) :
+    implementation_(new Implementation(file, startScanner, endScanner))
+{
+}
+
+void Resizer::operator( )( ) const
+{
+    implementation_->Resize( );
+}
+
+Resizer::NoFile::NoFile(const boost::filesystem::path &path) :
+    std::runtime_error("File '" + path.string( ) + "' does not exist")
+{
+}
+
+Resizer::CannotOpen::CannotOpen(const boost::filesystem::path &path) :
+    std::runtime_error("File '" + path.string( ) + "' cannot be opened")
+{
+}
+
+Resizer::Implementation::Implementation(const boost::filesystem::path &file,
+                                        PositionScannerPtr startScanner,
+                                        PositionScannerPtr endScanner) :
     file_(file),
     copier_(startScanner, endScanner)
 {
 }
 
-void Resizer::operator( )( ) const
+void Resizer::Implementation::Resize( ) const
 {
     if (!boost::filesystem::exists(file_))
     {
@@ -61,16 +99,6 @@ void Resizer::operator( )( ) const
     CopyFromTemporary(copier_, file_);
 
     tmpFile.Commit( );
-}
-
-Resizer::NoFile::NoFile(const boost::filesystem::path &path) :
-    std::runtime_error("File '" + path.string( ) + "' does not exist")
-{
-}
-
-Resizer::CannotOpen::CannotOpen(const boost::filesystem::path &path) :
-    std::runtime_error("File '" + path.string( ) + "' cannot be opened")
-{
 }
 
 // Local function implementations

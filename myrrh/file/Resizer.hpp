@@ -14,8 +14,6 @@
 
 #include "boost/shared_ptr.hpp"
 
-// Forward declare and isolate
-
 namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh

@@ -12,10 +12,10 @@
 #ifndef MYRRH_UTILITY_TEMPORARYFILE_HPP_INCLUDED
 #define MYRRH_UTILITY_TEMPORARYFILE_HPP_INCLUDED
 
-// Isolate the class better and avoid the include statements
-#include "boost/filesystem/path.hpp"
-#include "boost/filesystem/operations.hpp"
 #include <string>
+#include "boost/shared_ptr.hpp"
+
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {
@@ -51,13 +51,6 @@ public:
     explicit SafeModify(const boost::filesystem::path &original);
 
     /**
-     * Destructor. Ensures that if an exception occurs and the changes have
-     * not been committed by a call to Commit( ), the changes will be reverted
-     * back to the original state.
-     */
-    ~SafeModify( );
-
-    /**
      * Returns a name of the temporary file built from the original
      * @param original The path from which to build the temporary name
      * @return A valid path to the temporary file. Note that unless an object
@@ -83,29 +76,9 @@ private:
     /// Assignement operator declared private to prevent unintended use
     SafeModify &operator=(SafeModify&);
 
-    /// Path to the original file
-    const boost::filesystem::path ORIGINAL_;
-    /// Path to the temporary file
-    const boost::filesystem::path TEMPORARY_;
-    /// Prefix used to build the temporary file name
-    static const std::string FILE_TEMPORARY_PREFIX_;
+    class Implementation;
+    boost::shared_ptr<Implementation> implementation_;
 };
-
-// inline implementations
-/// Isolate to cpp file
-
-inline void SafeModify::Commit( ) const
-{
-    // The interface documentation promises that this method cannot throw.
-    // The following call CAN throw, but only in situations that are not
-    // possible if SafeModify works correctly.
-    boost::filesystem::remove(TEMPORARY_);
-}
-
-inline std::string SafeModify::Name(const boost::filesystem::path &original)
-{
-    return original.string( ) + FILE_TEMPORARY_PREFIX_;
-}
 
 }
 

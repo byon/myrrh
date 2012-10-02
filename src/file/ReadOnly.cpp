@@ -14,6 +14,7 @@
 
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
+#include "boost/filesystem/path.hpp"
 #include "boost/lexical_cast.hpp"
 #pragma warning(pop)
 
@@ -39,23 +40,23 @@ std::string ErrorString(const boost::filesystem::path &path, int errorCode);
 
 ReadOnly::ReadOnly(const boost::filesystem::path &path,
                    const std::string &content) :
-    path_(path)
+    path_(new boost::filesystem::path(path))
 {
-    if (!boost::filesystem::exists(path_))
+    if (!boost::filesystem::exists(*path_))
     {
-        std::ofstream file(path_.string( ).c_str( ));
+        std::ofstream file(path_->string( ).c_str( ));
         file << content;
     }
 
-    SetReadOnly(path_);
+    SetReadOnly(*path_);
 }
 
 ReadOnly::~ReadOnly( )
 {
-    RemoveReadOnly(path_);
+    RemoveReadOnly(*path_);
     try
     {
-        boost::filesystem::remove(path_);
+        boost::filesystem::remove(*path_);
     }
     catch(...)
     {

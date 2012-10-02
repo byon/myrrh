@@ -12,9 +12,10 @@
 #ifndef MYRRH_FILE_READONLYFILE_HPP_INCLUDED
 #define MYRRH_FILE_READONLYFILE_HPP_INCLUDED
 
-// Forward declare
-#include "boost/filesystem/path.hpp"
 #include <string>
+#include "boost/shared_ptr.hpp"
+
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {
@@ -54,8 +55,7 @@ private:
     ReadOnly(const ReadOnly&);
     ReadOnly operator=(const ReadOnly&);
 
-    // isolate
-    boost::filesystem::path path_;
+    boost::shared_ptr<boost::filesystem::path> path_;
 };
 
 }

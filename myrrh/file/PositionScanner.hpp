@@ -15,7 +15,7 @@
 
 #include "boost/shared_ptr.hpp"
 
-#include <ios>
+#include <iosfwd>
 #include <stdexcept>
 #include <string>
 

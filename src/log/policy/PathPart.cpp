@@ -212,7 +212,7 @@ std::string Date::DoGenerate( )
 boost::regex Date::DoGetExpression( ) const
 {
     static const std::string DAY("(0[1-9]|[12]\\d|3[01])");
-    static const std::string MONTH("(0[1-9]|1[1-2])");
+    static const std::string MONTH("(0[1-9]|1[0-2])");
     static const std::string YEAR("\\d{4}");
 
     return boost::regex(YEAR + MONTH + DAY);

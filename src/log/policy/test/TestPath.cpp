@@ -549,6 +549,10 @@ void AddingPartsTogether(const T1 &part1, const T2 &part2)
     path += part1 + part2;
     const boost::regex EXPRESSION(part1.GetExpression( ).str( ) +
                                   part2.GetExpression( ).str( ));
+    if (!boost::regex_match(path.Generate( ).string( ), EXPRESSION)) {
+        std::cout << "FAILURE" <<EXPRESSION.str( ) << " " << path.Generate( ).string( )
+              << std::endl;
+    }
     BOOST_CHECK(boost::regex_match(path.Generate( ).string( ), EXPRESSION));
 }
 

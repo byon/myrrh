@@ -256,7 +256,7 @@ void TestDatePathPart( )
 {
     const std::string DATE(DateString( ));
     const std::string EXPRESSION(
-        "\\d{4}(0[1-9]|1[1-2])(0[1-9]|[12]\\d|3[01])");
+        "\\d{4}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])");
     Date date;
     BOOST_CHECK_EQUAL(DATE, date.Generate( ));
     BOOST_CHECK_EQUAL(EXPRESSION, date.GetExpression( ).str( ));

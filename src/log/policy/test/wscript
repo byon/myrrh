@@ -27,5 +27,5 @@ def buildTestWithSources(bld, name, sources):
     if sys.platform == 'win32':
         lib = 'Advapi32'
     bld.program(features='UnitTest', source=sources, target=name,
-                use='myrrh.log.policy myrrh.file boost', lib=lib,
+                use='myrrh.log.policy myrrh.file myrrh.util boost', lib=lib,
                 includes='../../../..')

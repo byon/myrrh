@@ -84,52 +84,6 @@ private:
     std::string text_;
 };
 
-// Inline implementations
-
-// Any particular reason to have these inlined?
-
-inline std::streambuf::int_type
-BufferedStream::overflow(std::streambuf::int_type character)
-{
-    if (EOF != character)
-    {
-        text_ += static_cast<char>(character);
-    }
-
-    return character;
-}
-
-inline std::streamsize BufferedStream::xsputn(const char *text,
-                                              std::streamsize length)
-{
-    text_.append(text, length);
-
-    return length;
-}
-
-inline int BufferedStream::sync( )
-{
-    if (!text_.length( ))
-    {
-        // There's nothing to do
-        return 0;
-    }
-
-    if (!SyncImpl( ))
-    {
-        // Success, clear our buffer
-        text_.clear( );
-        return 0;
-    }
-
-    return -1;
-}
-
-inline const std::string &BufferedStream::GetBuffer( ) const
-{
-    return text_;
-}
-
 }
 
 }

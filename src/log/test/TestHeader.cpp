@@ -21,7 +21,6 @@
  */
 
 #include "myrrh/log/Header.hpp"
-#include "myrrh/util/RandomString.hpp"
 
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"

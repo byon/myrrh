@@ -10,7 +10,6 @@
  */
 
 #include "myrrh/util/Print.hpp"
-#include "myrrh/util/RandomString.hpp"
 
 #define BOOST_TEST_MODULE TestPrint
 #define DISABLE_ASSIGNMENT_OPERATOR_COULD_NOT_BE_GENERATED
@@ -118,7 +117,7 @@ public:
 
     std::string operator( )( )
     {
-        return myrrh::util::GetRandomString((std::rand( ) % 20) +1);
+        return "abcdefghijklmnopqrstuvxyzåäö";
     }
 };
 

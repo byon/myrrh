@@ -21,9 +21,6 @@
  *  - A simple deadlock test
  *  - Using customized headers in output lines
  *  - Resetting the default line header
- *  - Customizing the output targets by deriving our own class from
- *    std::streambuf. Our test uses ErrorBoxStream, which outputs to windows
- *    error dialogs.
  *  - Changing output threshold level
  *  - Using output target specific verbosity threshold
  *  - Using myrrh::log::DividedLogStream, which divides the output into
@@ -41,10 +38,6 @@
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #define DISABLE_UNINITIALIZED_LOCAL_VARIABLE
 #include "myrrh/util/Preprocessor.hpp"
-
-#ifdef WIN32
-#include "myrrh/log/ErrorBoxStream.hpp"
-#endif
 
 #include "myrrh/log/DefaultLogPolicy.hpp"
 #include "myrrh/log/DividedLogStream.hpp"
@@ -492,27 +485,6 @@ void TestCustomisedHeader( )
 }
 
 /**
- * Tests that we can use use error box output, which is a specialized version
- * of std::ostream, which pops up an error box, when a line is written to it.
- * @note The implementation is only for Windows, nothing is done for other
- *       compilation environments.
- * @param testCount The count of tests
- */
-void TestErrorBoxOutput(int testCount)
-{
-#ifdef WIN32
-    using namespace myrrh::log;
-    Log &log = Log::Instance( );
-
-    std::cout << "Doing error box tests" << std::endl;
-    ErrorBoxStream boxStream("Critical TestLogger error");
-    Log::OutputGuard boxGuard(log.AddOutputTarget(boxStream, CRIT));
-
-    TestLogger(testCount);
-#endif
-}
-
-/**
  * Tests that myrrh::log can be used with multiple output targets.
  * @param testCount Count of tests to be carried out
  */
@@ -642,7 +614,6 @@ void DoMain(int testCount)
     }
 
     TestCustomisedHeader( );
-    TestErrorBoxOutput(testCount);
 
     // The stdout is removed as output target, because the rest of the cases
     // are planned for performance test usage. We do not want such output to

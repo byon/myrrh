@@ -128,6 +128,12 @@ Log::Log( ) :
 {
 }
 
+Log &Log::Instance( )
+{
+    static Log logInstance;
+    return logInstance;
+}
+
 Log::OutputGuard Log::AddOutputTarget(std::ostream &target,
                                       VerbosityLevel verbosity)
 {
@@ -145,6 +151,16 @@ void Log::SetVerbosity(VerbosityLevel newVerbosity)
     verbosity_ = newVerbosity;
 }
 
+VerbosityLevel Log::GetVerbosity( ) const
+{
+    return verbosity_;
+}
+
+bool Log::IsWritable(VerbosityLevel verbosity) const
+{
+    return (verbosity_ >= verbosity);
+}
+
 void Log::SetHeader(HeaderPtr header)
 {
     if (!header.get( ))
@@ -153,6 +169,17 @@ void Log::SetHeader(HeaderPtr header)
     }
 
     header_ = header;
+}
+
+void Log::WriteHeader(char id)
+{
+    line_.str("");
+    // In very rare situations it might be that there was not enough memory
+    // to allocate the default header object.
+    if (header_.get( ))
+    {
+        header_->Write(line_, id);
+    }
 }
 
 void Log::RemoveOutputTarget(std::ostream &target)

@@ -412,34 +412,6 @@ typedef log::Log::Verbosity<DEBUG, 'D'> Debug;
 typedef log::Log::Verbosity<TRACE, 'T'> Trace;
 
 // Inline implementations
-// Move to cpp and isolate better
-
-inline Log &Log::Instance( )
-{
-    static Log logInstance;
-    return logInstance;
-}
-
-inline VerbosityLevel Log::GetVerbosity( ) const
-{
-    return verbosity_;
-}
-
-inline bool Log::IsWritable(VerbosityLevel verbosity) const
-{
-    return (verbosity_ >= verbosity);
-}
-
-inline void Log::WriteHeader(char id)
-{
-    line_.str("");
-    // In very rare situations it might be that there was not enough memory
-    // to allocate the default header object.
-    if (header_.get( ))
-    {
-        header_->Write(line_, id);
-    }
-}
 
 // The lock is now reserved for the duration of the verbosity object. If
 // locking really is needed, it would be better to have it only around the

@@ -10,7 +10,6 @@
  */
 
 #include "myrrh/util/CopyIf.hpp"
-#include "myrrh/util/RandomString.hpp"
 
 #define DISABLE_SIGNED_UNSIGNED_MISMATCH
 #define DISABLE_TYPE_CONVERSION_LOSS_OF_DATA
@@ -77,8 +76,7 @@ public:
 
     int operator( )( )
     {
-        // don't generate randomness into unit tests
-        return std::rand( );
+        return 1234;
     }
 };
 
@@ -91,8 +89,7 @@ public:
 
     std::string operator( )( )
     {
-        // don't generate randomness into unit tests
-        return myrrh::util::GetRandomString(20);
+        return "abcdefghijklmnopqrst";
     }
 };
 
@@ -243,8 +240,6 @@ void TestCopyIfImplementation( )
 
 TestSuite *init_unit_test_suite(int, char *[])
 {
-    std::srand(static_cast<unsigned int>(std::time(0)));
-
     TestSuite* test = BOOST_TEST_SUITE("Test suite for Copyif");
     test->add(BOOST_TEST_CASE(TestCopyIfImplementation));
     return test;

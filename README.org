@@ -9,7 +9,11 @@ Admittedly the library would benefit from a face-lift. It is written in C++98 an
 
   1) Install [[http://www.python.org/][python]]
   2) Install [[http://code.google.com/p/waf/][waf]]
-  3) Build from command line
+  3) Make sure you have a C++ compiler available in PATH
+     - Tested with
+       - VS2010 on Windows
+       - gcc on linux
+  4) Build from command line
      - on linux: waf configure build
      - on windows: waf configure build_debug build_release
 

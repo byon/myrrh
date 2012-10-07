@@ -15,6 +15,7 @@
 
 #include "boost/shared_ptr.hpp"
 #include <iosfwd>
+#include <stdexcept>
 
 namespace boost { namespace filesystem { class path; } }
 

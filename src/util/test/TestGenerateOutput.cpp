@@ -31,6 +31,7 @@
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
 
+#include "boost/filesystem/path.hpp"
 #include "boost/test/unit_test.hpp"
 
 #ifdef WIN32
@@ -283,7 +284,8 @@ TestCase::~TestCase( )
 
 void TestCase::operator( )( )
 {
-    myrrh::file::Temporary outputFile(OutputStreamName( ));
+    boost::filesystem::path PATH(OutputStreamName( ));
+    myrrh::file::Temporary outputFile(PATH);
 
     std::ifstream input;
     OpenInputStream(input);
@@ -350,6 +352,7 @@ std::string NoInputCase::GetExpectedResult( )
     return "";
 }
 
+// Too big method
 std::string SuccessfullCase::GetExpectedResult( )
 {
     std::ifstream stream;

@@ -12,6 +12,8 @@
 #ifndef MYRRH_LOG_POLICY_RESTRICTION_H_INCLUDED
 #define MYRRH_LOG_POLICY_RESTRICTION_H_INCLUDED
 
+// Isolate better
+
 // The pragmas are required to remove warnings from boost::date_time
 #ifdef WIN32
 #pragma warning(push)
@@ -63,6 +65,9 @@ public:
      *                file.
      * @returns true If the file should be restricted, false otherwise
      */
+    /// Consider passing the string to be written instead of size. Then the
+    /// real size could be calculated (line endings) in those restrictions
+    /// that really require it.
     virtual bool IsRestricted(const File &file, std::size_t toWrite) const = 0;
 };
 
@@ -83,7 +88,7 @@ public:
      * Constructor
      * @param maxSize The maximum size for the restriction
      */
-    SizeRestriction(std::size_t maxSize);
+    explicit SizeRestriction(std::size_t maxSize);
 
     /**
      * Checks if the size of the text to be written fits into file.
@@ -148,6 +153,8 @@ private:
 
 // Inline implementations
 
+// Actually there is no need to inline this -> move to cpp and remove the
+// boost date_time header inclusion
 inline boost::gregorian::date DateCreator::NewDate( )
 {
     return boost::gregorian::day_clock::local_day( );

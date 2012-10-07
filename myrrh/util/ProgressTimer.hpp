@@ -21,6 +21,7 @@
 #ifndef MYRRH_UTILITY_PROGRESS_TIMER_H_INCLUDED
 #define MYRRH_UTILITY_PROGRESS_TIMER_H_INCLUDED
 
+// Probably does not need this many headers
 #include "myrrh/util/Error.hpp"
 #include "myrrh/util/Repeat.hpp"
 #include <boost/timer.hpp>
@@ -47,6 +48,8 @@ namespace util
  * @note Destructor will silently ignore any possible exceptions thrown in the
  *       process of writing into output.
  */
+// The class is used only only in some half-baked semi-automated performance
+// tests. Scrap this.
 class ProgressTimer : public boost::timer, private boost::noncopyable
 {
 public:
@@ -87,6 +90,7 @@ private:
  * @return true if all of the test calls were successfull, false if one caused
  *         an exception.
  */
+// Scrap this too
 template <typename Func>
 bool TimePerformance(const std::string &id, const size_t count, Func function,
                      std::ostream & os = std::cout);
@@ -95,7 +99,7 @@ bool TimePerformance(const std::string &id, const size_t count, Func function,
 
 inline ProgressTimer::ProgressTimer(const std::string id, std::ostream &os) :
     os_(os),
-        id_(id)
+    id_(id)
 {
 }
 

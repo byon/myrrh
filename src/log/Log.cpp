@@ -33,6 +33,7 @@ namespace
  * A helper functor class, which is used to write the current line to
  * given stream buffer.
  */
+// Use normal function with std::bind instead?
 class WriteLine : public std::unary_function<Log::OutputTarget, void>
 {
 public:
@@ -78,6 +79,7 @@ private:
  * is searched for. Can be used for in STL algorithms when handling
  * Log::OutputTarget.
  */
+// Use lambda instead
 class IsOutputTarget : public std::unary_function<Log::OutputTarget, bool>
 {
 public:
@@ -86,7 +88,7 @@ public:
      * Constructor.
      * @param The line to be written
      */
-    IsOutputTarget(const std::ostream &toCompare);
+    explicit IsOutputTarget(const std::ostream &toCompare);
 
     IsOutputTarget(const IsOutputTarget &orig);
 
@@ -117,10 +119,19 @@ private:
 // It is assumed (and tested for VS2005) that std::vector default constructor
 // does not allocate memory and thus cannot throw exceptions (this refers to
 // the construction of targets_ member variable).
+
+/// @todo It would be better to separate the initialization from the actual
+///       logging. Then the initialization could report errors with exceptions.
 Log::Log( ) :
     verbosity_(INFO),
     header_(new (std::nothrow) TimestampHeader)
 {
+}
+
+Log &Log::Instance( )
+{
+    static Log logInstance;
+    return logInstance;
 }
 
 Log::OutputGuard Log::AddOutputTarget(std::ostream &target,
@@ -140,6 +151,16 @@ void Log::SetVerbosity(VerbosityLevel newVerbosity)
     verbosity_ = newVerbosity;
 }
 
+VerbosityLevel Log::GetVerbosity( ) const
+{
+    return verbosity_;
+}
+
+bool Log::IsWritable(VerbosityLevel verbosity) const
+{
+    return (verbosity_ >= verbosity);
+}
+
 void Log::SetHeader(HeaderPtr header)
 {
     if (!header.get( ))
@@ -150,6 +171,17 @@ void Log::SetHeader(HeaderPtr header)
     header_ = header;
 }
 
+void Log::WriteHeader(char id)
+{
+    line_.str("");
+    // In very rare situations it might be that there was not enough memory
+    // to allocate the default header object.
+    if (header_.get( ))
+    {
+        header_->Write(line_, id);
+    }
+}
+
 void Log::RemoveOutputTarget(std::ostream &target)
 {
     IsOutputTarget test(target);
@@ -158,13 +190,6 @@ void Log::RemoveOutputTarget(std::ostream &target)
         targets_.end( ));
 }
 
-/// @note This method is not inlined, even though inlining might give some
-///       performance boost. The reason is that the implementation uses
-///       WriteLine class, which is an implementation detail. If this method
-///       would be inlined, the implementation of WriteLine would need to be
-///       exposed as well.
-///       The previous reason holds even better after the addition of the
-///       exception suppression.
 void Log::Write(VerbosityLevel verbosity)
 {
     try

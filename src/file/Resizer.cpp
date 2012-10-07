@@ -11,7 +11,10 @@
 
 #include "myrrh/file/Resizer.hpp"
 
+#include "myrrh/file/Copy.hpp"
 #include "myrrh/file/SafeModify.hpp"
+#include "boost/filesystem/path.hpp"
+#include "boost/filesystem/operations.hpp"
 #include <string>
 #include <fstream>
 
@@ -25,67 +28,44 @@ namespace file
 namespace
 {
 
-/**
- * Copies contents from a temporary file to a new file. The contents of how
- * much is copied is known by the given Copier object.
- * @param copier The workhorse of the copying
- * @param fileName The file to which the data will be copied to.
- * @throws std::runtime_error, if files cannot be opened
- */
 void CopyFromTemporary(const Copy &copier,
                        const boost::filesystem::path &fileName);
-
-/**
- * Opens a given stream to a given file path. If the opening fails, an
- * exception is thrown with given error string as additional information
- * @param stream The stream to be opened
- * @param path Path to the file to be copied
- * @param errorString Additional information string added to possibly thrown
- *                    exception
- * @throws std::runtime_error, if file cannot be opened
- */
 template <typename Stream>
 void Open(Stream &stream, const boost::filesystem::path &path,
           const std::string &errorString);
-
-/**
- * Returns the open mode for output stream
- */
 template <typename Stream>
 std::ios::openmode GetOpenMode( );
-
-/**
- * Returns the open mode for output stream
- */
 template <>
 std::ios::openmode GetOpenMode<std::ifstream>( );
 
 }
+
+class Resizer::Implementation
+{
+public:
+    Implementation(const boost::filesystem::path &file,
+                   PositionScannerPtr startScanner,
+                   PositionScannerPtr endScanner);
+    void Resize( ) const;
+
+private:
+
+    boost::filesystem::path file_;
+    Copy copier_;
+};
 
 // Class implementation
 
 Resizer::Resizer(const boost::filesystem::path &file,
                  PositionScannerPtr startScanner,
                  PositionScannerPtr endScanner) :
-    file_(file),
-    copier_(startScanner, endScanner)
+    implementation_(new Implementation(file, startScanner, endScanner))
 {
 }
 
 void Resizer::operator( )( ) const
 {
-    if (!boost::filesystem::exists(file_))
-    {
-        throw(NoFile(file_));
-    }
-
-    // file::SafeModify ensures that the original file is reverted if an
-    // exception occurs.
-    file::SafeModify tmpFile(file_);
-
-    CopyFromTemporary(copier_, file_);
-
-    tmpFile.Commit( );
+    implementation_->Resize( );
 }
 
 Resizer::NoFile::NoFile(const boost::filesystem::path &path) :
@@ -98,11 +78,37 @@ Resizer::CannotOpen::CannotOpen(const boost::filesystem::path &path) :
 {
 }
 
+Resizer::Implementation::Implementation(const boost::filesystem::path &file,
+                                        PositionScannerPtr startScanner,
+                                        PositionScannerPtr endScanner) :
+    file_(file),
+    copier_(startScanner, endScanner)
+{
+}
+
+void Resizer::Implementation::Resize( ) const
+{
+    if (!boost::filesystem::exists(file_))
+    {
+        throw NoFile(file_);
+    }
+
+    // file::SafeModify ensures that the original file is reverted if an
+    // exception occurs.
+    file::SafeModify tmpFile(file_);
+
+    CopyFromTemporary(copier_, file_);
+
+    tmpFile.Commit( );
+}
+
 // Local function implementations
 
 namespace
 {
 
+// Refactor to smaller to avoid the need for comments. Or is the code just
+// self-explanatory?
 void CopyFromTemporary(const Copy &copier,
                        const boost::filesystem::path &fileName)
 {
@@ -114,8 +120,7 @@ void CopyFromTemporary(const Copy &copier,
 
     // Open the temporary output file with the original file name
     std::ofstream output;
-    Open(output, fileName.string( ),
-         "Failed to open output file for resizing");
+    Open(output, fileName.string( ), "Failed to open output file for resizing");
 
     // Copy the original contents to the new file
     copier(input, output);

@@ -45,6 +45,8 @@ PathStore MatchFiles(const boost::filesystem::path &folder, Matcher matcher);
 /**
  * A predicate useful to check if a path matches a regular expression.
  */
+// Check out what was the benefit of using std::unary_function
+// A version that recursively looks for the pattern might also be useful
 class ExpressionMatcher :
     public std::unary_function<boost::filesystem::path, bool>
 {

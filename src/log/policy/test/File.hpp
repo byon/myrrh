@@ -12,6 +12,7 @@
 #ifndef MYRRH_LOG_POLICY_TEST_EXAMPLES_FILE_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_TEST_EXAMPLES_FILE_HPP_INCLUDED
 
+// isolate better
 #include "boost/filesystem/path.hpp"
 #include <string>
 #include <vector>

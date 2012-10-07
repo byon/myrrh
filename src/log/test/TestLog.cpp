@@ -50,6 +50,7 @@
 #define DISABLE_ASSIGNMENT_OPERATOR_COULD_NOT_BE_GENERATED
 #include "myrrh/util/Preprocessor.hpp"
 
+#include "boost/filesystem/path.hpp"
 #include "boost/test/unit_test.hpp"
 #include "boost/shared_ptr.hpp"
 #include "boost/algorithm/string/replace.hpp"
@@ -854,7 +855,7 @@ void WritingWithNoOutputTargets( )
 
 void WritingFromSeveralThreads( )
 {
-    const std::string FILE_NAME("Output.txt");
+    const boost::filesystem::path FILE_NAME("Output.txt");
     Temporary fileDeleter(FILE_NAME);
     Log::OutputGuard guard(
         Log::Instance( ).AddOutputTarget(fileDeleter.Stream( )));
@@ -872,7 +873,7 @@ void WritingFromSeveralThreads( )
 
     threadGroup.join_all( );
 
-    std::ifstream inputFile(FILE_NAME.c_str( ));
+    std::ifstream inputFile(FILE_NAME.string( ).c_str( ));
     BOOST_REQUIRE(inputFile.is_open( ));
     std::ostringstream stream;
     stream << inputFile.rdbuf( );

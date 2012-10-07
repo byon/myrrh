@@ -26,7 +26,7 @@ class Dummy
 {
 public:
 
-    Dummy(const std::string &text) :
+    explicit Dummy(const std::string &text) :
         text_(text)
     {
     }
@@ -65,10 +65,7 @@ void Function(const T &)
 template <typename T>
 void ThrowUnknown(const T &)
 {
-    class UnknownException
-    {
-    };
-    throw UnknownException( );
+    throw 3;
 }
 
 template <int ExpectedValue>

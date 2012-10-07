@@ -37,6 +37,7 @@ Creator::Creator( )
 {
 }
 
+/// Divide smaller
 boost::filesystem::path Creator::DoOpen(std::filebuf &file, Path& path)
 {
     const boost::filesystem::path PATH(path.Generate( ));
@@ -46,6 +47,7 @@ boost::filesystem::path Creator::DoOpen(std::filebuf &file, Path& path)
     {
         if (PATH.has_parent_path( ))
         {
+            // These days there is a no-throw version available
             boost::filesystem::create_directories(PATH.parent_path( ));
         }
         file.open(PATH.string( ).c_str( ), std::ios::out | std::ios::trunc);

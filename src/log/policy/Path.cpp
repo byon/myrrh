@@ -28,9 +28,6 @@ namespace policy
 namespace
 {
 
-/**
- * Used to determine the result of path part comparison
- */
 enum Comparison
 {
     LESS = 0,
@@ -38,41 +35,11 @@ enum Comparison
     MORE
 };
 
-/**
- * Checks if the given path part object is of type Folder
- */
 bool IsFolder(const PathPartPtr &part);
-
-/**
- * Checks if the given part store contains folders. If so, iterator to the
- * first folder is stored to result parameter.
- * @param store The store to look through
- * @param result The placeholder for the result. If function returns false, the
- *               iterator must not be dereferenced.
- * @returns true, if there is at least one Folder object in the given store
- */
 bool FindFirstFolder(PartStore &store, PartStore::iterator &result);
-
-/**
- * Extracts the path parts from the beginning of given store to the part
- * pointed to by given folder parameter.
- * @param store The store to check
- * @param folder Iterator that points to the first folder in store
- * @param foldersFound true, if this is not the first call and previous calls
- *                     have found folders
- * @throws Path::Error If the resulting path part store is empty. The error
- *                     string depends on the value of parameter foldersFound.
- */
 PartStore PartsUntilFolder(const PartStore &store,
                            PartStore::const_iterator folder,
                            bool foldersFound);
-
-/**
- * Helper function for combining regular expressions.
- * @param left Object on the left hand side of addition
- * @param right Object on the right hand side of addition
- * @return The resulting boost::regexp object that combines given objects.
- */
 boost::regex operator+(const boost::regex &left, const boost::regex &right);
 
 /**
@@ -80,17 +47,6 @@ boost::regex operator+(const boost::regex &left, const boost::regex &right);
  */
 std::string FirstMatch(const boost::regex &expression,
                        const std::string &toMatch);
-
-/**
- * Compares the two given strings according to the rules defined by the given
- * path part. If the start of the strings are equivalent, the strings are
- * updated to the point after the noted equivalence.
- * @param part The part according to which the comparison is made
- * @param left The left hand side of the comparison
- * @param right The right hadn side of the comparison.
- * @return MORE, if the left side is earlier, LESS, if right side is earlier
- *         or EVEN, if the part so far compared is equivalent.
- */
 Comparison CompareAndUpdate(const PathPart &part, std::string &left,
                             std::string &right);
 
@@ -160,6 +116,7 @@ void Path::AddNewEntity(Path::EntityStore &store, const PartStore &parts)
     store.push_back(newEntity);
 }
 
+// Divide smaller
 Path::EntityStore Path::AddNewParts(const Path::EntityStore &store,
                                     const PartSum &parts)
 {
@@ -190,9 +147,7 @@ Path::EntityStore Path::AddNewParts(const Path::EntityStore &store,
 
 void Path::AppendRestrictions(RestrictionStore &store) const
 {
-    for (EntityIterator i = entityStore_.begin( );
-         entityStore_.end( ) != i;
-         ++i)
+    for (auto i = entityStore_.begin( ); entityStore_.end( ) != i; ++i)
     {
         i->AppendRestrictions(store);
     }
@@ -241,6 +196,7 @@ Path::Entity::Comparer Path::Entity::GetComparer( ) const
     return Path::Entity::Comparer(*this);
 }
 
+// Divide smaller
 bool Path::Entity::IsFirstEarlier(const boost::filesystem::path &left,
                                   const boost::filesystem::path &right) const
 {
@@ -250,6 +206,7 @@ bool Path::Entity::IsFirstEarlier(const boost::filesystem::path &left,
     assert(Matcher( )(leftString));
     assert(Matcher( )(rightString));
 
+    // Why is there a loop, if always comparing only the first?
     typedef PartStore::const_iterator PartIter;
     for (PartIter i = partStore_.begin( ); partStore_.end( ) != i; ++i)
     {
@@ -273,9 +230,7 @@ bool Path::Entity::IsFirstEarlier(const boost::filesystem::path &left,
 
 void Path::Entity::AppendRestrictions(RestrictionStore &store) const
 {
-    for (PartStore::const_iterator i = partStore_.begin( );
-         partStore_.end( ) != i;
-         ++i)
+    for (auto i = partStore_.begin( ); partStore_.end( ) != i; ++i)
     {
         (*i)->AppendRestrictions(store);
     }
@@ -318,6 +273,7 @@ bool FindFirstFolder(PartStore &store, PartStore::iterator &result)
     return store.end( ) != result;
 }
 
+// Use early return
 PartStore PartsUntilFolder(const PartStore &store,
                            PartStore::const_iterator folder,
                            bool foldersFound)
@@ -353,6 +309,7 @@ std::string FirstMatch(const boost::regex &expression,
     return *matches->begin( );
 }
 
+// Divide smaller
 Comparison CompareAndUpdate(const PathPart &part, std::string &left,
                             std::string &right)
 {

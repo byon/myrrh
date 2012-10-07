@@ -38,8 +38,7 @@ void RestrictionStore::Add(RestrictionPtr restriction)
 bool RestrictionStore::IsRestricted(const File &file,
                                     std::size_t toWrite) const
 {
-    typedef Restrictions::const_iterator Iter;
-    for (Iter i = restrictions_.begin( ); restrictions_.end( ) != i; ++i)
+    for (auto i = restrictions_.begin( ); restrictions_.end( ) != i; ++i)
     {
         if ((*i)->IsRestricted(file, toWrite))
         {

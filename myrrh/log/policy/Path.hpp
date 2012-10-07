@@ -12,6 +12,7 @@
 #ifndef MYRRH_LOG_POLICY_PATH_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_PATH_HPP_INCLUDED
 
+/// @todo Isolate better
 #include "boost/shared_ptr.hpp"
 #include "boost/filesystem/path.hpp"
 
@@ -80,6 +81,7 @@ public:
      * By making std::iterator a parent class it is possible to use Entity
      * as iterator in STL algorithms.
      */
+    /// @todo Does this need to be a public class?
     class Entity : public std::iterator<std::forward_iterator_tag, Entity>
     {
     public:
@@ -98,6 +100,8 @@ public:
          * use Comparer as a binary predicate in STL algorithms, sort( ) most
          * specifically.
          */
+        /// @todo Check the benefit of binary_function. Could probably be
+        ///       implemented with lambda or std::bind.
         class Comparer : public std::binary_function<boost::filesystem::path,
                                                      boost::filesystem::path,
                                                      bool>
@@ -189,7 +193,7 @@ public:
     class Error : public std::runtime_error
     {
     public:
-        Error(const std::string &what);
+        explicit Error(const std::string &what);
     };
 
     /**
@@ -200,7 +204,7 @@ public:
      *                   constructed from the running directory.
      */
     explicit Path(const boost::filesystem::path &parentPath =
-                  boost::filesystem::path( ));
+                      boost::filesystem::path( ));
 
     /**
      * Returns the parent path. May be empty.
@@ -235,6 +239,7 @@ public:
     /**
      * Returns an iterator that points to the first entity in the path.
      */
+    // What is this really used for?
     EntityIterator BeginEntity( ) const;
 
     /**
@@ -242,6 +247,7 @@ public:
      * that it is always illegal to dereference this iterator. It must only be
      * used for checking of end of iteration.
      */
+    // What is this really used for?
     EntityIterator EndEntity( ) const;
 
     /**

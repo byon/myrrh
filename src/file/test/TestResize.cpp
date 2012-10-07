@@ -30,6 +30,7 @@
 #include "myrrh/file/PositionScanner.hpp"
 #include "myrrh/file/ReadOnly.hpp"
 #include "myrrh/file/Temporary.hpp"
+#include "myrrh/file/Eraser.hpp"
 #include "myrrh/data/test/Files.hpp"
 
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
@@ -124,7 +125,7 @@ TestSuite *init_unit_test_suite(int, char *[])
     test->add(BOOST_TEST_CASE(FileHasOneLine));
     test->add(BOOST_TEST_CASE(FileHasSeveralLines));
 #if WIN32
-    // No easy/practical way to test on linux
+    // No known easy/practical way to test on linux
     test->add(BOOST_TEST_CASE(TemporaryFileCannotBeOpened));
 #endif
 

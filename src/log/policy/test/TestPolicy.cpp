@@ -20,6 +20,8 @@
  * $Id: TestPolicy.cpp 369 2007-09-20 20:08:51Z byon $
  */
 
+// Does not seem to be worth maintaining, rewrite if needed
+
 #include "myrrh/log/policy/Policy.hpp"
 #include "myrrh/log/policy/Path.hpp"
 #include "myrrh/log/policy/PathPart.hpp"
@@ -176,6 +178,7 @@ public:
     operator PartSum( ) const;
 };
 
+// Use automatic test initialization
 TestSuite *init_unit_test_suite(int, char *[])
 {
     TestSuite* test =

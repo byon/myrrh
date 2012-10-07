@@ -12,14 +12,18 @@
 #ifndef MYRRH_FILE_RESIZER_H_INCLUDED
 #define MYRRH_FILE_RESIZER_H_INCLUDED
 
-#include "myrrh/file/Copy.hpp"
-#include "boost/filesystem/path.hpp"
+#include "boost/shared_ptr.hpp"
+
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {
 
 namespace file
 {
+
+class PositionScanner;
+typedef boost::shared_ptr<PositionScanner> PositionScannerPtr;
 
 /**
  * Resizer class is used to resize an existing file to a new size according to
@@ -77,10 +81,8 @@ public:
 
 private:
 
-    // Path to the target file
-    boost::filesystem::path file_;
-    // Used to do the work of resizing
-    Copy copier_;
+    class Implementation;
+    boost::shared_ptr<Implementation> implementation_;
 };
 
 }

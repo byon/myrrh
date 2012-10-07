@@ -28,6 +28,7 @@ std::string GetBaseString(std::istream &input,
 
 }
 
+// Too big function
 void GenerateOutput(std::istream &input, std::ostream &output,
                     const std::streamsize outputSize)
 {
@@ -36,17 +37,16 @@ void GenerateOutput(std::istream &input, std::ostream &output,
         return;
     }
 
-    const std::string BASE(GetBaseString(input, outputSize));
-    const std::streamsize BASE_SIZE =
-        static_cast<std::streamsize>(BASE.size( ));
+    const auto BASE(GetBaseString(input, outputSize));
+    const auto BASE_SIZE = static_cast<std::streamsize>(BASE.size( ));
     if (BASE_SIZE <= 0)
     {
         return;
     }
 
-    const std::streamsize LAST_COMPLETE_POINT = outputSize - BASE_SIZE;
+    const auto LAST_COMPLETE_POINT = outputSize - BASE_SIZE;
 
-    const std::streampos ORIG_POS(output.tellp( ));
+    const auto ORIG_POS(output.tellp( ));
 
     while ((output.tellp( ) - ORIG_POS) <= LAST_COMPLETE_POINT)
     {
@@ -58,7 +58,7 @@ void GenerateOutput(std::istream &input, std::ostream &output,
         }
     }
 
-    const std::streamsize INCOMPLETE_SIZE = outputSize % BASE_SIZE;
+    const auto INCOMPLETE_SIZE = outputSize % BASE_SIZE;
     output << BASE.substr(0, INCOMPLETE_SIZE);
 
     output.flush( );
@@ -67,8 +67,7 @@ void GenerateOutput(std::istream &input, std::ostream &output,
 namespace
 {
 
-std::string GetBaseString(std::istream &input,
-                          const std::streamsize outputSize)
+std::string GetBaseString(std::istream &input, const std::streamsize outputSize)
 {
     std::ostringstream stream;
     stream << input.rdbuf( );

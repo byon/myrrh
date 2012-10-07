@@ -9,12 +9,14 @@
  * $Id: Header.cpp 286 2007-03-18 15:04:53Z Byon $
  */
 
+/// Do we need all of these?
 #include "myrrh/log/Header.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include <memory>
 #include <ostream>
 #include <cstdio>
 
+// Still relevant warning?
 #pragma warning(disable : 4996)
 
 namespace myrrh

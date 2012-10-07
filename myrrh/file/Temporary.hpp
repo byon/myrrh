@@ -12,11 +12,11 @@
 #ifndef MYRRH_FILE_TEMPORARY_HPP_INCLUDED
 #define MYRRH_FILE_TEMPORARY_HPP_INCLUDED
 
-#include "myrrh/file/Eraser.hpp"
-#include "boost/filesystem/path.hpp"
-
-#include <fstream>
+#include <iosfwd>
 #include <stdexcept>
+#include "boost/shared_ptr.hpp"
+
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {
@@ -67,7 +67,7 @@ public:
      *         the path points to a directory or the file cannot be opened
      *         for some reason.
      */
-    Temporary(const boost::filesystem::path &path);
+    explicit Temporary(const boost::filesystem::path &path);
 
     /**
      * Gives write access to the underlying stream.
@@ -87,27 +87,10 @@ private:
     /// Disabled assignment operator
     Temporary &operator=(const Temporary &);
 
-    const boost::filesystem::path PATH_;
-    /**
-     * @note The order of eraser_ and stream_ members is significant. When
-     *       destructing, the stream needs to get closed before erasing. The
-     *       order in which the variables are declared, ensures this.
-     */
-    Eraser eraser_;
-    std::ofstream stream_;
+    class Implementation;
+
+    boost::shared_ptr<Implementation> implementation_;
 };
-
-// Inline implementations
-
-inline std::ostream &Temporary::Stream( )
-{
-    return stream_;
-}
-
-inline boost::filesystem::path Temporary::Path( ) const
-{
-    return PATH_;
-}
 
 }
 

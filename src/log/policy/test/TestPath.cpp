@@ -184,6 +184,7 @@ BOOST_AUTO_TEST_CASE(AddingPidTogether)
     AddingPartsTogether(ProcessId( ), ProcessId( ));
 }
 
+// Divide to smaller tests
 BOOST_AUTO_TEST_CASE(AddingDifferentTypes)
 {
     Text text("Just some random text");
@@ -274,6 +275,7 @@ BOOST_AUTO_TEST_CASE(OneEntityFromSeveralParts)
     CheckEntityCount(1, path);
 }
 
+// Use BOOST_CHECK_EXCEPTION in cases like these
 BOOST_AUTO_TEST_CASE(AddFolderAsFirstPart)
 {
     Path path;
@@ -418,6 +420,7 @@ BOOST_AUTO_TEST_CASE(MatcherFromSeveralParts)
     BOOST_CHECK(path.BeginEntity( )->Matcher( )("SomeTextOtherText1234"));
 }
 
+// Divide smaller
 BOOST_AUTO_TEST_CASE(ComparerFromOnePart)
 {
     Path path;
@@ -427,6 +430,7 @@ BOOST_AUTO_TEST_CASE(ComparerFromOnePart)
     BOOST_CHECK(!comparer("1234", "12"));
 }
 
+// Divide smaller
 BOOST_AUTO_TEST_CASE(ComparerFromSeveralParts)
 {
     Path path;
@@ -442,6 +446,7 @@ BOOST_AUTO_TEST_CASE(ComparerFromSeveralParts)
                          "myrrh-20060114-101010-000001-0.log"));
 }
 
+// Divide smaller
 BOOST_AUTO_TEST_CASE(UseComparerForSorting)
 {
     Path path;
@@ -482,6 +487,7 @@ BOOST_AUTO_TEST_CASE(UseComparerForSorting)
     BOOST_CHECK(expected == toSort);
 }
 
+// Divide smaller
 BOOST_AUTO_TEST_CASE(AddingRestriction)
 {
     class NoOpener : public myrrh::log::policy::Opener
@@ -608,7 +614,7 @@ template <bool IS_RESTRICTED>
 bool RestrictionImplementation<IS_RESTRICTED>::IsRestricted(const File &,
                                                             std::size_t) const
 {
-        return IS_RESTRICTED;
+    return IS_RESTRICTED;
 }
 
 }

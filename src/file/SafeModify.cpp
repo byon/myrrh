@@ -10,6 +10,7 @@
  */
 
 #include "myrrh/file/SafeModify.hpp"
+// tarpeen? #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
 
 namespace myrrh
@@ -18,7 +19,43 @@ namespace myrrh
 namespace file
 {
 
+namespace
+{
+
+const std::string FILE_TEMPORARY_PREFIX(".tmp");
+
+}
+
+class SafeModify::Implementation
+{
+public:
+    explicit Implementation(const boost::filesystem::path &original);
+    ~Implementation( );
+    static std::string Name(const boost::filesystem::path &original);
+    void Commit( ) const;
+
+private:
+    const boost::filesystem::path ORIGINAL_;
+    const boost::filesystem::path TEMPORARY_;
+};
+
 SafeModify::SafeModify(const boost::filesystem::path &original) :
+    implementation_(new Implementation(original))
+{
+}
+
+void SafeModify::Commit( ) const
+{
+    implementation_->Commit( );
+}
+
+std::string SafeModify::Name(const boost::filesystem::path &original)
+{
+    return Implementation::Name(original);
+}
+
+SafeModify::Implementation::
+Implementation(const boost::filesystem::path &original) :
     ORIGINAL_(original),
     TEMPORARY_(Name(original))
 {
@@ -26,7 +63,7 @@ SafeModify::SafeModify(const boost::filesystem::path &original) :
     boost::filesystem::rename(ORIGINAL_, TEMPORARY_);
 }
 
-SafeModify::~SafeModify( )
+SafeModify::Implementation::~Implementation( )
 {
     try
     {
@@ -54,7 +91,19 @@ SafeModify::~SafeModify( )
     }
 }
 
-const std::string SafeModify::FILE_TEMPORARY_PREFIX_(".tmp");
+void SafeModify::Implementation::Commit( ) const
+{
+    // The interface documentation promises that this method cannot throw.
+    // The following call CAN throw, but only in situations that are not
+    // possible if SafeModify works correctly.
+    boost::filesystem::remove(TEMPORARY_);
+}
+
+std::string SafeModify::Implementation::
+Name(const boost::filesystem::path &original)
+{
+    return original.string( ) + FILE_TEMPORARY_PREFIX;
+}
 
 }
 

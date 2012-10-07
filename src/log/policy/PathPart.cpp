@@ -224,7 +224,8 @@ void Date::AppendRestrictions(RestrictionStore &store)
     store.Add(restriction);
 }
 
-bool Date::DoIsFirstEarlier(const std::string &left, const std::string &right) const
+bool Date::DoIsFirstEarlier(const std::string &left,
+                            const std::string &right) const
 {
     return left < right;
 }
@@ -234,36 +235,15 @@ Date::operator PartSum( ) const
     return NewPartSum(*this);
 }
 
-// Date class implementation
-
-/**
- * Private class of Time. Encapsulates the generation of unique identifier
- * for a timestamp, if there are similar timestamps generated after each other.
- * This can happen, if new files are generated very fast with small maximum
- * size (or some other restriction). Although this is quite unlikely, it can
- * happen, so it must be taken care of.
- */
 class Time::TimePrivate
 {
 public:
 
-    /**
-     * Constructor.
-     */
     TimePrivate( ) :
         counter_(0)
     {
     }
 
-    /**
-     * Checks the given timestamp and returns a required unique identifier. If
-     * the timestamp differs from the one generated previously, the return
-     * value is always 0. Otherwise, it is always one more than with the last
-     * call.
-     * @param now The timestamp to check
-     * @returns A unique identifier if called with equal timestamps. Otherwise
-     *          0.
-     */
     int UniqueIdentifier(const boost::posix_time::time_duration &now)
     {
         if (now == lastCheck_)
@@ -282,9 +262,7 @@ public:
 
 private:
 
-    /// The timestamp of last check
     boost::posix_time::time_duration lastCheck_;
-    /// Counter for the calls with same timestamp
     int counter_;
 };
 
@@ -354,7 +332,8 @@ void Time::AppendRestrictions(RestrictionStore &)
 {
 }
 
-bool Time::DoIsFirstEarlier(const std::string &left, const std::string &right) const
+bool Time::DoIsFirstEarlier(const std::string &left,
+                            const std::string &right) const
 {
     return left < right;
 }
@@ -387,7 +366,8 @@ void Index::AppendRestrictions(RestrictionStore &)
 {
 }
 
-bool Index::DoIsFirstEarlier(const std::string &left, const std::string &right) const
+bool Index::DoIsFirstEarlier(const std::string &left,
+                             const std::string &right) const
 {
     return boost::lexical_cast<int>(left) < boost::lexical_cast<int>(right);
 }
@@ -428,6 +408,7 @@ ProcessId::operator PartSum( ) const
     return NewPartSum(*this);
 }
 
+/// Divide smaller
 PartSum &operator+=(PartSum &left, const std::string &right)
 {
     static const std::string SEPARATORS("/\\");

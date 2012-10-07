@@ -12,6 +12,7 @@
 #ifndef MYRRH_LOG_POLICY_POLICY_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_POLICY_HPP_INCLUDED
 
+// Isolate better
 #include "myrrh/log/policy/RestrictionStore.hpp"
 #include "myrrh/log/policy/Opener.hpp"
 #include <string>
@@ -52,11 +53,11 @@ namespace policy
  * the date changes, you should reopen the file, because the rules of the path
  * making require the path to contain the current date. This of course means
  * writing to a new file. You can add new restrictions by using method
- * AddRestriction. See it's documentation for more details.
+ * AddRestriction. See the method documentation for more details.
  *
  * The rules on how to name the log files are implemented by subclasses of
  * PathPart and contained in Path class. These rules are passed to the opener
- * objects on construction of Policy object. Each PathPart implementes some
+ * objects on construction of Policy object. Each PathPart implements some
  * logic for creating one small part of a file path. See the documentation
  * of PathPart and it's subclasses for details.
  *

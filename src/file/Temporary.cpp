@@ -10,6 +10,7 @@
  */
 
 #include "myrrh/file/Temporary.hpp"
+#include "myrrh/file/Eraser.hpp"
 #include "boost/filesystem/operations.hpp"
 
 namespace myrrh
@@ -18,7 +19,44 @@ namespace myrrh
 namespace file
 {
 
+class Temporary::Implementation
+{
+public:
+
+    explicit Implementation(const boost::filesystem::path &path);
+    std::ostream &Stream( );
+    boost::filesystem::path Path( ) const;
+
+private:
+
+    boost::filesystem::path PATH_;
+    Eraser eraser_;
+    std::ofstream stream_;
+};
+
 Temporary::Temporary(const boost::filesystem::path &path) :
+    implementation_(new Implementation(path))
+{
+}
+
+std::ostream &Temporary::Stream( )
+{
+    return implementation_->Stream( );
+}
+
+boost::filesystem::path Temporary::Path( ) const
+{
+    return implementation_->Path( );
+}
+
+Temporary::PathError::PathError(const std::string what,
+                                       const boost::filesystem::path &path) :
+    std::runtime_error(what + " '" + path.string( ) + '\'')
+{
+}
+
+// Refactor the method smaller
+Temporary::Implementation::Implementation(const boost::filesystem::path &path) :
     PATH_(path),
     eraser_(path),
     stream_(path.string( ).c_str( ))
@@ -40,10 +78,14 @@ Temporary::Temporary(const boost::filesystem::path &path) :
     }
 }
 
-Temporary::PathError::PathError(const std::string what,
-                                       const boost::filesystem::path &path) :
-    std::runtime_error(what + " '" + path.string( ) + '\'')
+std::ostream &Temporary::Implementation::Stream( )
 {
+    return stream_;
+}
+
+boost::filesystem::path Temporary::Implementation::Path( ) const
+{
+    return PATH_;
 }
 
 }

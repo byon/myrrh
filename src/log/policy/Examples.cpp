@@ -32,29 +32,9 @@ namespace policy
 namespace
 {
 
-/**
- * Returns the default file name when there is only prefix and postfix.
- */
 std::string DefaultName( );
-
-/**
- * Returns the default file prefix.
- */
 std::string DefaultPrefix( );
-
-/**
- * Returns the default file postfix.
- */
 std::string DefaultPostfix( );
-
-/**
- * Creates a new Policy object with added SizeRestriction.
- * Provides strong exception guarantee
- * @param initialOpener The initial opener
- * @param subsequentOpener The subsequent opener
- * @param maxSize The maximum size set into the restriction
- * @throws std::bad_alloc In case there is no memory available.
- */
 PolicyPtr AddSizeRestriction(Path path, InitialOpenerPtr initialOpener,
                              OpenerPtr subsequentOpener, std::size_t maxSize);
 
@@ -123,17 +103,17 @@ PolicyPtr SizeRestrictedDatedFolderLogs(std::size_t maxSize)
 namespace
 {
 
-inline std::string DefaultName( )
+std::string DefaultName( )
 {
     return DefaultPrefix( ) + DefaultPostfix( );
 }
 
-inline std::string DefaultPrefix( )
+std::string DefaultPrefix( )
 {
     return "myrrh";
 }
 
-inline std::string DefaultPostfix( )
+std::string DefaultPostfix( )
 {
     return ".log";
 }

@@ -13,6 +13,7 @@
 #ifndef MYRRH_LOG_POLICY_OPENER_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_OPENER_HPP_INCLUDED
 
+/// @todo Isolate better. Much better
 #include "myrrh/log/policy/Path.hpp"
 #include "boost/shared_ptr.hpp"
 #include "boost/operators.hpp"
@@ -44,6 +45,8 @@ class Opener;
  * By adding boost::equality_comparable<File> as base class, we'll get the
  * inequality operator.
  */
+/// Move to own header
+/// Convert into polymorphic class, so the tests do not require IO?
 class File : public boost::equality_comparable<File>
 {
 public:
@@ -72,6 +75,7 @@ public:
      * @param left The File object on the right size of comparison
      * @return true, if objects are pointing to the same physical file.
      */
+    /// Potentially remove the friend status and move outside of class
     friend bool operator==(const File &left, const File &right);
 
 private:
@@ -162,6 +166,7 @@ class InitialOpener : public Opener
 typedef boost::shared_ptr<InitialOpener> InitialOpenerPtr;
 
 // Inline implementations
+/// Isolate to cpp
 
 inline std::streamsize File::WrittenSize( ) const
 {

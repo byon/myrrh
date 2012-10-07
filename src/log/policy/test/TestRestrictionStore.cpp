@@ -73,6 +73,7 @@ BOOST_AUTO_TEST_CASE(AddingRestriction)
     BOOST_CHECK_EQUAL(std::size_t(1), store.Count( ));
 }
 
+// Adding just two is enough
 BOOST_AUTO_TEST_CASE(AddingManyRestrictions)
 {
     RestrictionStore store;
@@ -87,6 +88,7 @@ BOOST_AUTO_TEST_CASE(AddingManyRestrictions)
     BOOST_CHECK_EQUAL(COUNT, store.Count( ));
 }
 
+// Make more simple
 BOOST_AUTO_TEST_CASE(CheckingIsRestricted)
 {
     RestrictionStore store;

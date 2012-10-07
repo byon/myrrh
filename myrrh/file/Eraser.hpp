@@ -57,7 +57,7 @@ public:
      *          directory, it will be deleted with its entire content.
      * @param path Path to the file or directory to be erased unless released.
      */
-    Eraser(const boost::filesystem::path &path);
+    explicit Eraser(const boost::filesystem::path &path);
 
     /**
      * Destructor

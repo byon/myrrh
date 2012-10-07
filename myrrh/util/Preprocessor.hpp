@@ -27,9 +27,12 @@ namespace util
  * used to remove the awkward #ifdef statements from code.
  * @returns true If this is a debug build, false otherwise.
  */
+// There is only one use of this. The place could be removed completely.
+// Probably so should this.
 bool IsDebugBuild( );
 
 
+// Does boost cause the warnings anymore? Just remove the damn thing.
 
 #ifdef WIN32
 

@@ -15,7 +15,7 @@
 
 #include "boost/shared_ptr.hpp"
 
-#include <ios>
+#include <iosfwd>
 #include <stdexcept>
 #include <string>
 
@@ -51,6 +51,9 @@ public:
     /**
      * Exception class, which is used, if the stream passed to Scan is not open
      */
+    // Nesting exception classes is nice in the sense that they will not
+    // pollute the outer namespace. But then again they are impossible to
+    // forward declare.
     class NotOpen : public std::runtime_error
     {
     public:
@@ -82,15 +85,11 @@ protected:
      * Constructor
      * @param direction Identifies the direction to scan to.
      */
-    ToEdgeScanner(std::ios::seekdir direction);
+    // Possible to hide seekdir?
+    explicit ToEdgeScanner(std::ios::seekdir direction);
 
 private:
 
-    /**
-     * Implements the scanning
-     * @param stream The file stream to scan
-     * @return The position searched for
-     */
     virtual std::streampos DoScan(std::ifstream &stream) const;
 
     std::ios::seekdir DIRECTION_;
@@ -99,6 +98,7 @@ private:
 /**
  * Scans to the beginning of the file
  */
+// Disable copy semantics?
 class StartScanner : public ToEdgeScanner
 {
 public:
@@ -112,6 +112,7 @@ public:
 /**
  * Scans to the end of the file
  */
+// Disable copy semantics?
 class EndScanner : public ToEdgeScanner
 {
 public:
@@ -139,11 +140,6 @@ public:
 
 private:
 
-    /**
-     * Implements the scanning
-     * @param stream The file stream to scan
-     * @return The position searched for
-     */
     virtual std::streampos DoScan(std::ifstream &stream) const;
 
     /// Disabled copy constructor
@@ -171,11 +167,6 @@ public:
 
 private:
 
-    /**
-     * Implements the scanning
-     * @param stream The file stream to scan
-     * @return The position searched for
-     */
     virtual std::streampos DoScan(std::ifstream &stream) const;
 
     /// Disabled copy constructor

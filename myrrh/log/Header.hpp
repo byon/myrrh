@@ -41,6 +41,7 @@ public:
     virtual void Write(std::ostream &stream, char id) = 0;
 };
 
+// Use shared_ptr instead
 typedef std::auto_ptr<Header> HeaderPtr;
 
 /**
@@ -76,6 +77,5 @@ public:
 }
 
 }
-
 
 #endif

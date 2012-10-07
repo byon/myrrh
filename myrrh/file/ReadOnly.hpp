@@ -12,8 +12,9 @@
 #ifndef MYRRH_FILE_READONLYFILE_HPP_INCLUDED
 #define MYRRH_FILE_READONLYFILE_HPP_INCLUDED
 
-#include <string>
 #include "boost/shared_ptr.hpp"
+#include <string>
+#include <stdexcept>
 
 namespace boost { namespace filesystem { class path; } }
 

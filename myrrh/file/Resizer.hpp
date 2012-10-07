@@ -13,6 +13,7 @@
 #define MYRRH_FILE_RESIZER_H_INCLUDED
 
 #include "boost/shared_ptr.hpp"
+#include <stdexcept>
 
 namespace boost { namespace filesystem { class path; } }
 

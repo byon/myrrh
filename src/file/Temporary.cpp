@@ -12,6 +12,7 @@
 #include "myrrh/file/Temporary.hpp"
 #include "myrrh/file/Eraser.hpp"
 #include "boost/filesystem/operations.hpp"
+#include <fstream>
 
 namespace myrrh
 {

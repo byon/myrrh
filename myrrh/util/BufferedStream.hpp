@@ -15,9 +15,10 @@
 #ifndef MYRHH_UTIL_BUFFEREDSTREAM_HPP_INCLUDED
 #define MYRHH_UTIL_BUFFEREDSTREAM_HPP_INCLUDED
 
-#include <iosfwd>
-#include <string>
 #include <cstdio>
+#include <iosfwd>
+#include <streambuf>
+#include <string>
 
 namespace myrrh
 {

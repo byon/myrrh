@@ -13,16 +13,12 @@
 #ifndef MYRRH_LOG_POLICY_OPENER_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_OPENER_HPP_INCLUDED
 
-/// @todo Isolate better. Much better
-#include "myrrh/log/policy/Path.hpp"
 #include "boost/shared_ptr.hpp"
-#include "boost/operators.hpp"
-#include "boost/filesystem/path.hpp"
 
 #include <fstream>
 #include <string>
 
-#include <cassert>
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {
@@ -34,6 +30,7 @@ namespace policy
 {
 
 class Opener;
+class Path;
 
 /**
  * File class encapsulates the functionality relating to writing of data into
@@ -47,7 +44,7 @@ class Opener;
  */
 /// Move to own header
 /// Convert into polymorphic class, so the tests do not require IO?
-class File : public boost::equality_comparable<File>
+class File
 {
 public:
 
@@ -77,6 +74,7 @@ public:
      */
     /// Potentially remove the friend status and move outside of class
     friend bool operator==(const File &left, const File &right);
+    friend bool operator!=(const File &left, const File &right);
 
 private:
 
@@ -108,7 +106,7 @@ private:
     // Current size of the file
     std::streamsize writtenSize_;
     // Path to the file
-    const boost::filesystem::path PATH_;
+    const boost::shared_ptr<boost::filesystem::path> path_;
 };
 
 typedef boost::shared_ptr<File> FilePtr;
@@ -164,25 +162,6 @@ class InitialOpener : public Opener
 };
 
 typedef boost::shared_ptr<InitialOpener> InitialOpenerPtr;
-
-// Inline implementations
-/// Isolate to cpp
-
-inline std::streamsize File::WrittenSize( ) const
-{
-    assert(writtenSize_ >= 0);
-    return writtenSize_;
-}
-
-inline const boost::filesystem::path &File::Path( ) const
-{
-    return PATH_;
-}
-
-inline FilePtr Opener::Open(Path path)
-{
-    return FilePtr(new (std::nothrow) File(*this, path));
-}
 
 }
 

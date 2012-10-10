@@ -11,13 +11,15 @@
  */
 
 #include "myrrh/log/policy/Opener.hpp"
+#include "myrrh/log/policy/Path.hpp"
+#include "boost/filesystem/path.hpp"
+
+#include <cassert>
 
 namespace myrrh
 {
-
 namespace log
 {
-
 namespace policy
 {
 
@@ -25,7 +27,7 @@ namespace policy
 
 File::File(Opener &opener, policy::Path& path) :
     writtenSize_(0),
-    PATH_(TryOpening(opener, path, file_))
+    path_(new boost::filesystem::path(TryOpening(opener, path, file_)))
 {
     std::streamsize end = file_.tellp( );
     if (end > 0)
@@ -54,6 +56,27 @@ std::streamsize File::Write(const std::string &line)
     return DIFFERENCE;
 }
 
+bool operator==(const File &left, const File &right)
+{
+    return *left.path_ == *right.path_;
+}
+
+bool operator!=(const File &left, const File &right)
+{
+    return !(left == right);
+}
+
+std::streamsize File::WrittenSize( ) const
+{
+    assert(writtenSize_ >= 0);
+    return writtenSize_;
+}
+
+const boost::filesystem::path &File::Path( ) const
+{
+    return *path_;
+}
+
 boost::filesystem::path File::TryOpening(Opener &opener, policy::Path &path,
                                          std::ofstream &file)
 {
@@ -79,19 +102,17 @@ boost::filesystem::path File::TryOpening(Opener &opener, policy::Path &path,
     return "";
 }
 
-bool operator==(const File &left, const File &right)
-{
-    return (left.PATH_ == right.PATH_);
-}
-
 // Opener class implementation
 
 Opener::~Opener( )
 {
 }
 
+FilePtr Opener::Open(Path path)
+{
+    return FilePtr(new (std::nothrow) File(*this, path));
 }
 
 }
-
+}
 }

@@ -15,6 +15,7 @@
 // Isolate better
 #include "myrrh/log/policy/RestrictionStore.hpp"
 #include "myrrh/log/policy/Opener.hpp"
+#include "myrrh/log/policy/Path.hpp"
 #include <string>
 
 namespace myrrh

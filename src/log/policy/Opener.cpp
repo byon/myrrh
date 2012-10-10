@@ -23,11 +23,70 @@ namespace log
 namespace policy
 {
 
-// File class implementations
+namespace
+{
+
+boost::filesystem::path TryOpening(Opener &opener, policy::Path &path,
+                                   std::ofstream &file);
+}
+
+class File::Implementation
+{
+public:
+
+    Implementation(Opener &opener, policy::Path& path);
+
+    std::streamsize Write(const std::string &line);
+    std::streamsize WrittenSize( ) const;
+    const boost::filesystem::path &Path( ) const;
+    bool Compare(const Implementation &other);
+
+private:
+
+    static boost::filesystem::path TryOpening(Opener &opener,
+                                              policy::Path &path,
+                                              std::ofstream &file);
+
+    std::ofstream file_;
+    std::streamsize writtenSize_;
+    const boost::filesystem::path PATH_;
+};
 
 File::File(Opener &opener, policy::Path& path) :
+    implementation_(new Implementation(opener, path))
+{
+}
+
+std::streamsize File::Write(const std::string &line)
+{
+    return implementation_->Write(line);
+}
+
+bool operator==(const File &left, const File &right)
+{
+    return left.implementation_->Compare(*right.implementation_);
+}
+
+bool operator!=(const File &left, const File &right)
+{
+    return !(left == right);
+}
+
+std::streamsize File::WrittenSize( ) const
+{
+    return implementation_->WrittenSize( );
+}
+
+const boost::filesystem::path &File::Path( ) const
+{
+    return implementation_->Path( );
+}
+
+// File class implementations
+
+File::Implementation::Implementation(Opener &opener, policy::Path& path) :
     writtenSize_(0),
-    path_(new boost::filesystem::path(TryOpening(opener, path, file_)))
+    PATH_(TryOpening(opener, path, file_))
 {
     std::streamsize end = file_.tellp( );
     if (end > 0)
@@ -36,7 +95,7 @@ File::File(Opener &opener, policy::Path& path) :
     }
 }
 
-std::streamsize File::Write(const std::string &line)
+std::streamsize File::Implementation::Write(const std::string &line)
 {
     // It can be a programming error, if the file buffer is not open. But it
     // is possible that the file just could not be opened. Because we are
@@ -56,29 +115,24 @@ std::streamsize File::Write(const std::string &line)
     return DIFFERENCE;
 }
 
-bool operator==(const File &left, const File &right)
+bool File::Implementation::Compare(const Implementation &other)
 {
-    return *left.path_ == *right.path_;
+    return PATH_ == other.PATH_;
 }
 
-bool operator!=(const File &left, const File &right)
-{
-    return !(left == right);
-}
-
-std::streamsize File::WrittenSize( ) const
+std::streamsize File::Implementation::WrittenSize( ) const
 {
     assert(writtenSize_ >= 0);
     return writtenSize_;
 }
 
-const boost::filesystem::path &File::Path( ) const
+const boost::filesystem::path &File::Implementation::Path( ) const
 {
-    return *path_;
+    return PATH_;
 }
 
-boost::filesystem::path File::TryOpening(Opener &opener, policy::Path &path,
-                                         std::ofstream &file)
+boost::filesystem::path File::Implementation::
+TryOpening(Opener &opener, policy::Path &path, std::ofstream &file)
 {
     // The opening is done in this separate function, because it is possible
     // to fail for lack of memory. Any other exceptions are programming errors

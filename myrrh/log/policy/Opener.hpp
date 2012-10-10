@@ -92,21 +92,12 @@ private:
      */
     File(Opener &opener, policy::Path& path);
 
-    static boost::filesystem::path TryOpening(Opener &opener,
-                                              policy::Path &path,
-                                              std::ofstream &file);
-
-    /// Disabled copy constructor
     File(const File &);
-    /// Disabled assignment operator
     File &operator=(const File &);
 
-    // Stream opened to the file
-    std::ofstream file_;
-    // Current size of the file
-    std::streamsize writtenSize_;
-    // Path to the file
-    const boost::shared_ptr<boost::filesystem::path> path_;
+    class Implementation;
+
+    boost::shared_ptr<Implementation> implementation_;
 };
 
 typedef boost::shared_ptr<File> FilePtr;

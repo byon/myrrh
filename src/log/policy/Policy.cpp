@@ -10,6 +10,7 @@
  */
 
 #include "myrrh/log/policy/Policy.hpp"
+#include "myrrh/log/policy/File.hpp"
 
 namespace myrrh
 {

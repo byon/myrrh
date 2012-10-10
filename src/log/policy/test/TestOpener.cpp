@@ -50,6 +50,7 @@
 #include "myrrh/log/policy/Creator.hpp"
 #include "myrrh/log/policy/Resizer.hpp"
 #include "myrrh/log/policy/PathPart.hpp"
+#include "myrrh/log/policy/File.hpp"
 #include "myrrh/file/Temporary.hpp"
 #include "myrrh/file/Eraser.hpp"
 

@@ -29,76 +29,8 @@ namespace log
 namespace policy
 {
 
-class Opener;
+class File;
 class Path;
-
-/**
- * File class encapsulates the functionality relating to writing of data into
- * a physical file and storing the data of the write operations.
- *
- * Note that it is not possible to construct File objects outside from Opener
- * subclasses.
- *
- * By adding boost::equality_comparable<File> as base class, we'll get the
- * inequality operator.
- */
-/// Move to own header
-/// Convert into polymorphic class, so the tests do not require IO?
-class File
-{
-public:
-
-    /**
-     * Writes the given string to a file.
-     * Provides no-throw guarantee
-     * @param line The string to be written
-     * @return The size written to file
-     */
-    std::streamsize Write(const std::string &line);
-
-    /**
-     * Returns the size that has already been written to the file during the
-     * previous write operations (or before opening the file, if we are
-     * appending to existing file).
-     * @return The size written so far
-     */
-    std::streamsize WrittenSize( ) const;
-
-    const boost::filesystem::path &Path( ) const;
-
-    /**
-     * Comparison operator
-     * @param left The File object on the left size of comparison
-     * @param left The File object on the right size of comparison
-     * @return true, if objects are pointing to the same physical file.
-     */
-    /// Potentially remove the friend status and move outside of class
-    friend bool operator==(const File &left, const File &right);
-    friend bool operator!=(const File &left, const File &right);
-
-private:
-
-    // Friend access is needed to Opener, so that the File objects can be
-    // constructed. Because of this friend connection, the File and Opener
-    // classes must not be extracted to separate files. Otherwise it could be
-    // possible to breach the class encapsulation.
-    friend class Opener;
-
-    /**
-     * Constructor.
-     * Provides no-throw guarantee, assuming that the Opener subclass is
-     * implemented correctly (i.e. does not throw exceptions).
-     * @param The opener object that will be used to open the file.
-     */
-    File(Opener &opener, policy::Path& path);
-
-    File(const File &);
-    File &operator=(const File &);
-
-    class Implementation;
-
-    boost::shared_ptr<Implementation> implementation_;
-};
 
 typedef boost::shared_ptr<File> FilePtr;
 

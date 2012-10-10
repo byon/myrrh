@@ -11,6 +11,7 @@
 
 #include "myrrh/log/policy/Restriction.hpp"
 #include "myrrh/log/policy/Opener.hpp"
+#include "myrrh/log/policy/File.hpp"
 
 namespace myrrh
 {

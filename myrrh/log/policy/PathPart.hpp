@@ -16,6 +16,7 @@
 #include "myrrh/log/policy/RestrictionAppender.hpp"
 #include "boost/regex_fwd.hpp"
 #include "boost/shared_ptr.hpp"
+#include <stdexcept>
 #include <string>
 #include <vector>
 

@@ -121,7 +121,8 @@ boost::filesystem::path Path::Implementation::Generate( )
 
 void Path::Implementation::Add(const PartSum &parts)
 {
-    entityStore_.swap(AddNewParts(entityStore_, parts));
+    auto copy = AddNewParts(entityStore_, parts);
+    entityStore_.swap(copy);
 }
 
 void Path::Implementation::Add(const std::string &path)

@@ -12,23 +12,10 @@
 #ifndef MYRRH_LOG_POLICY_RESTRICTION_H_INCLUDED
 #define MYRRH_LOG_POLICY_RESTRICTION_H_INCLUDED
 
-// Isolate better
-
-// The pragmas are required to remove warnings from boost::date_time
-#ifdef WIN32
-#pragma warning(push)
-#pragma warning(disable: 4244)
-#pragma warning(disable: 4996)
-#endif
-
-#include "boost/date_time/gregorian/gregorian_types.hpp"
-
-#ifdef WIN32
-#pragma warning(pop)
-#endif
-
 #include "boost/shared_ptr.hpp"
 #include <string>
+
+namespace boost { namespace gregorian { class date; } }
 
 namespace myrrh
 {
@@ -152,13 +139,6 @@ private:
 };
 
 // Inline implementations
-
-// Actually there is no need to inline this -> move to cpp and remove the
-// boost date_time header inclusion
-inline boost::gregorian::date DateCreator::NewDate( )
-{
-    return boost::gregorian::day_clock::local_day( );
-}
 
 template <typename Creator>
 inline DateRestriction<Creator>::DateRestriction( ) :

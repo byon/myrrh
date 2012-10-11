@@ -13,6 +13,8 @@
 #include "myrrh/log/policy/Opener.hpp"
 #include "myrrh/log/policy/File.hpp"
 
+#include "boost/date_time/gregorian/gregorian_types.hpp"
+
 namespace myrrh
 {
 
@@ -38,6 +40,11 @@ SizeRestriction::SizeRestriction(std::size_t maxSize) :
 bool SizeRestriction::IsRestricted(const File &file, std::size_t toWrite) const
 {
     return (file.WrittenSize( ) + toWrite > MAX_SIZE_);
+}
+
+boost::gregorian::date DateCreator::NewDate( )
+{
+    return boost::gregorian::day_clock::local_day( );
 }
 
 }

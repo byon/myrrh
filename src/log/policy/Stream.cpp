@@ -11,6 +11,7 @@
  */
 
 #include "myrrh/log/policy/Stream.hpp"
+#include "myrrh/log/policy/Policy.hpp"
 
 namespace myrrh
 {

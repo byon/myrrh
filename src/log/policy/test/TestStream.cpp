@@ -10,6 +10,7 @@
  */
 
 #include "myrrh/log/policy/Stream.hpp"
+#include "myrrh/log/policy/Policy.hpp"
 #include "myrrh/log/policy/Restriction.hpp"
 #include "myrrh/log/policy/Creator.hpp"
 #include "myrrh/log/policy/Path.hpp"

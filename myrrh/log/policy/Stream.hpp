@@ -13,8 +13,8 @@
 #ifndef MYRRH_LOG_POLICY_STREAM_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_STREAM_HPP_INCLUDED
 
-#include "myrrh/log/policy/Policy.hpp"
 #include "myrrh/util/BufferedStream.hpp"
+#include "boost/shared_ptr.hpp"
 
 namespace myrrh
 {
@@ -24,6 +24,9 @@ namespace log
 
 namespace policy
 {
+
+class Policy;
+typedef boost::shared_ptr<Policy> PolicyPtr;
 
 /**
  * This class integrates the myrrh::log::policy component to std::ostream

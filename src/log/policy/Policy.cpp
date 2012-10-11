@@ -11,6 +11,7 @@
 
 #include "myrrh/log/policy/Policy.hpp"
 #include "myrrh/log/policy/File.hpp"
+#include "boost/filesystem/path.hpp"
 
 namespace myrrh
 {

@@ -12,9 +12,9 @@
 #ifndef MYRRH_LOG_POLICY_APPENDER_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_APPENDER_HPP_INCLUDED
 
-/// Isolate better
 #include "myrrh/log/policy/Opener.hpp"
-#include "boost/filesystem/path.hpp"
+
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {

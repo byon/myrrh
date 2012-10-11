@@ -23,6 +23,7 @@
 // Does not seem to be worth maintaining, rewrite if needed
 
 #include "myrrh/log/policy/Policy.hpp"
+#include "myrrh/log/policy/RestrictionStore.hpp"
 #include "myrrh/log/policy/Path.hpp"
 #include "myrrh/log/policy/PathPart.hpp"
 #include "myrrh/log/policy/Creator.hpp"

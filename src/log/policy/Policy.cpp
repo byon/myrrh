@@ -10,6 +10,9 @@
  */
 
 #include "myrrh/log/policy/Policy.hpp"
+#include "myrrh/log/policy/RestrictionStore.hpp"
+#include "myrrh/log/policy/Path.hpp"
+#include "myrrh/log/policy/Opener.hpp"
 #include "myrrh/log/policy/File.hpp"
 #include "boost/filesystem/path.hpp"
 
@@ -84,9 +87,41 @@ typedef SizeAdjusterImpl<ADJUSTING_NEEDED> SizeAdjuster;
 
 }
 
+class Policy::Implementation
+{
+public:
+    Implementation(Path path, InitialOpenerPtr initialOpener,
+           OpenerPtr subsequentOpener);
+    void AddRestriction(RestrictionPtr restriction);
+    std::streamsize Write(const std::string &toWrite);
+private:
+    Path path_;
+    RestrictionStore restrictions_;
+    OpenerPtr subsequentOpener_;
+    FilePtr file_;
+};
+
 // Class implementations
 
 Policy::Policy(Path path, InitialOpenerPtr initialOpener,
+               OpenerPtr subsequentOpener) :
+    implementation_(new Implementation(path, initialOpener, subsequentOpener))
+{
+}
+
+void Policy::AddRestriction(RestrictionPtr restriction)
+{
+    implementation_->AddRestriction(restriction);
+}
+
+// Divide smaller
+std::streamsize Policy::Write(const std::string &toWrite)
+{
+    return implementation_->Write(toWrite);
+}
+
+Policy::Implementation::
+Implementation(Path path, InitialOpenerPtr initialOpener,
                OpenerPtr subsequentOpener) :
     path_(path),
     subsequentOpener_(subsequentOpener),
@@ -95,13 +130,13 @@ Policy::Policy(Path path, InitialOpenerPtr initialOpener,
     path_.AppendRestrictions(restrictions_);
 }
 
-void Policy::AddRestriction(RestrictionPtr restriction)
+void Policy::Implementation::AddRestriction(RestrictionPtr restriction)
 {
     restrictions_.Add(restriction);
 }
 
 // Divide smaller
-std::streamsize Policy::Write(const std::string &toWrite)
+std::streamsize Policy::Implementation::Write(const std::string &toWrite)
 {
     boost::filesystem::path originalPath(file_->Path( ));
     int counter = 0;
@@ -153,8 +188,8 @@ std::streamsize Policy::Write(const std::string &toWrite)
 namespace
 {
 
-inline std::streamsize AdjustSize(const std::string &toWrite,
-                                  const std::streamsize written)
+std::streamsize AdjustSize(const std::string &toWrite,
+                           const std::streamsize written)
 {
     const std::streamsize TEXT_SIZE =
         static_cast<std::streamsize>(toWrite.size( ));
@@ -176,7 +211,7 @@ inline std::streamsize AdjustSize(const std::string &toWrite,
 }
 
 template <bool AdjustingNeeded>
-inline SizeAdjusterImpl<AdjustingNeeded>::
+SizeAdjusterImpl<AdjustingNeeded>::
 SizeAdjusterImpl(const std::string &toWrite) :
     TEXT_(toWrite),
     LINES_(static_cast<std::streamsize>(std::count(toWrite.begin( ),
@@ -185,13 +220,13 @@ SizeAdjusterImpl(const std::string &toWrite) :
 }
 
 template <bool AdjustingNeeded>
-inline std::streamsize SizeAdjusterImpl<AdjustingNeeded>::GetSize( ) const
+std::streamsize SizeAdjusterImpl<AdjustingNeeded>::GetSize( ) const
 {
     return static_cast<std::streamsize>(TEXT_.size( ) + LINES_);
 }
 
 template <bool AdjustingNeeded>
-inline std::streamsize
+std::streamsize
 SizeAdjusterImpl<AdjustingNeeded>::Adjust(std::streamsize written) const
 {
     if ((TEXT_.size( ) == written) ||
@@ -203,17 +238,17 @@ SizeAdjusterImpl<AdjustingNeeded>::Adjust(std::streamsize written) const
     return written;
 }
 
-inline SizeAdjusterImpl<false>::SizeAdjusterImpl(const std::string &toWrite) :
+SizeAdjusterImpl<false>::SizeAdjusterImpl(const std::string &toWrite) :
     TEXT_(toWrite)
 {
 }
 
-inline std::streamsize SizeAdjusterImpl<false>::GetSize( ) const
+std::streamsize SizeAdjusterImpl<false>::GetSize( ) const
 {
     return static_cast<std::streamsize>(TEXT_.size( ));
 }
 
-inline std::streamsize
+std::streamsize
 SizeAdjusterImpl<false>::Adjust(std::streamsize written) const
 {
     return written;

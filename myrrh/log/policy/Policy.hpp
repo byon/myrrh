@@ -12,10 +12,7 @@
 #ifndef MYRRH_LOG_POLICY_POLICY_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_POLICY_HPP_INCLUDED
 
-// Isolate better
-#include "myrrh/log/policy/RestrictionStore.hpp"
-#include "myrrh/log/policy/Opener.hpp"
-#include "myrrh/log/policy/Path.hpp"
+#include "boost/shared_ptr.hpp"
 #include <string>
 
 namespace myrrh
@@ -26,6 +23,16 @@ namespace log
 
 namespace policy
 {
+
+class File;
+class InitialOpener;
+class Opener;
+class Path;
+class Restriction;
+typedef boost::shared_ptr<File> FilePtr;
+typedef boost::shared_ptr<InitialOpener> InitialOpenerPtr;
+typedef boost::shared_ptr<Opener> OpenerPtr;
+typedef boost::shared_ptr<Restriction> RestrictionPtr;
 
 /**
  * Policy class is the container of all the rules that can be combined from
@@ -116,13 +123,9 @@ private:
     /// Disabled assignment
     Policy& operator=(const Policy&);
 
-    Path path_;
-    /// Stores the stored restrictions
-    RestrictionStore restrictions_;
-    /// The object that implements subsequent openers
-    OpenerPtr subsequentOpener_;
-    /// The currently open log object
-    FilePtr file_;
+    class Implementation;
+
+    boost::shared_ptr<Implementation> implementation_;
 };
 
 typedef boost::shared_ptr<Policy> PolicyPtr;

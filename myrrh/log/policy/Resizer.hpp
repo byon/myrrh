@@ -12,10 +12,9 @@
 #ifndef MYRRH_LOG_POLICY_RESIZER_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_RESIZER_HPP_INCLUDED
 
-// Isolate better
 #include "myrrh/log/policy/Opener.hpp"
-#include "myrrh/log/policy/Path.hpp"
-#include "boost/filesystem/path.hpp"
+
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {
@@ -25,6 +24,8 @@ namespace log
 
 namespace policy
 {
+
+class Path;
 
 /**
  * This class a way of opening log files for myrrh::log::policy component. The

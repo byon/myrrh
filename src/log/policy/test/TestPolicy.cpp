@@ -3,23 +3,6 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-/**
- * This file contains the unit test(s) for Policy
- *
- * The following situations are tested:
- * -The correct number of bytes is returned after writing
- * -Copy construction
- * -Assignment
- * -The initial opener opens a file that is usable
- * -The initial opener opens a file that is not usable
- * -Several attempts are needed to open a usable file
- * -The initial opener is usable for several writes
- * -The subsequent opener is usable for several writes
- * -Writing fails
- *
- * $Id: TestPolicy.cpp 369 2007-09-20 20:08:51Z byon $
- */
-
 // Does not seem to be worth maintaining, rewrite if needed
 
 #include "myrrh/log/policy/Policy.hpp"

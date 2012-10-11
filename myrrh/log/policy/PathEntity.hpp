@@ -10,7 +10,6 @@
 
 #include "boost/shared_ptr.hpp"
 
-/// Can the class be isolated better?
 #include <iterator>
 #include <functional>
 #include <string>

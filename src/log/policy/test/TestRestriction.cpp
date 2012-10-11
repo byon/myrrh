@@ -31,6 +31,7 @@
 #include "myrrh/log/policy/Creator.hpp"
 #include "myrrh/log/policy/PathPart.hpp"
 #include "myrrh/log/policy/File.hpp"
+#include "myrrh/log/policy/Path.hpp"
 
 #define DISABLE_ASSIGNMENT_OPERATOR_COULD_NOT_BE_GENERATED
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT

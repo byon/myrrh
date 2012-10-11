@@ -12,9 +12,7 @@
 #ifndef MYRRH_LOG_POLICY_CREATOR_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_CREATOR_HPP_INCLUDED
 
-/// @todo Isolate better
 #include "myrrh/log/policy/Opener.hpp"
-#include "myrrh/log/policy/Path.hpp"
 
 namespace myrrh
 {
@@ -24,6 +22,8 @@ namespace log
 
 namespace policy
 {
+
+class Path;
 
 /**
  * Creator class is used in the myrrh::log::policy library to open a file

@@ -10,6 +10,8 @@
  */
 
 #include "myrrh/log/policy/Creator.hpp"
+#include "myrrh/log/policy/Path.hpp"
+
 
 #define DISABLE_SIGNED_UNSIGNED_MISMATCH
 #include "myrrh/util/Preprocessor.hpp"

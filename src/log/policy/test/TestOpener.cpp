@@ -3,49 +3,6 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-/**
- * This file contains the unit test(s) for classes File, Appender, Creator and
- * Resizer. All are in namespace myrrh::log::policy.
- *
- * The following tests are made for File:
- * -Lines can be written to file
- * -Writing of empty line
- * -Writing of line with line-endings
- * -Writing of lines correctly updates the data size
- * -Writing when the underlying file is not open
- * -Equality comparison succeeds when two objects point to same file and
- *  fail otherwise
- * -Path name accessing
- *
- * The following tests are made for all Opener subclasses:
- * -The lines are correctly written through File
- * -The data size is correctly set on open
- * -The data size gets correctly updated after each write.
- * -Path is a direct path to file
- * -Path is a path with subfolders
- * -Path is a path with subfolder pointing to an existing file
- *
- * The following tests are made for only Appender:
- * -When target file does not exist, a new file is created
- * -When target file exists, the new lines are appended to the end of file
- *
- * The following tests are made for only Creator:
- * -When target file does not exist, a new file is created
- * -When target file exists, the old content is replaced by new lines
- *
- * The following tests are made for only Resizer:
- * -When target file does not exist, a new file is created
- * -When target file exists, the old content is resized correctly and new lines
- *  are added to end of file
- *
- * The following tests are not made, because they are user errors
- * @todo Is this true with Path interface?
- * -Path is an empty path
- * -Path is a path to a directory
- *
- * $Id: TestOpener.cpp 354 2007-09-17 17:39:58Z byon $
- */
-
 #include "myrrh/log/policy/Appender.hpp"
 #include "myrrh/log/policy/Creator.hpp"
 #include "myrrh/log/policy/Resizer.hpp"

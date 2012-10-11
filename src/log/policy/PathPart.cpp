@@ -14,6 +14,9 @@
 #include "myrrh/log/policy/Restriction.hpp"
 #include "myrrh/log/policy/RestrictionStore.hpp"
 
+#include "boost/filesystem/path.hpp"
+#include "boost/regex.hpp"
+
 #define DISABLE_ASSIGNMENT_OPERATOR_COULD_NOT_BE_GENERATED
 #define DISABLE_TYPE_CONVERSION_LOSS_OF_DATA
 #define DISABLE_COPY_CONSTRUCTOR_COULD_NOT_BE_GENERATED

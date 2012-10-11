@@ -13,13 +13,13 @@
 #ifndef MYRRH_LOG_POLICY_PATHPART_H_INCLUDED
 #define MYRRH_LOG_POLICY_PATHPART_H_INCLUDED
 
-// Isolate better
 #include "myrrh/log/policy/RestrictionAppender.hpp"
-#include "boost/filesystem/path.hpp"
-#include "boost/regex.hpp"
+#include "boost/regex_fwd.hpp"
 #include "boost/shared_ptr.hpp"
 #include <string>
 #include <vector>
+
+namespace boost { namespace filesystem { class path; } }
 
 namespace myrrh
 {

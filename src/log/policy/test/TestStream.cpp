@@ -21,6 +21,7 @@
 #include "myrrh/util/Preprocessor.hpp"
 
 #include "boost/test/unit_test.hpp"
+#include "boost/filesystem/path.hpp"
 
 #ifdef WIN32
 #pragma warning(pop)

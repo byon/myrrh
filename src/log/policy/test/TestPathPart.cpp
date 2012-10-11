@@ -23,6 +23,7 @@
 #include "boost/lexical_cast.hpp"
 #include "boost/test/unit_test.hpp"
 #include "boost/filesystem/path.hpp"
+#include "boost/regex.hpp"
 
 #ifdef WIN32
 

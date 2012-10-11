@@ -15,6 +15,7 @@
 #include "boost/shared_ptr.hpp"
 
 #include <iterator>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -81,10 +82,12 @@ public:
      * By making std::iterator a parent class it is possible to use Entity
      * as iterator in STL algorithms.
      */
-    /// @todo Does this need to be a public class?
     class Entity : public std::iterator<std::forward_iterator_tag, Entity>
     {
     public:
+
+        typedef std::function<bool (const boost::filesystem::path&,
+                                    const boost::filesystem::path)> Comparer;
 
         /**
          * Returns an object that can be checked if a path matches to the rules
@@ -93,53 +96,12 @@ public:
         file::ExpressionMatcher Matcher( ) const;
 
         /**
-         * A class used to compare two boost::filesystem::path objects into
-         * order of preference according to the entity rules.
-         *
-         * By making std::binary_function a parent class, it is possible to
-         * use Comparer as a binary predicate in STL algorithms, sort( ) most
-         * specifically.
-         */
-        /// @todo Check the benefit of binary_function. Could probably be
-        ///       implemented with lambda or std::bind.
-        class Comparer : public std::binary_function<boost::filesystem::path,
-                                                     boost::filesystem::path,
-                                                     bool>
-        {
-        public:
-
-            /**
-             * Does the comparison.
-             * @param left The object on the left side of comparison
-             * @param right The object on the right side of comparison
-             * @returns true if the left object is earlier, false otherwise
-             */
-            bool operator( )(const boost::filesystem::path &left,
-                             const boost::filesystem::path &right) const;
-
-        private:
-
-            // Friend access is needed, so Path::Entity can construct
-            // Path::Entity::Comparer objects
-            friend class Entity;
-
-            /**
-             * Constructor
-             * Provides no-throw guarantee
-             * @param entity The entity that has the rules for comparison
-             */
-            explicit Comparer(const Path::Entity &entity);
-
-            // Gives access to the entity object
-            const Path::Entity *entity_;
-        };
-
-        /**
          * Returns an object that can be used to sort two
          * boost::filesystem::path objects into order of preference according
          * to the entity rules. The object can be passed to STL algorithms,
          * like std::sort( ).
          */
+
         Comparer GetComparer( ) const;
 
         void AppendRestrictions(RestrictionStore &store) const;
@@ -149,9 +111,6 @@ public:
         // Friend access is needed, so Path can construct Entity objects,
         // add new path parts and to Generate new path strings
         friend class Path;
-        // Friend access is needed, so Comparer can access the methods that
-        // truly implement the comparison.
-        friend class Comparer;
 
         /**
          * Default constructor

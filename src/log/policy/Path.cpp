@@ -260,7 +260,11 @@ file::ExpressionMatcher Path::Entity::Matcher( ) const
 
 Path::Entity::Comparer Path::Entity::GetComparer( ) const
 {
-    return Path::Entity::Comparer(*this);
+    using namespace boost::filesystem;
+    return [&](const path& left, const path& right)
+    {
+        return this->IsFirstEarlier(left, right);
+    };
 }
 
 // Divide smaller
@@ -301,20 +305,6 @@ void Path::Entity::AppendRestrictions(RestrictionStore &store) const
     {
         (*i)->AppendRestrictions(store);
     }
-}
-
-// Path::Entity::Comparer class implementations
-
-Path::Entity::Comparer::Comparer(const Path::Entity &entity) :
-    entity_(&entity)
-{
-}
-
-bool Path::Entity::Comparer::
-operator( )(const boost::filesystem::path &left,
-            const boost::filesystem::path &right) const
-{
-    return entity_->IsFirstEarlier(left, right);
 }
 
 // Path::Error class implementations

@@ -11,6 +11,7 @@
 
 #include "myrrh/log/policy/Appender.hpp"
 #include "myrrh/log/policy/Path.hpp"
+#include "myrrh/log/policy/PathEntity.hpp"
 #include "myrrh/file/MatchFiles.hpp"
 
 #define DISABLE_SIGNED_UNSIGNED_MISMATCH

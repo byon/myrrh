@@ -3,13 +3,8 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-/**
- * This file contains the unit test(s) for Path
- *
- * $Id: TestPath.cpp 356 2007-09-18 19:55:21Z byon $
- */
-
 #include "myrrh/log/policy/Path.hpp"
+#include "myrrh/log/policy/PathEntity.hpp"
 #include "myrrh/log/policy/PathPart.hpp"
 #include "myrrh/log/policy/RestrictionStore.hpp"
 #include "myrrh/log/policy/Restriction.hpp"

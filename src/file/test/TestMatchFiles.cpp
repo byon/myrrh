@@ -12,7 +12,6 @@
 #include "myrrh/file/MatchFiles.hpp"
 #include "myrrh/file/Eraser.hpp"
 #include "myrrh/file/Temporary.hpp"
-#include "boost/filesystem/exception.hpp"
 
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #define DISABLE_SIGNED_UNSIGNED_MISMATCH
@@ -21,8 +20,6 @@
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/lexical_cast.hpp"
 #include "boost/test/auto_unit_test.hpp"
-#include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/convenience.hpp"
 
 #ifdef WIN32
 #pragma warning(pop)

@@ -3,14 +3,6 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-/**
- * The file contains the non-inline implementation of classes Log,
- * Log::IsOutputTarget, Log::WriteException, Log::WriteLine and
- * Log::OutputGuard.
- *
- * $Id: Log.cpp 355 2007-09-17 18:48:35Z byon $
- */
-
 #include "myrrh/log/Log.hpp"
 #include <algorithm>
 #include <cassert>
@@ -27,50 +19,11 @@ namespace
 
 // Local declarations
 
-/**
- * A helper functor class, which is used to write the current line to
- * given stream buffer.
- */
-// Use normal function with std::bind instead?
-class WriteLine : public std::unary_function<Log::OutputTarget, void>
-{
-public:
-
-    /**
-     * Constructor.
-     * @param The line to be written
-     * @param verbosity The verbosity level of the line to be written.
-     */
-    WriteLine(const std::string &line, VerbosityLevel verbosity);
-
-    /**
-     * Copy constructor
-     * @param orig The original object
-     */
-    WriteLine(const WriteLine &orig);
-
-    /**
-     * Writes the line to given stream buffer
-     * @param buffer The buffer into which the line will be written
-     * @return void
-     */
-    result_type operator( )(argument_type buffer);
-
-private:
-
-    /// Assignment disabled
-    WriteLine &operator=(const WriteLine &);
-
-    /**
-     * Does the actual work of writing the buffer.
-     */
-    void Write(std::streambuf *buffer);
-
-    /** The line to be written */
-    const std::string &line_;
-    /** Verbosity level of the line to be written */
-    const VerbosityLevel verbosity_;
-};
+void WriteToTargets(const std::string &line, VerbosityLevel verbosity,
+                    Log::OutputTargets &targets);
+void WriteLine(const std::string &line, VerbosityLevel verbosity,
+               Log::OutputTarget &target);
+void WriteLine(const std::string &line, std::streambuf& buffer);
 
 /**
  * A predicate functor for checking is the given output target the one that
@@ -192,8 +145,7 @@ void Log::Write(VerbosityLevel verbosity)
 {
     try
     {
-        std::for_each(targets_.begin( ), targets_.end( ),
-                      WriteLine(line_.str( ), verbosity));
+        WriteToTargets(line_.str( ), verbosity, targets_);
     }
     catch (const std::bad_alloc&)
     {
@@ -253,38 +205,32 @@ Log::OutputGuard::~OutputGuard( )
 namespace
 {
 
-inline WriteLine::WriteLine(const std::string &line,
-                            VerbosityLevel verbosity) :
-    line_(line),
-    verbosity_(verbosity)
+void WriteToTargets(const std::string &line, VerbosityLevel verbosity,
+                    Log::OutputTargets &targets)
 {
+    auto writer = [&](Log::OutputTarget& t){ WriteLine(line, verbosity, t); };
+    std::for_each(targets.begin( ), targets.end( ), writer);
 }
 
-inline WriteLine::WriteLine(const WriteLine &orig) :
-    line_(orig.line_),
-    verbosity_(orig.verbosity_)
+void WriteLine(const std::string &line, VerbosityLevel verbosity,
+               Log::OutputTarget& target)
 {
+    if (verbosity <= target.second)
+    {
+        WriteLine(line, *target.first);
+    }
 }
 
-inline void WriteLine::Write(std::streambuf *buffer)
+void WriteLine(const std::string &line, std::streambuf& buffer)
 {
-    const std::streamsize SIZE = static_cast<std::streamsize>(line_.size( ));
-    if ((buffer->sputn(line_.c_str( ), SIZE) != SIZE) ||
-        (buffer->sputc('\n') != '\n') ||
-        (buffer->pubsync( ) < 0))
+    const std::streamsize SIZE = static_cast<std::streamsize>(line.size( ));
+    if ((buffer.sputn(line.c_str( ), SIZE) != SIZE) ||
+        (buffer.sputc('\n') != '\n') ||
+        (buffer.pubsync( ) < 0))
     {
         /// @todo Design some error reporting mechanism. Now the errors are
         ///       silently ignored, because we need this method to have
         ///       no-throw guarantee.
-    }
-}
-
-inline WriteLine::result_type
-WriteLine::operator( )(WriteLine::argument_type target)
-{
-    if (verbosity_ <= target.second)
-    {
-        Write(target.first);
     }
 }
 

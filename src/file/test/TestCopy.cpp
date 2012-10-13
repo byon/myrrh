@@ -29,7 +29,6 @@
 #include "myrrh/file/Copy.hpp"
 #include "myrrh/file/PositionScanner.hpp"
 #include "myrrh/file/Eraser.hpp"
-#include "myrrh/util/GenerateOutput.hpp"
 #include "myrrh/data/test/Files.hpp"
 
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
@@ -332,15 +331,13 @@ void CopySmallRange( )
 
 void CopyLargeRange( )
 {
-    std::ifstream input(Path(Files::SEVERAL_LINES_NOT_EQUAL_LENGTH).c_str( ));
-    BOOST_REQUIRE(input.is_open( ));
-
     const std::string FILE_NAME("LargeFile.txt");
     Eraser fileDeleter(FILE_NAME.c_str( ));
     std::ofstream output(FILE_NAME.c_str( ));
     BOOST_REQUIRE(output.is_open( ));
 
-    myrrh::util::GenerateOutput(input, output, 1000000);
+    const std::string CONTENT(1000000, 'a');
+    output << CONTENT << std::endl;
 
     class Case : public HardCodedPointsTestCase<123456, 654321>
     {

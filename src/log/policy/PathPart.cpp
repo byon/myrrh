@@ -14,7 +14,6 @@
 #include "myrrh/log/policy/Restriction.hpp"
 #include "myrrh/log/policy/RestrictionStore.hpp"
 
-#include "boost/filesystem/path.hpp"
 #include "boost/regex.hpp"
 
 #define DISABLE_ASSIGNMENT_OPERATOR_COULD_NOT_BE_GENERATED
@@ -24,8 +23,6 @@
 #define DISABLE_DEPRECATED_FUNCTION_WARNING
 #define DISABLE_UNINITIALIZED_LOCAL_VARIABLE
 #include "myrrh/util/Preprocessor.hpp"
-#include "boost/date_time/special_defs.hpp"
-#include "boost/date_time/posix_time/ptime.hpp"
 #include "boost/date_time/local_time/local_time_types.hpp"
 #include "boost/algorithm/string/replace.hpp"
 #pragma warning(pop)

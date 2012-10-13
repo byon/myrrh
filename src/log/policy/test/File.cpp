@@ -12,9 +12,6 @@
 #include "File.hpp"
 #include <algorithm>
 #include <cassert>
-#include <fstream>
-#include <sstream>
-
 
 File::File(const boost::filesystem::path &path) :
     path_(path)

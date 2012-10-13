@@ -48,6 +48,7 @@
 
 typedef boost::unit_test::test_suite TestSuite;
 typedef std::vector<std::string> Lines;
+typedef std::vector<File> Files;
 
 using namespace myrrh::log;
 

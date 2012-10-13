@@ -12,10 +12,8 @@
 #ifndef MYRRH_LOG_POLICY_TEST_EXAMPLES_FILE_HPP_INCLUDED
 #define MYRRH_LOG_POLICY_TEST_EXAMPLES_FILE_HPP_INCLUDED
 
-// isolate better
 #include "boost/filesystem/path.hpp"
 #include <string>
-#include <vector>
 
 class File
 {
@@ -34,7 +32,5 @@ private:
     boost::filesystem::path path_;
     std::string content_;
 };
-
-typedef std::vector<File> Files;
 
 #endif

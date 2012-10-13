@@ -25,8 +25,6 @@
 
 #include "boost/filesystem/operations.hpp"
 
-#include <cassert>
-
 namespace myrrh
 {
 

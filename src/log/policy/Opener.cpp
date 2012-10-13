@@ -14,8 +14,6 @@
 #include "myrrh/log/policy/Path.hpp"
 #include "myrrh/log/policy/File.hpp"
 
-#include <cassert>
-
 namespace myrrh
 {
 namespace log

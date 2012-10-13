@@ -10,7 +10,6 @@
  */
 
 #include "myrrh/log/policy/Restriction.hpp"
-#include "myrrh/log/policy/Opener.hpp"
 #include "myrrh/log/policy/File.hpp"
 
 #include "boost/date_time/gregorian/gregorian_types.hpp"

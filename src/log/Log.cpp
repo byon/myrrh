@@ -25,40 +25,6 @@ void WriteLine(const std::string &line, VerbosityLevel verbosity,
                Log::OutputTarget &target);
 void WriteLine(const std::string &line, std::streambuf& buffer);
 
-/**
- * A predicate functor for checking is the given output target the one that
- * is searched for. Can be used for in STL algorithms when handling
- * Log::OutputTarget.
- */
-// Use lambda instead
-class IsOutputTarget : public std::unary_function<Log::OutputTarget, bool>
-{
-public:
-
-    /**
-     * Constructor.
-     * @param The line to be written
-     */
-    explicit IsOutputTarget(const std::ostream &toCompare);
-
-    IsOutputTarget(const IsOutputTarget &orig);
-
-    /**
-     * Does the comparison
-     * @param buffer The buffer into which the line will be written
-     * @return true if comparison succeeds, false otherwise.
-     */
-    result_type operator( )(argument_type buffer);
-
-private:
-
-    /// Assignment disabled
-    IsOutputTarget &operator=(const IsOutputTarget &);
-
-    /** The line to be written */
-    const std::ostream &toCompare_;
-};
-
 }
 
 // Log class implementations
@@ -133,12 +99,12 @@ void Log::WriteHeader(char id)
     }
 }
 
-void Log::RemoveOutputTarget(std::ostream &target)
+void Log::RemoveOutputTarget(std::ostream &toRemove)
 {
-    IsOutputTarget test(target);
-    targets_.erase(
-        std::remove_if(targets_.begin( ), targets_.end( ), test),
-        targets_.end( ));
+    auto finder = [&](const OutputTarget& t)
+        { return toRemove.rdbuf( ) == t.first; };
+    auto first = std::remove_if(targets_.begin( ), targets_.end( ), finder);
+    targets_.erase(first, targets_.end( ));
 }
 
 void Log::Write(VerbosityLevel verbosity)
@@ -232,22 +198,6 @@ void WriteLine(const std::string &line, std::streambuf& buffer)
         ///       silently ignored, because we need this method to have
         ///       no-throw guarantee.
     }
-}
-
-IsOutputTarget::IsOutputTarget(const std::ostream &toCompare) :
-    toCompare_(toCompare)
-{
-}
-
-IsOutputTarget::IsOutputTarget(const IsOutputTarget &orig) :
-    toCompare_(orig.toCompare_)
-{
-}
-
-inline IsOutputTarget::result_type
-IsOutputTarget::operator( )(IsOutputTarget::argument_type target)
-{
-    return target.first == toCompare_.rdbuf( );
 }
 
 }

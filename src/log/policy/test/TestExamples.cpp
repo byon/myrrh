@@ -20,7 +20,6 @@
 
 #include "myrrh/log/policy/Examples.hpp"
 #include "File.hpp"
-#include "myrrh/file/Eraser.hpp"
 
 #define DISABLE_ASSIGNMENT_OPERATOR_COULD_NOT_BE_GENERATED
 #define DISABLE_COPY_CONSTRUCTOR_COULD_NOT_BE_GENERATED
@@ -32,16 +31,17 @@
 
 #include "boost/test/unit_test.hpp"
 #include "boost/regex.hpp"
-#include "boost/date_time/special_defs.hpp"
-#include "boost/date_time/local_time/local_time_types.hpp"
 #include "boost/filesystem/convenience.hpp"
+#include "boost/lexical_cast.hpp"
+#include "boost/algorithm/string/erase.hpp"
+#include "boost/algorithm/string/replace.hpp"
 
 #ifdef WIN32
 #pragma warning(pop)
 #endif
 
-#include <algorithm>
 #include <fstream>
+#include <iomanip>
 #include <sstream>
 #include <string>
 #include <vector>

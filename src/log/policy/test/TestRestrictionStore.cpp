@@ -17,7 +17,6 @@
 #define DISABLE_CONDITIONAL_EXPRESSION_IS_CONSTANT
 #include "myrrh/util/Preprocessor.hpp"
 
-#include "boost/shared_ptr.hpp"
 #include "boost/filesystem/path.hpp"
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/test/auto_unit_test.hpp"

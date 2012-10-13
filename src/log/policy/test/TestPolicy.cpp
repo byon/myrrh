@@ -21,14 +21,12 @@
 
 #include "boost/test/unit_test.hpp"
 #include "boost/lexical_cast.hpp"
+#include "boost/filesystem/operations.hpp"
 
 #ifdef WIN32
 #pragma warning(pop)
 #include <windows.h>
 #endif
-
-#include "boost/filesystem/path.hpp"
-#include "boost/filesystem/operations.hpp"
 
 #include <vector>
 

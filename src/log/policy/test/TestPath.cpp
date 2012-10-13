@@ -16,7 +16,8 @@
 #define DISABLE_SIGNED_UNSIGNED_MISMATCH
 #include "myrrh/util/Preprocessor.hpp"
 
-#include <boost/lexical_cast.hpp>
+#include "boost/lexical_cast.hpp"
+#include "boost/filesystem/path.hpp"
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/test/auto_unit_test.hpp"
 

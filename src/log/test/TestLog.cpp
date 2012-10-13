@@ -52,7 +52,6 @@
 
 #include "boost/filesystem/path.hpp"
 #include "boost/test/unit_test.hpp"
-#include "boost/shared_ptr.hpp"
 #include "boost/algorithm/string/replace.hpp"
 #include "boost/thread.hpp"
 #include "boost/tokenizer.hpp"
@@ -62,13 +61,8 @@
 #pragma warning (pop)
 #endif
 
-#include <algorithm>
 #include <fstream>
-#include <sstream>
-#include <string>
 #include <vector>
-#include <iomanip>
-#include <iostream>
 
 using namespace myrrh::log;
 using namespace myrrh::file;

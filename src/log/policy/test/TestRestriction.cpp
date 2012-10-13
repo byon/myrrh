@@ -29,7 +29,6 @@
 
 #include "myrrh/log/policy/Restriction.hpp"
 #include "myrrh/log/policy/Creator.hpp"
-#include "myrrh/log/policy/PathPart.hpp"
 #include "myrrh/log/policy/File.hpp"
 #include "myrrh/log/policy/Path.hpp"
 
@@ -41,7 +40,6 @@
 #include "boost/algorithm/string/erase.hpp"
 #include "boost/algorithm/string/replace.hpp"
 #include "boost/filesystem/operations.hpp"
-#include "boost/lexical_cast.hpp"
 
 #ifdef WIN32
 #pragma warning(pop)

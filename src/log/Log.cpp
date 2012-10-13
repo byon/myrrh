@@ -14,9 +14,7 @@
 #include "myrrh/log/Log.hpp"
 #include <algorithm>
 #include <cassert>
-#include <ctime>
 #include <functional>
-#include <sstream>
 
 namespace myrrh
 {

@@ -81,7 +81,7 @@ def setBoostConfiguration(conf):
     conf.env.INCLUDES_boost = [boost_path]
 
 def setBoostConfigurationLinux(conf):
-    boost_path = '/home/byon/src/vendor/boost/boost_1_50_0/'
+    boost_path = '/home/byon/Documents/src/vendor/boost/boost_1_50_0/'
     conf.env.STLIB_boost = ['boost_thread',
                             'boost_regex',
                             'boost_system',

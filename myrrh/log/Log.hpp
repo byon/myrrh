@@ -3,15 +3,6 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-/**
- * This file contains declaration of classes Log, Log::OutputGuard,
- * Log::Verbosity, typedefs Critical, Error, Warn, Notify, Info, Debug and
- * enumeration VerbosityLevel all in namespace myrrh::log.
- *
- * $Id: Log.hpp 355 2007-09-17 18:48:35Z byon $
- *
- */
-
 #ifndef MYRRH_LOG_LOGGER_H_INCLUDED
 #define MYRRH_LOG_LOGGER_H_INCLUDED
 
@@ -68,74 +59,7 @@ class Log
 {
 public:
 
-    /**
-     * This class is used to make sure that the output stream objects stored
-     * inside Log will not get destructed before Log is destroyed. This way
-     * it is not possible to use them after destruction.
-     *
-     * Construction of new OutputGuard objects is made through
-     * Log::AddOutputTarget, which adds a new output stream to Log output
-     * target. When OutputGuard gets out of scope it automatically removes the
-     * correct output stream from Log.
-     *
-     * OutputGuard has a public copy constructor, which passes the ownership
-     * to the new object. The original object has no real reason to be stored
-     * and its destruction will not cause changes in output targets.
-     */
-    // Another option would be to use shared_ptr, with the deletion logic
-    // replaced with cleanup
-    class OutputGuard
-    {
-    public:
-
-        /**
-         * Copy constructor, passes output target ownership to new object.
-         * @param orig The original object to be copied. Once the copy
-         *             construction is complete, this object will have no
-         *             reason to exist.
-         */
-        OutputGuard(const OutputGuard &orig);
-
-        /**
-         * Assignment operator, passes output target ownership to new object.
-         * @param orig The original object to be copied. Once the copy
-         *             construction is complete, this object will have no
-         *             reason to exist.
-         */
-        OutputGuard &operator=(const OutputGuard &orig);
-
-        /**
-         * Destructor. When OutputGuard gets destructed, Release( ) is called.
-         */
-        ~OutputGuard( );
-
-        /**
-         * Releases the ownership to output stream. After calling of this
-         * method the Log no longer writes output to that Output stream. The
-         * calling of this method is not mandatory as the method gets
-         * automatically called when OutputGuardgets destructed.
-         */
-        void Release( );
-
-    private:
-
-        /**
-         * Constructor, private to allow only Log to have authorization to
-         * construct new objects. The given output stream is added to Log's
-         * output targets.
-         * @param target The output target to be added.
-         */
-        OutputGuard(std::ostream &target);
-
-        /**
-         * Reference to the output target
-         */
-        mutable std::ostream *target_;
-
-        // Needed so that Log can access constructor
-        friend class Log;
-    };
-
+    typedef boost::shared_ptr<void> OutputGuard;
 
     // This declaration needs to be done before declaration of class
     // Verbosity, because gcc will require template parameters otherwise.

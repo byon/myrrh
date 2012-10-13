@@ -55,7 +55,12 @@ Log::OutputGuard Log::AddOutputTarget(std::ostream &target,
                                       VerbosityLevel verbosity)
 {
     targets_.push_back(std::make_pair(target.rdbuf( ), verbosity));
-    return OutputGuard(target);
+    auto releaser = [&](void*)
+    {
+        target.flush( );
+        this->RemoveOutputTarget(target);
+    };
+    return OutputGuard(this, releaser);
 }
 
 void Log::RemoveAllOutputTargets( )
@@ -123,47 +128,6 @@ void Log::Write(VerbosityLevel verbosity)
     {
         assert(false && "Exception here is programming error");
     }
-}
-
-// Log::OutputGuard class implementations
-
-Log::OutputGuard::OutputGuard(std::ostream &target) :
-    target_(&target)
-{
-}
-
-Log::OutputGuard::OutputGuard(const Log::OutputGuard &orig) :
-    target_(orig.target_)
-{
-    // Note that we do not follow smart pointer logic here (i.e. call
-    // orig.Release), because that way OutputGuard would never then have true
-    // ownership of output target as the only way to construct the class
-    // outside of Log is through AddOutputTarget, which returns new object by
-    // value.
-    orig.target_ = 0;
-}
-
-Log::OutputGuard &Log::OutputGuard::operator=(const Log::OutputGuard &orig)
-{
-    target_ = orig.target_;
-    orig.target_ = 0;
-
-    return *this;
-}
-
-void Log::OutputGuard::Release( )
-{
-    if (target_)
-    {
-        target_->flush( );
-        Log::Instance( ).RemoveOutputTarget(*target_);
-        target_ = 0;
-    }
-}
-
-Log::OutputGuard::~OutputGuard( )
-{
-    Release( );
 }
 
 // Local implementations

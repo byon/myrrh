@@ -810,7 +810,7 @@ void OutputGuardManualRelease( )
     Log::OutputGuard guard(Log::Instance( ).AddOutputTarget(stream));
 
     Notify( ) << "This goes to output";
-    guard.Release( );
+    guard.reset( );
     Notify( ) << "This does not go to output";
 
     StreamContainsOnlyOneLine(stream, "This goes to output\n");

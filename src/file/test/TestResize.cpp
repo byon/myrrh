@@ -29,7 +29,6 @@
 #include "myrrh/file/Resizer.hpp"
 #include "myrrh/file/PositionScanner.hpp"
 #include "myrrh/file/ReadOnly.hpp"
-#include "myrrh/file/Temporary.hpp"
 #include "myrrh/file/Eraser.hpp"
 #include "myrrh/data/test/Files.hpp"
 

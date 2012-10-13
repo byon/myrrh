@@ -13,7 +13,6 @@
 #include "myrrh/file/PositionScanner.hpp"
 
 #include <fstream>
-#include <limits>
 
 namespace myrrh
 {

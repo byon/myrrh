@@ -15,7 +15,6 @@
 #include "myrrh/file/SafeModify.hpp"
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
-#include <string>
 #include <fstream>
 
 namespace myrrh

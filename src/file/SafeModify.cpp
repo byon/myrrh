@@ -10,7 +10,6 @@
  */
 
 #include "myrrh/file/SafeModify.hpp"
-// tarpeen? #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
 
 namespace myrrh

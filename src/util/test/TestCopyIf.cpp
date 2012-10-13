@@ -23,7 +23,6 @@
 #endif
 
 #include <deque>
-#include <iterator>
 #include <list>
 #include <map>
 #include <vector>

@@ -12,7 +12,6 @@
 
 #include "myrrh/util/GenerateOutput.hpp"
 
-#include <cassert>
 #include <sstream>
 
 namespace myrrh

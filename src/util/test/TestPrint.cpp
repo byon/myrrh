@@ -24,19 +24,15 @@
 #include "boost/test/unit_test.hpp"
 #include "boost/test/floating_point_comparison.hpp"
 #include "boost/tokenizer.hpp"
-#include <boost/type_traits/remove_const.hpp>
 
 #ifdef WIN32
 #pragma warning (pop)
 #endif
 
-#include <cstdlib>
-#include <ctime>
 #include <deque>
 #include <list>
 #include <map>
 #include <set>
-#include <utility>
 #include <vector>
 
 typedef boost::unit_test::test_suite TestSuite;

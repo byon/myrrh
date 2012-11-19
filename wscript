@@ -76,7 +76,7 @@ def defineSeparateConfigurations( ):
 # @todo windows and linux are actually so close to each other that try to
 # combine
 def setBoostConfiguration(conf):
-    boost_path = 'C:\\Utilities\\boost\\boost_1_50_0'
+    boost_path = 'C:\\Utilities\\boost\\boost_1_52_0'
     conf.env.STLIBPATH_boost = [boost_path + '\\stage\\lib']
     conf.env.INCLUDES_boost = [boost_path]
 

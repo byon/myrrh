@@ -1,0 +1,11 @@
+
+CFLAGS += /O2 /Zi /Oi /GL /D NDEBUG /MD /Gy /Gm-
+
+LIBFLAGS += /LTCG
+
+# Note: originally there was also /OPT:REF, but F-secure thinks the result is
+#       a virus
+LDFLAGS += /INCREMENTAL:NO /OPT:ICF /LTCG
+
+!exe = |> ^ link %o^ link $(LDFLAGS) /PDB:%O.pdb /Out:%o %f |>
+!dll = |> ^ dll %o^ link $(LDFLAGS) $(DLLFLAGS) /PDB:%O.pdb /Out:%o %f |> | %O.lib %O.exp

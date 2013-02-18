@@ -1,0 +1,9 @@
+include common-rules.tup
+
+ifdef RELEASE
+  include release-rules.tup
+else
+  include debug-rules.tup
+endif
+
+include unit-test.tup

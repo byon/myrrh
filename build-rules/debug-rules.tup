@@ -1,0 +1,8 @@
+CFLAGS += /Od /ZI /D _DEBUG /MDd /RTC1 /Gm
+
+# LIBFLAGS does not require anything for debug
+
+LDFLAGS += /INCREMENTAL
+
+!exe = |> ^ link %o^ link $(LDFLAGS) /PDB:%O.pdb /Out:%o %f |> | %O.ilk
+!dll = |> ^ dll %o^ link $(LDFLAGS) $(DLLFLAGS) /PDB:%O.pdb /Out:%o %f |> | %O.ilk %O.lib %O.exp

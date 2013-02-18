@@ -1,0 +1,6 @@
+BOOST_HOME += c:\Utilities\boost\boost_1_52_0
+BOOST_LIBRARY_PATH += $(BOOST_HOME)\stage\lib
+
+CFLAGS += /I $(BOOST_HOME)
+
+LDFLAGS += /LIBPATH:"$(BOOST_LIBRARY_PATH)"

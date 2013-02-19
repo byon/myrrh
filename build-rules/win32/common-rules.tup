@@ -6,7 +6,7 @@ CFLAGS += /c /nologo /W3 /WX- /Oy-
 CFLAGS += /D WIN32 /D _CONSOLE /D _UNICODE /D UNICODE
 CFLAGS += /EHsc /GS /fp:precise /Zc:wchar_t /Zc:forScope
 CFLAGS += /Gd /TP /analyze- /errorReport:prompt
-CFLAGS += /I$(TUP_CWD)/..
+CFLAGS += /I$(TUP_CWD)/../..
 
 PCH_CFLAGS += /Yu"$(PRECOMPILED)" /FI"$(PRECOMPILED)"
 PCH_CFLAGS += /Fp"precompiled.pch"

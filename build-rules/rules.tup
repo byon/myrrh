@@ -1,9 +1,3 @@
-include common-rules.tup
-
-ifdef RELEASE
-  include release-rules.tup
-else
-  include debug-rules.tup
-endif
+include @(TUP_PLATFORM)/rules.tup
 
 include unit-test.tup

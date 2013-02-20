@@ -1,0 +1,4 @@
+include_rules
+
+: foreach *.cpp |> !compile |>
+: *.o |> !lib |> myrrh.util.a

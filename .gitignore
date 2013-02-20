@@ -1,2 +1,4 @@
 /.tup/
 myrrh.wiki/
+*.a
+*.o

@@ -1,0 +1,6 @@
+CFLAGS += -std=c++0x
+
+!compile = |> ^ compile %f ^ gcc $(CFLAGS) "%o" %f |> %B.o
+!lib = |> ^ static lib %o^ command? $(LIBFLAGS) "%o" %f |>
+!exe = |> ^ link %o^ command? $(LDFLAGS) %o %f |> | %O.ilk
+!dll = |> ^ dll %o^ command? $(LDFLAGS) $(DLLFLAGS) %o %f |> |

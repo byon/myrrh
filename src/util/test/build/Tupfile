@@ -11,3 +11,5 @@ DEPENDENCIES += ../../../util/build/libmyrrh.util.a
 : TestProgressTimer.o $(DEPENDENCIES) |> !exe |> test.myrrh.util.ProgressTimer
 : TestRepeat.o $(DEPENDENCIES) |> !exe |> test.myrrh.util.Repeat
 : TestStream.o $(DEPENDENCIES) |> !exe |> test.myrrh.util.Stream
+
+: foreach test.* |> !test |>

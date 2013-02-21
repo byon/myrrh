@@ -393,7 +393,7 @@ std::string ResultFromFileCase::InputStreamName( )
 }
 std::string Path(const std::string &restOfPath)
 {
-    const std::string START("../../../../../..");
+    const std::string START("../../../..");
     return START + restOfPath;
 }
 

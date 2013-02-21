@@ -1,14 +1,14 @@
 CFLAGS += -std=c++0x -c
 #CFLAGS += -I/home/byon/Documents/src/myrrh/build/linux
-CFLAGS += -I/home/byon/Documents/src/vendor/boost/boost_1_50_0
 
 CFLAGS += -I$(TUP_CWD)/../..
 
-STATIC_LIBRARIES = -L/home/byon/Documents/src/vendor/boost/boost_1_50_0/stage/lib -lboost_thread -lboost_regex -lboost_system -lboost_filesystem -lboost_date_time -lboost_unit_test_framework
+STATIC_LIBRARIES += -lboost_thread -lboost_regex -lboost_filesystem -lboost_system -lboost_date_time -lboost_unit_test_framework
 
-DYNAMIC_LIBRARIES = -lpthread
+DYNAMIC_LIBRARIES += -lpthread
 
 !compile = |> ^ compile %f ^ g++ $(CFLAGS) -o %o %f |> %B.o
 !lib = |> ^ static lib %o^ ar rcs -o %o %f |>
 !exe = |> ^ link %o^ g++ -o %o %f -Wl,-Bstatic $(STATIC_LIBRARIES) -Wl,-Bdynamic $(DYNAMIC_LIBRARIES) |>
 #!dll = |> ^ dll %o^ command? $(LDFLAGS) $(DLLFLAGS) %o %f |> |
+

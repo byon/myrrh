@@ -1,0 +1,8 @@
+include_rules
+
+DEPENDENCIES += ../../../data/test/build/libmyrrh.data.a
+DEPENDENCIES += ../../../file/build/libmyrrh.file.a
+DEPENDENCIES += ../../../util/build/libmyrrh.util.a
+
+: foreach ../*.cpp |> !compile |>
+: TestGenerateOutput.o $(DEPENDENCIES) |> !exe |> test.myrrh.util.GenerateOutput

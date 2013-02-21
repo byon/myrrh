@@ -321,6 +321,6 @@ std::string GetFileContent(const std::string &fileName)
 
 std::string Path(const std::string &fileName)
 {
-    const std::string PATH_TO_ROOT("../../../../../..");
+    const std::string PATH_TO_ROOT("../../../..");
     return PATH_TO_ROOT + fileName;
 }

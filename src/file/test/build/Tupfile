@@ -1,0 +1,17 @@
+include_rules
+
+DEPENDENCIES += ../../../data/test/build/libmyrrh.data.a
+DEPENDENCIES += ../../../file/build/libmyrrh.file.a
+DEPENDENCIES += ../../../util/build/libmyrrh.util.a
+
+: foreach ../*.cpp |> !compile |>
+: TestCopy.o $(DEPENDENCIES) |> !exe |> test.myrrh.file.Copy
+: TestEraser.o $(DEPENDENCIES) |> !exe |> test.myrrh.file.Eraser
+: TestMatchFiles.o $(DEPENDENCIES) |> !exe |> test.myrrh.file.MatchFiles
+: TestPositionScanner.o $(DEPENDENCIES) |> !exe |> test.myrrh.file.PositionScanner
+: TestReadOnly.o $(DEPENDENCIES) |> !exe |> test.myrrh.file.ReadOnly
+#: TestResize.o $(DEPENDENCIES) |> !exe |> test.myrrh.file.Resize
+: TestSafeModify.o $(DEPENDENCIES) |> !exe |> test.myrrh.file.SafeModify
+: TestTemporary.o $(DEPENDENCIES) |> !exe |> test.myrrh.file.Temporary
+
+: foreach test.* |> !test |>

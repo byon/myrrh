@@ -606,7 +606,7 @@ void CheckStream(Stream &stream, const std::string &fileName)
 
 std::string Path(const std::string &fileName)
 {
-    return "../../../../../.." + fileName;
+    return "../../../.." + fileName;
 }
 
 void CheckScan(std::ifstream &stream, PositionScanner &scanner,

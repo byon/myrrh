@@ -380,7 +380,7 @@ std::streampos FromMiddleScanner::DoScan(std::ifstream &stream) const
 
 std::string Path(const std::string &baseName)
 {
-    const std::string PATH("../../../../../..");
+    const std::string PATH("../../../..");
     return PATH + baseName;
 }
 

@@ -5,7 +5,7 @@ CFLAGS += -I$(TUP_CWD)/../..
 
 STATIC_LIBRARIES += -lboost_thread -lboost_regex -lboost_filesystem -lboost_system -lboost_date_time -lboost_unit_test_framework
 
-DYNAMIC_LIBRARIES += -lpthread
+DYNAMIC_LIBRARIES += -lpthread -lrt
 
 !compile = |> ^ compile %f ^ g++ $(CFLAGS) -o %o %f |> %B.o
 !lib = |> ^ static lib %o^ ar rcs -o %o %f |>

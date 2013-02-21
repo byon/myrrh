@@ -5,4 +5,9 @@ DEPENDENCIES += ../../../file/build/libmyrrh.file.a
 DEPENDENCIES += ../../../util/build/libmyrrh.util.a
 
 : foreach ../*.cpp |> !compile |>
+: TestCopyIf.o $(DEPENDENCIES) |> !exe |> test.myrrh.util.CopyIf
 : TestGenerateOutput.o $(DEPENDENCIES) |> !exe |> test.myrrh.util.GenerateOutput
+: TestPrint.o $(DEPENDENCIES) |> !exe |> test.myrrh.util.Print
+: TestProgressTimer.o $(DEPENDENCIES) |> !exe |> test.myrrh.util.ProgressTimer
+: TestRepeat.o $(DEPENDENCIES) |> !exe |> test.myrrh.util.Repeat
+: TestStream.o $(DEPENDENCIES) |> !exe |> test.myrrh.util.Stream

@@ -1,0 +1,12 @@
+include_rules
+
+DEPENDENCIES += ../../../data/test/build/libmyrrh.data.a
+DEPENDENCIES += ../../../file/build/libmyrrh.file.a
+DEPENDENCIES += ../../../util/build/libmyrrh.util.a
+DEPENDENCIES += ../../../log/build/libmyrrh.log.a
+
+: foreach ../*.cpp |> !compile |>
+: TestHeader.o $(DEPENDENCIES) |> !exe |> test.myrrh.log.Header
+: TestLog.o $(DEPENDENCIES) |> !exe |> test.myrrh.log.Log
+
+: foreach test.* |> !test |>

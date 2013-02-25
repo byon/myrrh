@@ -1,4 +1,4 @@
 include_rules
 
 : foreach ../*.cpp |> !compile |>
-: *.o |> !lib |> myrrh.log.policy.a
+: *.o |> !lib |> libmyrrh.log.policy.a

@@ -1,0 +1,19 @@
+include_rules
+
+DEPENDENCIES += ../../../../data/test/build/libmyrrh.data.a
+DEPENDENCIES += ../../../../file/build/libmyrrh.file.a
+DEPENDENCIES += ../../../../util/build/libmyrrh.util.a
+DEPENDENCIES += ../../../../log/build/libmyrrh.log.a
+DEPENDENCIES += ../../../../log/policy/build/libmyrrh.log.policy.a
+
+: foreach ../*.cpp |> !compile |>
+#: TestExamples.o File.o $(DEPENDENCIES) |> !exe |> test.myrrh.log.policy.TestExamples
+#: TestOpener.o File.o $(DEPENDENCIES) |> !exe |> test.myrrh.log.policy.TestOpener
+: TestPath.o $(DEPENDENCIES) |> !exe |> test.myrrh.log.policy.TestPath
+: TestPathPart.o $(DEPENDENCIES) |> !exe |> test.myrrh.log.policy.TestPathPart
+: TestPolicy.o $(DEPENDENCIES) |> !exe |> test.myrrh.log.policy.TestPolicy
+: TestRestriction.o File.o $(DEPENDENCIES) |> !exe |> test.myrrh.log.policy.TestRestriction
+: TestRestrictionStore.o $(DEPENDENCIES) |> !exe |> test.myrrh.log.policy.TestRestrictionStore
+: TestStream.o $(DEPENDENCIES) |> !exe |> test.myrrh.log.policy.TestStream
+
+: foreach test.* |> !test |>
